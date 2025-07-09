@@ -110,7 +110,7 @@ function ItemPage() {
                     </div>
 
                     {/* REVIEWS SECTION */}
-                    <div className="reviews mt-80">
+                    <div className="reviews mt-16">
                         <h1 className="text-2xl font-bold text-zinc-700 mb-4">Reviews ({reviewsData.length})</h1>
                         <div className="space-y-4">
                             {reviewsData.length > 0 && (
