@@ -17,7 +17,11 @@ const itemsList = [
         name: "CSE201 Lab Files",
         author: "Le Minh Tri",
         description: "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments.",
-        image: "https://picsum.photos/1920/1080?random=1",
+        images: [
+            "https://picsum.photos/1920/1080?random=10",
+            "https://picsum.photos/1920/1080?random=11",
+            "https://picsum.photos/1920/1080?random=12"
+        ],
         price: "200,000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -28,7 +32,11 @@ const itemsList = [
         name: "MTH101 Calculus Notes",
         author: "Nguyen Van An",
         description: "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
-        image: "https://picsum.photos/1920/1080?random=2",
+        images: [
+            "https://picsum.photos/1920/1080?random=20",
+            "https://picsum.photos/1920/1080?random=21",
+            "https://picsum.photos/1920/1080?random=22"
+        ],
         price: "150,000",
         university: "Vietnam National University",
         subject: "MTH101",
@@ -39,7 +47,11 @@ const itemsList = [
         name: "PHY102 Physics Exam Prep",
         author: "Le Thi Binh",
         description: "A complete exam preparation kit for PHY102. Contains summaries of key formulas, mock exam questions, and fully solved past papers.",
-        image: "https://picsum.photos/1920/1080?random=3",
+        images: [
+            "https://picsum.photos/1920/1080?random=30",
+            "https://picsum.photos/1920/1080?random=31",
+            "https://picsum.photos/1920/1080?random=32"
+        ],
         price: "250,000",
         university: "FPT University",
         subject: "PHY102",
@@ -50,7 +62,11 @@ const itemsList = [
         name: "ENG303 English Literature Essays",
         author: "Pham Minh Cuong",
         description: "A collection of A-grade essays on major works of English literature. Perfect for inspiration and understanding complex themes for your ENG303 course.",
-        image: "https://picsum.photos/1920/1080?random=4",
+        images: [
+            "https://picsum.photos/1920/1080?random=40",
+            "https://picsum.photos/1920/1080?random=41",
+            "https://picsum.photos/1920/1080?random=42"
+        ],
         price: "180,000",
         university: "Eastern International University",
         subject: "ENG303",
@@ -61,7 +77,11 @@ const itemsList = [
         name: "BUS101 Business Management Slides",
         author: "Vo Thi Dung",
         description: "Complete set of presentation slides for BUS101. Visually engaging and packed with key information, case studies, and business theories.",
-        image: "https://picsum.photos/1920/1080?random=5",
+        images: [
+            "https://picsum.photos/1920/1080?random=50",
+            "https://picsum.photos/1920/1080?random=51",
+            "https://picsum.photos/1920/1080?random=52"
+        ],
         price: "120,000",
         university: "RMIT University Vietnam",
         subject: "BUS101",
@@ -72,7 +92,11 @@ const itemsList = [
         name: "CHE101 Chemistry Lab Guide",
         author: "Le Minh Tri",
         description: "A step-by-step guide for all CHE101 lab experiments. Includes safety protocols, expected results, and tips for writing excellent lab reports.",
-        image: "https://picsum.photos/1920/1080?random=6",
+        images: [
+            "https://picsum.photos/1920/1080?random=60",
+            "https://picsum.photos/1920/1080?random=61",
+            "https://picsum.photos/1920/1080?random=62"
+        ],
         price: "220,000",
         university: "Vietnam National University",
         subject: "CHE101",
@@ -83,7 +107,11 @@ const itemsList = [
         name: "CSE305 Database Systems Project",
         author: "Trinh Tran Phuong Tuan",
         description: "A full project implementation for CSE305, featuring a relational database schema, SQL queries, and a front-end interface. Great for reference.",
-        image: "https://picsum.photos/1920/1080?random=7",
+        images: [
+            "https://picsum.photos/1920/1080?random=70",
+            "https://picsum.photos/1920/1080?random=71",
+            "https://picsum.photos/1920/1080?random=72"
+        ],
         price: "350,000",
         university: "Eastern International University",
         subject: "CSE305",
@@ -94,7 +122,11 @@ const itemsList = [
         name: "ECO101 Microeconomics Summary",
         author: "Nguyen Van An",
         description: "Concise summary of all key concepts in ECO101. Perfect for last-minute revision before midterms or finals. Includes graphs and charts.",
-        image: "https://picsum.photos/1920/1080?random=8",
+        images: [
+            "https://picsum.photos/1920/1080?random=80",
+            "https://picsum.photos/1920/1080?random=81",
+            "https://picsum.photos/1920/1080?random=82"
+        ],
         price: "90,000",
         university: "FPT University",
         subject: "ECO101",
