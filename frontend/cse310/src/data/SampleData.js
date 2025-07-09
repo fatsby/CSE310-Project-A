@@ -28,7 +28,7 @@ const itemsList = [
         id: 1,
         name: "CSE201 Lab Files",
         authorId: 6, // Le Minh Tri
-        description: "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments.",
+        description: "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments. \n \nFiles included: \n- Lab 1: Introduction to Programming\n- Lab 2: Data Structures\n- Lab 3: Algorithms",
         images: [
             "https://picsum.photos/1920/1080?random=10",
             "https://picsum.photos/1920/1080?random=11",
@@ -43,7 +43,7 @@ const itemsList = [
     {
         id: 2,
         name: "MTH101 Calculus Notes",
-        authorId: 2, // Nguyen Van An
+        authorId: 3, // Nguyen Van An
         description: "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
         images: [
             "https://picsum.photos/1920/1080?random=20",
@@ -187,6 +187,7 @@ const reviews = [
     { id: 5, itemId: 4, userId: 4, rating: 5, comment: "The essays provided great insight.", date: "2023-10-25" },
     { id: 6, itemId: 5, userId: 5, rating: 3, comment: "The slides are okay, but a bit too basic.", date: "2023-12-10" },
     { id: 7, itemId: 3, userId: 2, rating: 4, comment: "Very helpful, thank you.", date: "2023-11-16" },
+    { id: 8, itemId: 6, userId: 2, rating: 5, comment: "Good notes, but could use more examples.", date: "2023-09-20" },
 ];
 
 // --- Data Access Functions ---
@@ -238,3 +239,24 @@ export const getCurrentUser = () => {
 export const getReviewsByItemId = (itemId) => {
     return reviews.filter(review => review.itemId === itemId);
 };
+
+export const getItemsBySubject = (subject) => {
+    return itemsList.filter(item => item.subject === subject).map(item => ({
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    }));
+}
+
+export const getOtherItemsBySubject = (subject, currentItemId) => {
+    return itemsList.filter(item => item.subject === subject && item.id !== currentItemId).map(item => ({
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    }));
+}
+
+export const getOtherItems = (currentItemId) => {
+    return itemsList.filter(item => item.id !== currentItemId).map(item => ({
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    }));
+}
