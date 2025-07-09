@@ -1,7 +1,7 @@
 // HOW TO USE:
 // This file simulates a database with related data.
-// - getItemsList() returns all items.
-// - getItemById(id) returns a single item.
+// - getItemsList() returns all items, now with a calculated 'avgRating'.
+// - getItemById(id) returns a single item, also with its 'avgRating'.
 // - getUsers() returns all users.
 // - getUserById(id) returns a single user, useful for finding an item's author details.
 // - getReviews() returns all reviews.
@@ -21,7 +21,8 @@ const users = [
     { id: 6, name: "Le Minh Tri", profilePicture: "https://randomuser.me/api/portraits/men/6.jpg" },
 ];
 
-// --- Items Data ---
+// --- Base Items Data ---
+// raw data without the calculated average rating.
 const itemsList = [
     {
         id: 1,
@@ -36,7 +37,8 @@ const itemsList = [
         price: "200,000",
         university: "Eastern International University",
         subject: "CSE201",
-        lastUpdated: "2023-10-01",
+        lastUpdated: "01/10/2024",
+        purchaseCount: 150,
     },
     {
         id: 2,
@@ -51,7 +53,9 @@ const itemsList = [
         price: "150,000",
         university: "Vietnam National University",
         subject: "MTH101",
-        lastUpdated: "2023-09-15",
+        lastUpdated: "15/09/2024",
+        purchaseCount: 254,
+
     },
     {
         id: 3,
@@ -66,7 +70,8 @@ const itemsList = [
         price: "250,000",
         university: "FPT University",
         subject: "PHY102",
-        lastUpdated: "2023-11-05",
+        lastUpdated: "11/06/2025",
+        purchaseCount: 320,
     },
     {
         id: 4,
@@ -81,7 +86,8 @@ const itemsList = [
         price: "180,000",
         university: "Eastern International University",
         subject: "ENG303",
-        lastUpdated: "2023-10-20",
+        lastUpdated: "09/07/2025",
+        purchaseCount: 180,
     },
     {
         id: 5,
@@ -96,7 +102,8 @@ const itemsList = [
         price: "120,000",
         university: "RMIT University Vietnam",
         subject: "BUS101",
-        lastUpdated: "2023-12-01",
+        lastUpdated: "01/12/2024",
+        purchaseCount: 210,
     },
     {
         id: 6,
@@ -111,7 +118,8 @@ const itemsList = [
         price: "220,000",
         university: "Vietnam National University",
         subject: "CHE101",
-        lastUpdated: "2024-01-10",
+        lastUpdated: "01/10/2023",
+        purchaseCount: 175,
     },
     {
         id: 7,
@@ -126,7 +134,8 @@ const itemsList = [
         price: "350,000",
         university: "Eastern International University",
         subject: "CSE305",
-        lastUpdated: "2024-02-15",
+        lastUpdated: "15/02/2024",
+        purchaseCount: 95,
     },
     {
         id: 8,
@@ -141,7 +150,8 @@ const itemsList = [
         price: "90,000",
         university: "FPT University",
         subject: "ECO101",
-        lastUpdated: "2024-03-01",
+        lastUpdated: "23/12/2024",
+        purchaseCount: 300,
     }
 ];
 
@@ -176,16 +186,40 @@ const reviews = [
     { id: 4, itemId: 1, userId: 3, rating: 4, comment: "Well-organized and saved me a lot of time.", date: "2023-10-05" },
     { id: 5, itemId: 4, userId: 4, rating: 5, comment: "The essays provided great insight.", date: "2023-10-25" },
     { id: 6, itemId: 5, userId: 5, rating: 3, comment: "The slides are okay, but a bit too basic.", date: "2023-12-10" },
+    { id: 7, itemId: 3, userId: 2, rating: 4, comment: "Very helpful, thank you.", date: "2023-11-16" },
 ];
 
-// --- Data Getters ---
+// --- Data Access Functions ---
+
+// Calculates the average rating for a single item
+const calculateAvgRating = (itemId) => {
+    const itemReviews = reviews.filter(review => review.itemId === itemId);
+    if (itemReviews.length === 0) {
+        return 0;
+    }
+    const totalRating = itemReviews.reduce((sum, review) => sum + review.rating, 0);
+    // Return the average rounded to one decimal place
+    return parseFloat((totalRating / itemReviews.length).toFixed(1));
+};
 
 export const getItemsList = () => {
-    return itemsList;
+    // Enrich each item with its calculated average rating
+    return itemsList.map(item => ({
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    }));
 };
 
 export const getItemById = (id) => {
-    return itemsList.find(item => item.id === id);
+    const item = itemsList.find(item => item.id === id);
+    if (!item) {
+        return null;
+    }
+    // Enrich the single item with its calculated average rating
+    return {
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    };
 };
 
 export const getUsers = () => {
@@ -201,6 +235,6 @@ export const getCurrentUser = () => {
     return { ...profile, ...currentUserData }; // Combine profile info with account data
 };
 
-export const getReviews = () => {
-    return reviews;
+export const getReviewsByItemId = (itemId) => {
+    return reviews.filter(review => review.itemId === itemId);
 };
