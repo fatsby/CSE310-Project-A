@@ -5,19 +5,24 @@ import App from './App.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ItemPage from './pages/ItemPage.jsx'
 
+import { MantineProvider } from '@mantine/core';
+
+
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />, //CHANGE THIS TO HOME PAGE
   },
   {
-    path: '/item',
+    path: '/item/:id',
     element: <ItemPage />,
   }
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <MantineProvider>
+      <RouterProvider router={router} />
+    </MantineProvider>
   </StrictMode>,
 )
