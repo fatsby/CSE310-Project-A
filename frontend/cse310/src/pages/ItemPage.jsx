@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import './css/ItemPageCSS.css';
+// import './css/ItemPageCSS.module.css';
 
 // Mantine Components
 import { Carousel } from '@mantine/carousel';
 import { Button } from '@mantine/core';
 import { Breadcrumbs, Anchor } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+
 
 
 // --- Components ---
@@ -16,7 +18,7 @@ import ReviewCard from '../components/ReviewCard';
 import { getItemById, getUserById, getReviewsByItemId, getOtherItems } from '../data/SampleData';
 
 // --- Icons ---
-import { Star, Heart } from 'lucide-react';
+import { Star, Heart, CheckIcon, XIcon } from 'lucide-react';
 
 
 
@@ -32,17 +34,48 @@ function ItemPage() {
 
 
     useEffect(() => {
+        // --- 1. Show loading notification ---
+        notifications.show({
+            id: 'load-item-data',
+            loading: true,
+            title: 'Loading Item...',
+            message: 'Please wait while we fetch the details.',
+            autoClose: false,
+            withCloseButton: false,
+        });
+
+        // --- Fetch data ---
         const data = getItemById(parseInt(id, 10));
-        setItemData(data);
 
-        const author = getUserById(data.authorId);
-        setAuthorData(author);
+        if (data) {
+            setItemData(data);
+            const author = getUserById(data.authorId);
+            setAuthorData(author);
+            const reviews = getReviewsByItemId(data.id);
+            setReviewsData(reviews);
+            const itemsInSameSubject = getOtherItems(data.id);
+            setOtherItems(itemsInSameSubject);
 
-        const reviews = getReviewsByItemId(data.id);
-        setReviewsData(reviews);
-
-        const itemsInSameSubject = getOtherItems(data.id);
-        setOtherItems(itemsInSameSubject);
+            // --- Update notification to SUCCESS ---
+            notifications.update({
+                id: 'load-item-data',
+                color: 'teal',
+                title: 'Data Loaded!',
+                message: 'The item details are ready for you to view.',
+                icon: <CheckIcon size="1rem" />,
+                autoClose: 3000,
+            });
+        } else {
+            // --- Update notification to ERROR ---
+            notifications.update({
+                id: 'load-item-data',
+                color: 'red',
+                title: 'Error Loading Item',
+                message: 'We could not find the item you were looking for.',
+                icon: <XIcon size="1rem" />,
+                autoClose: 5000,
+            });
+        }
     }, [id]);
 
 
@@ -66,7 +99,7 @@ function ItemPage() {
     ));
 
     return (
-        <div className="container mx-auto p-4 font-sans">
+        <div className="container mx-auto p-4">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* LEFT COLUMN */}
                 <div className="lg:col-span-8">
@@ -116,7 +149,7 @@ function ItemPage() {
                                 reviewsData.map(review => {
                                     const user = getUserById(review.userId);
                                     if (!user) return null;
-                                    
+
                                     return (
                                         <ReviewCard key={review.id} reviewData={review} userName={user.name} userProfilePic={user.profilePicture} />
                                     );
@@ -167,7 +200,13 @@ function ItemPage() {
                                 <Button fullWidth variant="outline" color="#000" size="md">Add to Cart</Button>
                             </div>
                             <div className="col-span-2">
-                                <Button fullWidth variant="outline" color="#000" size="md"><Heart /></Button>
+                                <Button onClick={() =>
+                                    notifications.show({
+                                        title: "New Favourite Item ❤️",
+                                        message: "Added a new item to your favourite collection!",
+                                        color: "pink",
+                                    })
+                                } fullWidth variant="outline" color="#000" size="md"><Heart /></Button>
                             </div>
                         </div>
                         {/* PURCHASE BUTTON */}

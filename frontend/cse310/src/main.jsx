@@ -5,11 +5,14 @@ import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ItemPage from "./pages/ItemPage.jsx";
 
+// MANTINE IMPORTS
 import { MantineProvider } from "@mantine/core";
-import Landing from "./pages/Landing/Landing.js";
-import LandingLayout from "./layouts/LandingLayout/LandingLayout.js";
-import UserLayout from "./layouts/UserLayout/UserLayout.js";
-import Upload from "./pages/Upload/Upload.js";
+import { Notifications } from '@mantine/notifications';
+
+import Landing from "./pages/Landing/Landing.tsx";
+import LandingLayout from "./layouts/LandingLayout/LandingLayout.tsx";
+import UserLayout from "./layouts/UserLayout/UserLayout.tsx";
+import Upload from "./pages/Upload/Upload.tsx";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +40,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <MantineProvider>
+      <Notifications />
       <RouterProvider router={router} />
     </MantineProvider>
   </StrictMode>
