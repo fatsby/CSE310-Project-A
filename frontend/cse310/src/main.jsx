@@ -7,12 +7,11 @@ import ItemPage from "./pages/ItemPage.jsx";
 
 // MANTINE IMPORTS
 import { MantineProvider } from "@mantine/core";
-import { Notifications } from '@mantine/notifications';
-
-import Landing from "./pages/Landing/Landing.tsx";
-import LandingLayout from "./layouts/LandingLayout/LandingLayout.tsx";
-import UserLayout from "./layouts/UserLayout/UserLayout.tsx";
-import Upload from "./pages/Upload/Upload.tsx";
+import { Notifications } from "@mantine/notifications";
+import UserLayout from "./layouts/UserLayout.jsx";
+import Upload from "./pages/Upload.jsx";
+import LandingLayout from "./layouts/LandingLayout.jsx";
+import Landing from "./pages/Landing.jsx";
 
 const router = createBrowserRouter([
   {

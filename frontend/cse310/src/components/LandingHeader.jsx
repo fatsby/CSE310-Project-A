@@ -8,8 +8,8 @@ export default function LandingHeader() {
         {/* Logo with yellow mark */}
         <div className="flex items-center gap-1 text-2xl font-bold">
           <img
-            src="./img/logo.png"
-            alt=""
+            src="src\assets\logo.png"
+            alt="Logo"
             className="max-w-[80px] min-w-[80px] cursor-pointer"
           />
         </div>
@@ -17,7 +17,7 @@ export default function LandingHeader() {
         <div className="flex items-center gap-4">
           <Link
             to="/login"
-            className="text-base text-gray-700 hover:underline font-medium rounded-full border-white border-1  px-4 py-2 cursor-pointer"
+            className="text-base text-gray-700 hover:underline font-medium rounded-full border-white border px-4 py-2 cursor-pointer"
           >
             Log in
           </Link>

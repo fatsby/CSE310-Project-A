@@ -8,7 +8,7 @@ export default function UserHeader() {
         {/* Logo with yellow mark */}
         <div className="flex items-center gap-4 text-2xl font-bold">
           <img
-            src="./img/logo.png"
+            src="src\assets\logo.png"
             alt=""
             className="max-w-[80px] min-w-[80px] cursor-pointer"
           />

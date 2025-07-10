@@ -2,9 +2,9 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 export default function Upload() {
-  const [uploadedURL, setUploadedURL] = useState<string | null>(null);
+  const [uploadedURL, setUploadedURL] = useState(null);
 
-  function formatBytes(bytes: number): string {
+  function formatBytes(bytes) {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -13,7 +13,7 @@ export default function Upload() {
     return `${value} ${sizes[i]}`;
   }
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file) => {
       console.log("File: " + file.name);
       console.log("Type: " + file.type);
@@ -55,7 +55,7 @@ export default function Upload() {
   };
 
   return (
-    <div className="max-w-screen h-full bg-[#393a4645] p-28">
+    <div className="max-w-screen h-full bg-[#393a4614] p-28">
       <div className="relative w-[786px] min-h-[577px] bg-[#f9f9f9] rounded-[20px] mx-auto">
         <div className="absolute top-[-20px] right-[-20px] text-black bg-white rounded-full">
           <i className="fa-solid fa-circle-xmark text-[54px]"></i>
@@ -66,7 +66,7 @@ export default function Upload() {
           </h1>
         </div>
         <div className="px-16">
-          <div {...getRootProps()} className="">
+          <div {...getRootProps()}>
             <input {...getInputProps()} />
             {isDragActive ? (
               <div className="pt-10 pb-5">
@@ -77,12 +77,16 @@ export default function Upload() {
                   }}
                 >
                   <div className="flex flex-col items-center">
-                    <img src="/img/blue_up.png" alt="" className="w-[80px]" />
+                    <img
+                      src="src\assets\grey_up.png"
+                      alt="Upload"
+                      className="w-[80px]"
+                    />
                     <p className="text-[15px] p-0 m-0 text-black mt-5">
                       Drag & Drop
                     </p>
                     <p className="text-[#a0a9b5] text-[11px] mb-5 p-0">
-                      ( doc, pdf, pptx, zip ){" "}
+                      ( doc, pdf, pptx, zip )
                     </p>
                     <div className="text-transparent bg-transparent px-[16px] py-[8px] rounded-[10px] text-[13px] font-bold">
                       Select files
@@ -94,15 +98,19 @@ export default function Upload() {
               <div className="pt-10 pb-5">
                 <div className="relative w-full h-[350px] flex justify-center items-center text-center">
                   <div className="flex flex-col items-center">
-                    <img src="/img/blue_up.png" alt="" className="w-[80px]" />
+                    <img
+                      src="src\assets\grey_up.png"
+                      alt="Upload"
+                      className="w-[80px]"
+                    />
                     <p className="text-[15px] p-0 m-0 text-black mt-5">
                       Drag & Drop
                     </p>
                     <p className="text-[#a0a9b5] text-[11px] mb-5 p-0">
-                      ( doc, pdf, pptx, zip ){" "}
+                      ( doc, pdf, pptx, zip )
                     </p>
-                    <button className="text-white bg-[#4e93fc] px-[16px] py-[8px] rounded-[10px] hover:bg-[#327BFB] text-[13px] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                      Select files
+                    <button className="text-white bg-black px-[16px] py-[8px] rounded-[10px] hover:bg-[#282829] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+                      <b className="text-[13px]">Select files</b>
                     </button>
                   </div>
                 </div>
@@ -117,16 +125,13 @@ export default function Upload() {
               {acceptedFiles.map((file) => (
                 <li key={file.name} className="m-4">
                   <div className="flex items-center w-[512px] h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                    {/* Icon */}
                     <div className="flex-shrink-0 w-8 h-8 mr-4">
                       <img
-                        src="/img/ggdoc.png"
-                        alt=""
+                        src="src\assets\ggdoc.png"
+                        alt="Document"
                         className="w-full h-full object-contain"
                       />
                     </div>
-
-                    {/* File info */}
                     <div className="flex-1 overflow-hidden">
                       <p className="text-sm font-medium truncate">
                         {file.name}
@@ -135,8 +140,6 @@ export default function Upload() {
                         {formatBytes(file.size)}
                       </p>
                     </div>
-
-                    {/* Trash icon */}
                     <button className="ml-4 text-[#C3C5C9] hover:text-red-600">
                       <i className="fa-solid fa-trash text-lg"></i>
                     </button>
@@ -144,12 +147,11 @@ export default function Upload() {
                 </li>
               ))}
             </ul>
-
             <button
               onClick={uploadUserFile}
-              className="text-white bg-[#4e93fc] px-[16px] py-[8px] rounded-[10px] hover:bg-[#327BFB] text-[13px] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] mt-3"
+              className="text-white bg-black px-[16px] py-[8px] rounded-[10px] hover:bg-[#282829] text-[13px] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] mt-3"
             >
-              Upload
+              <b className="text-[13px]">Upload</b>
             </button>
           </div>
         )}
