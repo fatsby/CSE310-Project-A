@@ -1,7 +1,7 @@
 import React from 'react';
-import { Star } from 'lucide-react'; // Assuming you might want to show stars here too
+import { Star } from 'lucide-react';
 
-// Renamed to ReviewCard for clarity
+
 function ReviewCard({ reviewData, userName, userProfilePic }) {
     if (!reviewData) {
         return null;

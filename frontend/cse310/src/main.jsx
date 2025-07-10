@@ -14,10 +14,6 @@ import Upload from "./pages/Upload/Upload.js";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />, //CHANGE THIS TO HOME PAGE
-  },
-  {
-    path: "/landing",
     element: (
       <LandingLayout>
         <Landing />

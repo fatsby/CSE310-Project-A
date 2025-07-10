@@ -58,7 +58,6 @@ function ItemPage() {
 
     const breadcrumbItems = [
         { title: 'Home', href: '/' },
-        // Remove the quotes around itemData.university
         { title: itemData.university, href: '#' },
     ].map((item, index) => (
         <Anchor href={item.href} key={index}>
@@ -179,7 +178,6 @@ function ItemPage() {
                     <div className="mt-65">
                         <h2 className="text-xl font-bold text-slate-600 mb-4">You may also like</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-                            {/* Placeholder for other items */}
                             {otherItems.map(item => (
                                 <ItemCard key={item.id} itemData={item} />
                             ))}

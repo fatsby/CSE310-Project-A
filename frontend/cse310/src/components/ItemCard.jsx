@@ -9,7 +9,6 @@ function ItemCard({ itemData }) {
 
     return (
         <Link to={`/item/${itemData.id}`} className="block bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-            {/* Now `itemData.images` will exist and the error is gone */}
             <img src={itemData.images[0]} alt={itemData.name} className="w-full h-48 object-cover rounded-md mb-4" />
             <p className="text-lg font-semibold text-gray-800 truncate" title={itemData.name}>{itemData.name}</p>
             <div className="flex items-center justify-between mt-2">
