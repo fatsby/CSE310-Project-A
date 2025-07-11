@@ -6,7 +6,7 @@ export default function Landing() {
       <div className="mx-auto max-w-7xl w-full px-18">
         {/* Hero Section */}
         <section className="w-full flex flex-col items-center pt-26 pb-6 text-center">
-          <h1 className="text-4xl md:text-[43px] font-bold mb-4">
+          <h1 className="text-4xl md:text-[43px] font-semibold mb-8 text-black">
             Join the ultimate material hub
             <br className="hidden md:block" />
             for students
@@ -34,7 +34,11 @@ export default function Landing() {
                   </div>
                 </div>
                 {/* Search bar */}
-                <div className="relative bg-white flex items-center rounded-full px-10 py-4 shadow-lg w-full mx-auto">
+                <div
+                  className="box-border relative bg-white flex items-center rounded-full px-10 py-4 shadow-lg w-full mx-auto 
+             border-2 border-transparent 
+             hover:border-[#b6d6ff] focus-within:border-[#b6d6ff]"
+                >
                   <input
                     type="text"
                     placeholder=""

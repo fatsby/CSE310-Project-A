@@ -40,7 +40,7 @@ export default function LandingHeader() {
             </Link>
             <Link
               to="/register"
-              className="text-base px-4 py-2 bg-[#4192fd] text-white rounded-lg hover:bg-blue-600 transition font-medium cursor-pointer"
+              className="text-base px-4 py-2 bg-[#4192fd] text-white rounded-[10px] hover:bg-blue-600 transition font-medium cursor-pointer"
             >
               Sign up for free
             </Link>
