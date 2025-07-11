@@ -260,3 +260,9 @@ export const getOtherItems = (currentItemId) => {
         avgRating: calculateAvgRating(item.id),
     }));
 }
+
+export const getSortedItemsByPurchase = () => {
+    return itemsList.sort((item1, item2) => {
+        item1.purchaseCount - item2.purchaseCount
+    });
+}

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
+import logo from "/src/assets/logo.png";
 
 export default function UserHeader() {
   const [showHeader, setShowHeader] = useState(true);
@@ -34,11 +35,13 @@ export default function UserHeader() {
         <div className="max-w-7xl w-full mx-auto px-18 flex items-center justify-between">
           {/* Logo with yellow mark */}
           <div className="flex items-center gap-4 text-2xl font-bold">
-            <img
-              src="src\assets\logo.png"
-              alt=""
+            <Link to="/">
+              <img
+              src= {logo}
+              alt="Brand logo"
               className="max-w-[80px] min-w-[80px] cursor-pointer"
-            />
+              />
+            </Link>
             <Link
               to="/upload"
               className="text-base text-black hover:underline font-medium rounded-ful  px-4 py-2 cursor-pointer"
