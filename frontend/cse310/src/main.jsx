@@ -23,10 +23,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/upload",
+    path: "/testupload",
     element: (
       <UserLayout>
-        <Upload />
+        <Landing />
       </UserLayout>
     ),
   },
