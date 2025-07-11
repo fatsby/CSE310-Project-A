@@ -3,11 +3,13 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ItemPage from "./pages/ItemPage.jsx";
 
 // MANTINE IMPORTS
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+
+// PAGES IMPORT
+import ItemPage from "./pages/ItemPage.jsx";
 import UserLayout from "./layouts/UserLayout.jsx";
 import Upload from "./pages/Upload.jsx";
 import LandingLayout from "./layouts/LandingLayout.jsx";
@@ -32,7 +34,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/item/:id",
-    element: <ItemPage />,
+    element: (
+      <UserLayout>
+        <ItemPage/>
+      </UserLayout>
+    ),
   },
 ]);
 

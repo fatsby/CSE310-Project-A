@@ -24,11 +24,13 @@ export default function LandingHeader() {
         <div className="max-w-7xl w-full mx-auto px-18 flex items-center justify-between">
           {/* Logo with yellow mark */}
           <div className="flex items-center gap-1 text-2xl font-bold">
-            <img
+            <Link to="/">
+              <img
               src="src\assets\logo.png"
               alt="Logo"
               className="max-w-[80px] min-w-[80px] cursor-pointer"
-            />
+              />
+            </Link>
           </div>
           {/* Auth buttons */}
           <div className="flex items-center gap-4">
