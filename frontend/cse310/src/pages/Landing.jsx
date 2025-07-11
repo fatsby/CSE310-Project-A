@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Landing() {
   return (
-    <div className="font-montserrat flex flex-col items-center bg-[#EEF2F7]">
+    <div className="font-montserrat flex flex-col items-center bg-[#EEF2F7] pt-[92px]">
       <div className="mx-auto max-w-7xl w-full px-18">
         {/* Hero Section */}
         <section className="w-full flex flex-col items-center pt-26 pb-6 text-center">
@@ -120,7 +120,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="flex justify-center my-14">
-            <button className="px-8 py-3 bg-[#4D93E9] text-[#F1F3FB] rounded-full hover:bg-blue-700 transition font-medium text-[16px] cursor-pointer">
+            <button className="px-8 py-3 bg-[#4D93E9] text-[#F1F3FB] rounded-full hover:bg-blue-600 transition font-medium text-[16px] cursor-pointer">
               Go Premium
             </button>
           </div>
@@ -137,14 +137,16 @@ export default function Landing() {
           />
 
           {/* LEFT TEXT BLOCK */}
-          <div className="absolute w-[700px] top-1/2 left-[10%] transform -translate-y-1/2 text-black text-lg md:text-xl font-normal leading-relaxed">
+          <div className="absolute w-[650px] top-1/2 left-[10%] transform -translate-y-1/2 text-black text-lg md:text-xl font-normal leading-relaxed">
             <div className="flex items-end">
               <img
                 src="src/assets/logo.png"
                 alt="Logo"
                 className="max-w-[100px]"
               />
-              <span className="ml-2">Get our App</span>
+              <span className="ml-2">
+                <b>Get our App</b>
+              </span>
             </div>
             <h2 className="text-3xl md:text-[40px] font-bold mb-4 mt-10 leading-14">
               Study anywhere.

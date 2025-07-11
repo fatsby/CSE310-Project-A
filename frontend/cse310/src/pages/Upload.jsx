@@ -55,7 +55,7 @@ export default function Upload() {
   };
 
   return (
-    <div className="max-w-screen h-full bg-[#393a4614] p-28">
+    <div className="max-w-screen h-full bg-[#393A4266] p-28 pt-[120px]">
       <div className="relative w-[786px] min-h-[577px] bg-[#f9f9f9] rounded-[20px] mx-auto">
         <div className="absolute top-[-20px] right-[-20px] text-black bg-white rounded-full">
           <i className="fa-solid fa-circle-xmark text-[54px]"></i>
