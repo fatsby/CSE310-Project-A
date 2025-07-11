@@ -157,7 +157,7 @@ export default function Landing() {
               <br className="hidden md:block" /> Study everywhere.
               <br className="hidden md:block" /> On any device.
             </h2>
-            <p className="mb-12 text-[20px]">
+            <p className="mb-12 text-[17px]">
               Elevate your study routine and unlock a world of knowledge at your
               fingertips! With our app, available on both iOS and Android, you
               can seamlessly access tools designed to improve your learning
