@@ -12,13 +12,14 @@ import hr_ad from "../assets/HomePage/hr-ad.jpg"
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
 import { use, useEffect, useState } from 'react';
 
-import { getCurrentUser, getItemsByUniversity, getSortedItemsByPurchase } from '../data/SampleData.js';
+import { getCurrentUser, getItemsByUniversity, getSortedItemsByPurchase, getSortedItemsByRating } from '../data/SampleData.js';
 
 
 function HomePage() {
     const [userData, setUserData] = useState(null);
     const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
     const [bestSellerItems, setBestSellerItems] = useState(null);
+    const [highestRatingItems, setHighestRatingItems] = useState(null);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -26,6 +27,7 @@ function HomePage() {
     useEffect(() => {
         setUserData(getCurrentUser());
         setBestSellerItems(getSortedItemsByPurchase());
+        setHighestRatingItems(getSortedItemsByRating());
     }, []);
 
     useEffect(() => {
@@ -36,10 +38,10 @@ function HomePage() {
     }, [userData]);
 
     useEffect(() => {
-        if (userData && itemsFromUserUni && bestSellerItems){
+        if (userData && itemsFromUserUni && bestSellerItems && highestRatingItems){
             setIsLoading(false);
         }
-    }, [userData, itemsFromUserUni, bestSellerItems])
+    }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems])
 
     if(isLoading){
         return (
@@ -64,6 +66,7 @@ function HomePage() {
                             pb={15}
                             placeholder="Select University"
                             radius="lg"
+                            size='md'
                         />
                     </div>
                     <div className="w-1/2">
@@ -73,6 +76,7 @@ function HomePage() {
                             pb={15}
                             placeholder="Select Course"
                             radius="lg"
+                            size='md'
                         />
                     </div>
                 </div>
@@ -82,10 +86,11 @@ function HomePage() {
                             placeholder="Search for documents name, notes, and more... (Optional)"
                             leftSection={<Search size="16" />}
                             radius="lg"
+                            size='md'
                         />
                     </div>
                     <div className='flex-auto w-1/7'>
-                        <Button variant="filled" radius="lg" fullWidth color="#0052cc">Search</Button>
+                        <Button size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
                     </div>
                 </div>
             </div>
@@ -99,8 +104,9 @@ function HomePage() {
             {/* MAIN CONTENT */}
             <div className="pt-5">
                 {/* ITEMS FROM USER UNI */}
-                <ItemsRow title={userData.university} itemsArray={itemsFromUserUni}></ItemsRow>
-                <ItemsRow title="Best Selling" itemsArray={bestSellerItems}></ItemsRow>
+                <ItemsRow title={userData.university} itemsArray={itemsFromUserUni} />
+                <ItemsRow title="Best Selling" itemsArray={bestSellerItems} />
+                <ItemsRow title="Highest Rating" itemsArray={highestRatingItems} />
             </div>
         </div>
     );

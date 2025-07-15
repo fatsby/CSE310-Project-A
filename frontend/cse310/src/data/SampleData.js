@@ -271,6 +271,15 @@ export const getSortedItemsByPurchase = () => {
         .sort((item1, item2) => item2.purchaseCount - item1.purchaseCount);
 };
 
+export const getSortedItemsByRating = () => {
+    return itemsList
+        .map(item => ({
+            ...item,
+            avgRating: calculateAvgRating(item.id),
+        }))
+        .sort((item1, item2) => item2.avgRating - item1.avgRating);
+};
+
 export const getItemsByUniversity = (universityName) => {
     return itemsList.filter(item => item.university === universityName).map(item => ({
         ...item,
