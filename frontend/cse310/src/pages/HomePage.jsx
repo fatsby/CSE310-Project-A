@@ -1,8 +1,12 @@
 // MANTINE IMPORTS
-import { Select, TextInput, Button, Loader } from '@mantine/core';
+import { Select, TextInput, Button, Loader, Image } from '@mantine/core';
 
 // LUCIDE ICONS
 import { Search } from "lucide-react"
+
+// IMAGE IMPORTS
+import Main_AD from "../assets/HomePage/main-ad.jpg";
+import hr_ad from "../assets/HomePage/hr-ad.jpg"
 
 // COMPONENT IMPORTS
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
@@ -59,6 +63,7 @@ function HomePage() {
                             data={['EIU', 'VNU', 'HUST', 'HUB']}
                             pb={15}
                             placeholder="Select University"
+                            radius="lg"
                         />
                     </div>
                     <div className="w-1/2">
@@ -67,6 +72,7 @@ function HomePage() {
                             data={['EIU', 'VNU', 'HUST', 'HUB']}
                             pb={15}
                             placeholder="Select Course"
+                            radius="lg"
                         />
                     </div>
                 </div>
@@ -75,14 +81,20 @@ function HomePage() {
                         <TextInput
                             placeholder="Search for documents name, notes, and more... (Optional)"
                             leftSection={<Search size="16" />}
+                            radius="lg"
                         />
                     </div>
                     <div className='flex-auto w-1/7'>
-                        <Button variant="filled" fullWidth color="#0052cc">Search</Button>
+                        <Button variant="filled" radius="lg" fullWidth color="#0052cc">Search</Button>
                     </div>
                 </div>
             </div>
 
+            
+            {/* ADVERTISEMENT */}
+            <div className="mt-10">
+                <Image src={hr_ad} radius="md"/>
+            </div>
 
             {/* MAIN CONTENT */}
             <div className="pt-5">
