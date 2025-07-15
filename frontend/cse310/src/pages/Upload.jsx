@@ -2,6 +2,9 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { notifications } from "@mantine/notifications";
 
+//IMAGES IMPORT
+import GREY_UP_IMG from "../assets/grey_up.png"
+
 export default function Upload() {
   const [files, setFiles] = useState([]);
   const [uploadedURL, setUploadedURL] = useState(null);
@@ -81,7 +84,7 @@ export default function Upload() {
               >
                 <div className="flex flex-col items-center">
                   <img
-                    src="src/assets/grey_up.png"
+                    src={GREY_UP_IMG}
                     alt="Upload"
                     className="w-[80px]"
                   />
@@ -100,7 +103,7 @@ export default function Upload() {
               <div className="relative w-full h-[350px] flex justify-center items-center text-center border-[2px] border-transparent">
                 <div className="flex flex-col items-center">
                   <img
-                    src="src/assets/grey_up.png"
+                    src={GREY_UP_IMG}
                     alt="Upload"
                     className="w-[80px]"
                   />

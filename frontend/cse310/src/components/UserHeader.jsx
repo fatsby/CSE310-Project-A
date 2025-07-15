@@ -1,26 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Modal } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks"; // ✅ Add this
+import { useDisclosure } from "@mantine/hooks";
 import Upload from "../pages/Upload";
 
+//IMAGES IMPORT
+import LogoIMG from "../assets/logo.png";
+
 export default function UserHeader() {
-  // ✅ 1. Add this to manage modal state
+  //modal state manager
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <header>
       <nav className="fixed top-0 z-50 w-full flex items-center justify-between h-[92px] transition-transform duration-300 bg-[#F6F8FA] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)] ">
         <div className="max-w-7xl w-full mx-auto px-18 flex items-center justify-between">
-          {/* Logo with yellow mark */}
           <div className="flex items-center gap-8 text-2xl font-bold">
-            <img
-              src="src/assets/logo.png"
-              alt=""
-              className="max-w-[80px] min-w-[80px] cursor-pointer"
-            />
+            <Link to="/">
+              <img
+                src={LogoIMG}
+                alt=""
+                className="max-w-[80px] min-w-[80px] cursor-pointer"
+              />
+            </Link>
 
-            {/* ✅ 2. Use button to open modal */}
+            {/* button to open modal */}
             <button
               onClick={open}
               className="hover:underline rounded-full cursor-pointer"
@@ -46,7 +50,7 @@ export default function UserHeader() {
         </div>
       </nav>
 
-      {/* ✅ 3. Mantine Modal */}
+      {/* Mantine Modal */}
       <Modal
         opened={opened}
         onClose={close}
