@@ -78,7 +78,7 @@ function HomePage() {
                         />
                     </div>
                     <div className='flex-auto w-1/7'>
-                        <Button variant="filled" fullWidth color="#000">Search</Button>
+                        <Button variant="filled" fullWidth color="#0052cc">Search</Button>
                     </div>
                 </div>
             </div>
