@@ -14,8 +14,11 @@ function ItemCard({ itemData }) {
             <div className="flex items-center justify-between mt-2">
                 <p className="text-gray-700 font-bold">
                     {itemData.price === 0 ? 'FREE' : `${itemData.price} VND`}
-                </p>                <div className="flex items-center gap-x-1">
-                    <p className="font-bold text-gray-700">{itemData.avgRating}</p>
+                </p>
+                <div className="flex items-center gap-x-1">
+                    <p className="font-bold text-gray-700">
+                        {itemData.avgRating === 0 ? 'No Reviews' : `${itemData.avgRating}`}
+                    </p>
                     <Star fill="#FFCC00" color="#FFCC00" size={20} />
                 </div>
             </div>
