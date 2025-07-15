@@ -14,6 +14,7 @@ import UserLayout from "./layouts/UserLayout.jsx";
 import Upload from "./pages/Upload.jsx";
 import LandingLayout from "./layouts/LandingLayout.jsx";
 import Landing from "./pages/Landing.jsx";
+import HomePage from "./pages/HomePage.jsx"
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,14 @@ const router = createBrowserRouter([
     element: (
       <UserLayout>
         <ItemPage/>
+      </UserLayout>
+    ),
+  },
+  {
+    path: "/home",
+    element: (
+      <UserLayout>
+        <HomePage/>
       </UserLayout>
     ),
   },

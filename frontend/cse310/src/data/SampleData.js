@@ -176,6 +176,7 @@ const currentUserData = {
     money: "550,000",
     moneyearned: "500,000",
     moneyspent: "450,000",
+    university: "Eastern International University",
 };
 
 // --- Reviews Data ---
