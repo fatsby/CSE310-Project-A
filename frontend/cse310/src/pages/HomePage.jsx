@@ -1,14 +1,49 @@
 // MANTINE IMPORTS
-import { Select, TextInput, Button } from '@mantine/core';
+import { Select, TextInput, Button, Loader } from '@mantine/core';
 
 // LUCIDE ICONS
 import { Search } from "lucide-react"
 
 // COMPONENT IMPORTS
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
+import { use, useEffect, useState } from 'react';
+
+import { getCurrentUser, getItemsByUniversity, getSortedItemsByPurchase } from '../data/SampleData.js';
 
 
 function HomePage() {
+    const [userData, setUserData] = useState(null);
+    const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
+    const [bestSellerItems, setBestSellerItems] = useState(null);
+
+    const [isLoading, setIsLoading] = useState(true);
+
+
+    useEffect(() => {
+        setUserData(getCurrentUser());
+        setBestSellerItems(getSortedItemsByPurchase());
+    }, []);
+
+    useEffect(() => {
+        if (userData) {
+            const tempData = getItemsByUniversity(userData.university);
+            setItemsFromUserUni(tempData);
+        }
+    }, [userData]);
+
+    useEffect(() => {
+        if (userData && itemsFromUserUni && bestSellerItems){
+            setIsLoading(false);
+        }
+    }, [userData, itemsFromUserUni, bestSellerItems])
+
+    if(isLoading){
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader color="blue" />
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto px-4 pb-4 pt-[125px]">
@@ -50,8 +85,10 @@ function HomePage() {
 
 
             {/* MAIN CONTENT */}
-            <div>
-                
+            <div className="pt-5">
+                {/* ITEMS FROM USER UNI */}
+                <ItemsRow title={userData.university} itemsArray={itemsFromUserUni}></ItemsRow>
+                <ItemsRow title="Best Selling" itemsArray={bestSellerItems}></ItemsRow>
             </div>
         </div>
     );
