@@ -1,6 +1,7 @@
 import apple from "../assets/apple-logo.png";
 import google from "../assets/google-logo.png";
 import { AtSign } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
     TextInput,
     PasswordInput,
@@ -51,22 +52,22 @@ function LoginPage() {
                 <p className="text-center">with</p>
                 {/* Login via google/apple */}
                 <div className="grid grid-cols-2 gap-4 p-[10px] ">
-                    <div
+                    <Link
                         className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-white rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
-                        onClick={() => (window.location.href = "")}
+                        to={""}
                     >
                         <img
                             className="w-[30px] h-[30px] "
                             src={google}
                             alt=""
                         />
-                    </div>
-                    <div
+                    </Link>
+                    <Link
                         className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-black rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
-                        onClick={() => (window.location.href = "")}
+                        to={""}
                     >
                         <img className="w-[30px] h-[30px]" src={apple} alt="" />
-                    </div>
+                    </Link>
                 </div>
                 <div className="flex items-center w-full">
                     <hr className="flex-grow border-t border-gray-300" />
