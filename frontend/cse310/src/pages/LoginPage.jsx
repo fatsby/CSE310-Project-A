@@ -17,38 +17,39 @@ import {
     matches,
 } from "@mantine/form";
 
-function RegisterPage() {
+function LoginPage() {
     const form = useForm({
         mode: "uncontrolled",
         initialValues: {
-            email: "",
             username: "",
-            termsOfService: false,
             password: "",
-            confirmPass: "",
+            remember: false,
         },
 
         validate: {
             email: isEmail("Invalid email"),
-            username: hasLength(
-                { min: 6 },
-                "Username must be > 6 characters long"
-            ),
-            termsOfService: (value) => (value ? null : true),
-            password: hasLength(
-                { min: 6 },
-                "Password must be > 6 characters long"
-            ),
-            confirmPass: (value, values) =>
-                value !== values.password ? "Passwords did not match" : null,
+            username: (value) => {
+                if (value.trim().length === 0)
+                    return "Username can not be empty";
+                if (value.trim().length < 7)
+                    return "Username must be > 6 characters long";
+                return null;
+            },
+            password: (value) => {
+                if (value.trim().length === 0)
+                    return "Password can not be empty";
+                if (value.trim().length < 7)
+                    return "Password must be > 6 characters long";
+                return null;
+            },
         },
     });
     return (
         <>
             <div className="flex flex-col w-[400px] mx-auto border-2 border-solid border-[#E0E0E0] p-[20px] rounded-[40px] bg-[#F5F5F5]">
-                <h2 className="text-center text-[30px] font-bold">Sign up</h2>
+                <h2 className="text-center text-[30px] font-bold">Log in</h2>
                 <p className="text-center">with</p>
-                {/* Sign up via google/apple */}
+                {/* Login via google/apple */}
                 <div className="grid grid-cols-2 gap-4 p-[10px] ">
                     <div
                         className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-white rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
@@ -72,7 +73,7 @@ function RegisterPage() {
                     <span className="px-4 text-gray-500 text-sm">or</span>
                     <hr className="flex-grow border-t border-gray-300" />
                 </div>
-                {/* Register form */}
+                {/* Login form */}
                 <div className="">
                     <form
                         onSubmit={form.onSubmit((values) =>
@@ -88,16 +89,6 @@ function RegisterPage() {
                             key={form.key("username")}
                             {...form.getInputProps("username")}
                         />
-                        <TextInput
-                            className="my-3"
-                            size="md"
-                            radius="xl"
-                            withAsterisk
-                            placeholder="Your email"
-                            rightSection={<AtSign size={20} />}
-                            key={form.key("email")}
-                            {...form.getInputProps("email")}
-                        />
                         <PasswordInput
                             className="my-3"
                             size="md"
@@ -107,23 +98,22 @@ function RegisterPage() {
                             key={form.key("password")}
                             {...form.getInputProps("password")}
                         />
-                        <PasswordInput
-                            className="my-3"
-                            size="md"
-                            radius="xl"
-                            withAsterisk
-                            placeholder="Confirm Password"
-                            key={form.key("confirmPass")}
-                            {...form.getInputProps("confirmPass")}
-                        />
-                        <Checkbox
-                            label="Agree terms and conditions"
-                            size="xs"
-                            key={form.key("termsOfService")}
-                            {...form.getInputProps("termsOfService", {
-                                type: "checkbox",
-                            })}
-                        />
+                        <div className="grid grid-cols-2">
+                            <Checkbox
+                                size="xs"
+                                label="Remember me"
+                                key={form.key("remember")}
+                                {...form.getInputProps("remember", {
+                                    type: "checkbox",
+                                })}
+                            />
+                            <a
+                                className="text-blue-600 text-right text-xs"
+                                href=""
+                            >
+                                Forgot password?
+                            </a>
+                        </div>
                         <Button
                             type="submit"
                             fullWidth
@@ -131,13 +121,13 @@ function RegisterPage() {
                             size="md"
                             radius="xl"
                         >
-                            Sign up
+                            Log in
                         </Button>
                     </form>
                     <p className="text-center">
-                        Already have an account?{" "}
+                        Don't have an account?{" "}
                         <a className="text-blue-600 font-bold " href="">
-                            Log in
+                            Sign up
                         </a>
                     </p>
                 </div>
@@ -146,4 +136,4 @@ function RegisterPage() {
     );
 }
 
-export default RegisterPage;
+export default LoginPage;

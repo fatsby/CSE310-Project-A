@@ -16,6 +16,7 @@ import LandingLayout from "./layouts/LandingLayout.jsx";
 import Landing from "./pages/Landing.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
                 <Landing />
             </LandingLayout>
         ),
+    },
+    {
+        path: "/login",
+        element: <LoginPage></LoginPage>,
     },
     {
         path: "/register",
