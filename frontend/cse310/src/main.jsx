@@ -11,7 +11,6 @@ import { Notifications } from "@mantine/notifications";
 // PAGES IMPORT
 import ItemPage from "./pages/ItemPage.jsx";
 import UserLayout from "./layouts/UserLayout.jsx";
-import Upload from "./pages/Upload.jsx";
 import LandingLayout from "./layouts/LandingLayout.jsx";
 import Landing from "./pages/Landing.jsx";
 import HomePage from "./pages/HomePage.jsx";
