@@ -18,7 +18,7 @@ import {
     matches,
 } from "@mantine/form";
 
-function RegisterPage() {
+function RegisterPage({ onSwitchToLogin }) {
     const form = useForm({
         mode: "uncontrolled",
         initialValues: {
@@ -46,8 +46,8 @@ function RegisterPage() {
     });
     return (
         <>
-            <div className="flex flex-col w-[400px] mx-auto border-2 border-solid border-[#E0E0E0] p-[20px] rounded-[40px] bg-[#F5F5F5]">
-                <h2 className="text-center text-[30px] font-bold">Sign up</h2>
+            <div className="flex flex-col w-[400px] mx-auto px-[20px]">
+                {/* <h2 className="text-center text-[30px] font-bold">Sign up</h2> */}
                 <p className="text-center">with</p>
                 {/* Sign up via google/apple */}
                 <div className="grid grid-cols-2 gap-4 p-[10px] ">
@@ -137,7 +137,10 @@ function RegisterPage() {
                     </form>
                     <p className="text-center">
                         Already have an account?{" "}
-                        <a className="text-blue-600 font-bold " href="">
+                        <a className="text-blue-600 font-bold " href="" onClick={(e) => {
+                            e.preventDefault();
+                            onSwitchToLogin();
+                        }}>
                             Log in
                         </a>
                     </p>
