@@ -1,13 +1,18 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { notifications } from "@mantine/notifications";
+import { Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 
 //IMAGES IMPORT
-import GREY_UP_IMG from "../assets/grey_up.png"
+import GREY_UP_IMG from "../assets/blue_up.png";
+import SetFileName from "./SetFileName";
 
-export default function Upload() {
+export default function Upload({ onCloseUpload }) {
+  // useState returns [currentValue, updaterFunction] => [files, setFiles] = [currentValue, updateFunction]
   const [files, setFiles] = useState([]);
-  const [uploadedURL, setUploadedURL] = useState(null);
+  // useState takes an argument empty [] for files because the user hasnt selected any files => currentValue = [] => files = []
+  const [uploadedURL, setUploadedURL] = useState([]);
 
   // Helper to format bytes
   function formatBytes(bytes) {
@@ -19,9 +24,14 @@ export default function Upload() {
     return `${value} ${sizes[i]}`;
   }
 
-  // Handle drop
+  // When a new file is dropped into the dropzone, run onDrop
+  // useCallBack because:
+  //      - Every time setFiles -> state changes -> the whole Upload re-render (the whole Upload runs top-to-bottom again) -> re-create a new object onDrop (onDrop1, onDrop2) even though it is the same code
+  //      => useDropzone({onDrop}) call onDrop. Without useCallback, the useDropzone sees that onDrop changes (a new onDrop is created), so useDropzone needs to remove the old listener to the old onDrop and add new listener to the new onDrop when re-render.
+  //      . If useCallBack, the onDrop always stay the same, so when Upload re-renders, the useDropzone always just calls back to the old same one. => higher performance
+
   const onDrop = useCallback((acceptedFiles) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]); //. setFiles with a new array of (taking all old files + new accepted files). Cant use add newfiles because it doesnt change state -> no re-render.
     acceptedFiles.forEach((file) => {
       console.log("File:", file.name);
       console.log("Type:", file.type);
@@ -29,53 +39,74 @@ export default function Upload() {
     });
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    open: openFileDialog,
+  } = useDropzone({
+    onDrop,
+    noClick: true,
+  }); //destructure
 
   // Remove single file by name
   const handleRemoveFile = (fileName) => {
+    // setFile take all old files (prevFiles) => filter (only set the files to the array of (the files that are not "the file"))
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
 
-  const selectedFile = files[0];
-
-  const uploadUserFile = async () => {
-    if (!selectedFile) {
-      console.error("No file selected.");
+  const uploadAllUserFiles = async () => {
+    if (files.length === 0) {
+      console.error("No files selected."); // When the user hit the remove => no files
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    formData.append(
-      "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-    );
-    formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
+    for (const file of files) {
+      // formData : {file-name, file-type, raw binary bits of the files}. Can't use json because we can't send the raw binary bits (json doesnt support raw binary). If use json, we need to convert to base64 (increase the size of the file 33%)
+      const formData = new FormData(); // formData is like a form in html but invisible
+      formData.append("file", file);
+      formData.append(
+        "upload_preset", // Handles how the data is sent (accepted formats, ...)
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      );
+      formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${
-        import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-      }/image/upload`,
-      {
-        method: "POST",
-        body: formData,
+      try {
+        const response = await fetch(
+          // wait until fetch successfully and then continue
+          `https://api.cloudinary.com/v1_1/${
+            import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+          }/raw/upload`, // raw for pdf, zip (no docx, pptx)
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        console.log(`Uploaded URL for ${file.name}:`, data.secure_url);
+        // ✅ Optional: save each uploaded URL
+        setUploadedURL((prevURLs) => [...prevURLs, data.secure_url]);
+        notifications.show({
+          title: "Upload Complete",
+          message: `${file.name} uploaded! 🎉`,
+        });
+      } catch (err) {
+        console.error(`Error uploading ${file.name}:`, err);
       }
-    );
-
-    const data = await response.json();
-    console.log("Uploaded URL:", data.secure_url);
-    setUploadedURL(data.secure_url);
-    notifications.show({
-      title: "Upload Complete",
-      message: "Material added! 🎉",
-    });
+    }
   };
 
+  //modal state manager
+  const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
+
   return (
-    <div className="relative w-[786px] max-h-[577px] bg-[#f9f9f9] rounded-[20px] mx-auto">
+    <div className="relative w-[786px] h-[577px] bg-[#f9f9f9] rounded-[20px] mx-auto">
       <div className="px-16">
+        {/* getRootProps spread all the div: handle "onDragEnter", "onDragLeave", "onDrop", "onClick" */}
         <div {...getRootProps()}>
           <input {...getInputProps()} />
+          {/* isDragActive = true => do after ?, if isDragActive = false => do after :*/}
           {isDragActive ? (
             <div className="pt-10 pb-5">
               <div
@@ -83,11 +114,7 @@ export default function Upload() {
                 style={{ border: "2px dashed #b1d2ff" }}
               >
                 <div className="flex flex-col items-center">
-                  <img
-                    src={GREY_UP_IMG}
-                    alt="Upload"
-                    className="w-[80px]"
-                  />
+                  <img src={GREY_UP_IMG} alt="Upload" className="w-[80px]" />
                   <p className="text-[15px] mt-5">Drag & Drop</p>
                   <p className="text-[#a0a9b5] text-[11px] mb-5">
                     ( doc, pdf, pptx, zip )
@@ -102,16 +129,17 @@ export default function Upload() {
             <div className="pt-10 pb-5">
               <div className="relative w-full h-[350px] flex justify-center items-center text-center border-[2px] border-transparent">
                 <div className="flex flex-col items-center">
-                  <img
-                    src={GREY_UP_IMG}
-                    alt="Upload"
-                    className="w-[80px]"
-                  />
-                  <p className="text-[15px] mt-5">Drag & Drop</p>
+                  <img src={GREY_UP_IMG} alt="Upload" className="w-[80px]" />
+                  <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
+                    Drag & Drop
+                  </p>
                   <p className="text-[#a0a9b5] text-[11px] mb-5">
                     ( doc, pdf, pptx, zip )
                   </p>
-                  <button className="text-white bg-black px-4 py-2 rounded-[10px] hover:bg-[#282829] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+                  <button
+                    onClick={openFileDialog}
+                    className="text-white bg-[#4e93fc] px-4 py-2 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
+                  >
                     <b className="text-[13px]">Select files</b>
                   </button>
                 </div>
@@ -150,14 +178,57 @@ export default function Upload() {
               </li>
             ))}
           </ul>
+          {/* button to open modal */}
           <button
-            onClick={uploadUserFile}
-            className="text-white bg-black px-4 py-2 rounded-[10px] hover:bg-[#282829] text-[13px] font-bold drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)] mt-3"
+            onClick={openModal}
+            className="text-white bg-[#4e93fc] px-4 py-2 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
           >
             <b className="text-[13px]">Upload</b>
           </button>
         </div>
       )}
+      {/* Mantine Modal */}
+      <Modal
+        opened={opened}
+        onClose={closeModal}
+        title="Upload Files"
+        size="auto"
+        radius="20px"
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        styles={{
+          // Change the modal box background
+          content: {
+            backgroundColor: "#f9f9f9", // your custom bg
+          },
+          // Title text
+          title: {
+            fontSize: "24px",
+            fontWeight: "500",
+            color: "#333",
+          },
+          // Close (X) button
+          close: {
+            color: "#333",
+            marginRight: "30px",
+          },
+          // Optional: header area if you want to style it
+          header: {
+            height: "100px",
+            borderBottom: "1px solid #CECFD2",
+            paddingLeft: "50px",
+          },
+        }}
+      >
+        <SetFileName
+          onSubmit={uploadAllUserFiles}
+          onClose={closeModal}
+          onCloseUp={onCloseUpload}
+        />{" "}
+        {/* ✅ Pass close if Upload needs it */}
+      </Modal>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function UserHeader() {
   return (
     <header>
       <nav className="fixed top-0 z-50 w-full flex items-center justify-between h-[92px] transition-transform duration-300 bg-[#F6F8FA] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)] ">
-        <div className="max-w-7xl w-full mx-auto px-18 flex items-center justify-between">
+        <div className="container w-full mx-auto px-18 flex items-center justify-between">
           <div className="flex items-center gap-8 text-2xl font-bold">
             <Link to="/">
               <img
@@ -85,7 +85,8 @@ export default function UserHeader() {
           },
         }}
       >
-        <Upload /> {/* ✅ Pass close if Upload needs it */}
+        <Upload onCloseUpload={close} />{" "}
+        {/* ✅ Pass close if Upload needs it */}
       </Modal>
     </header>
   );
