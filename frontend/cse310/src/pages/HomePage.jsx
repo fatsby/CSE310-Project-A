@@ -38,12 +38,12 @@ function HomePage() {
     }, [userData]);
 
     useEffect(() => {
-        if (userData && itemsFromUserUni && bestSellerItems && highestRatingItems){
+        if (userData && itemsFromUserUni && bestSellerItems && highestRatingItems) {
             setIsLoading(false);
         }
     }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems])
 
-    if(isLoading){
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <Loader color="blue" />
@@ -58,47 +58,49 @@ function HomePage() {
                 <h1 className="text-center text-[50px] font-semibold">What are you looking for?</h1>
 
                 {/* SELECTOR DIV */}
-                <div className="flex gap-x-3 pt-4">
-                    <div className="w-1/2">
-                        <Select
-                            checkIconPosition="right"
-                            data={['EIU', 'VNU', 'HUST', 'HUB']}
-                            pb={15}
-                            placeholder="Select University"
-                            radius="lg"
-                            size='md'
-                        />
+                <form action="">
+                    <div className="flex gap-x-3 pt-4">
+                        <div className="w-1/2">
+                            <Select
+                                checkIconPosition="right"
+                                data={['EIU', 'VNU', 'HUST', 'HUB']}
+                                pb={15}
+                                placeholder="Select University"
+                                radius="lg"
+                                size='md'
+                            />
+                        </div>
+                        <div className="w-1/2">
+                            <Select
+                                checkIconPosition="right"
+                                data={['EIU', 'VNU', 'HUST', 'HUB']}
+                                pb={15}
+                                placeholder="Select Course"
+                                radius="lg"
+                                size='md'
+                            />
+                        </div>
                     </div>
-                    <div className="w-1/2">
-                        <Select
-                            checkIconPosition="right"
-                            data={['EIU', 'VNU', 'HUST', 'HUB']}
-                            pb={15}
-                            placeholder="Select Course"
-                            radius="lg"
-                            size='md'
-                        />
+                    <div className="flex gap-x-2">
+                        <div className="flex-auto w-6/7">
+                            <TextInput
+                                placeholder="Search for documents name, notes, and more... (Optional)"
+                                leftSection={<Search size="16" />}
+                                radius="lg"
+                                size='md'
+                            />
+                        </div>
+                        <div className='flex-auto w-1/7'>
+                            <Button size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
+                        </div>
                     </div>
-                </div>
-                <div className="flex gap-x-2">
-                    <div className="flex-auto w-6/7">
-                        <TextInput
-                            placeholder="Search for documents name, notes, and more... (Optional)"
-                            leftSection={<Search size="16" />}
-                            radius="lg"
-                            size='md'
-                        />
-                    </div>
-                    <div className='flex-auto w-1/7'>
-                        <Button size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
-                    </div>
-                </div>
+                </form>
             </div>
 
-            
+
             {/* ADVERTISEMENT */}
             <div className="mt-10">
-                <Image src={hr_ad} radius="md"/>
+                <Image src={hr_ad} radius="md" />
             </div>
 
             {/* MAIN CONTENT */}
