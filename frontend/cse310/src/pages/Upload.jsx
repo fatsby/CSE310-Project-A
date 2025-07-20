@@ -1,20 +1,38 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { notifications } from "@mantine/notifications";
-import { Modal } from "@mantine/core";
+import {
+  ActionIcon,
+  Center,
+  CheckIcon,
+  Modal,
+  RingProgress,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-
-//IMAGES IMPORT
-import GREY_UP_IMG from "../assets/blue_up.png";
 import SetFileName from "./SetFileName";
 
-export default function Upload({ onCloseUpload }) {
-  // useState returns [currentValue, updaterFunction] => [files, setFiles] = [currentValue, updateFunction]
-  const [files, setFiles] = useState([]);
-  // useState takes an argument empty [] for files because the user hasnt selected any files => currentValue = [] => files = []
-  const [uploadedURL, setUploadedURL] = useState([]);
+// ===========================
+// Assets
+// ===========================
+import BLUE_UP_IMG from "../assets/Upload/blue_up.png";
+import GGDOCS_IMG from "../assets/Upload/ggdoc.png";
 
-  // Helper to format bytes
+export default function Upload({ onCloseUpload }) {
+  // ===========================
+  // State Management
+  // ===========================
+  const [files, setFiles] = useState([]);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedURL, setUploadedURL] = useState([]);
+  const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
+
+  const checkIcon = <CheckIcon size={20} />;
+
+  // ===========================
+  // Utility: Format file size
+  // ===========================
   function formatBytes(bytes) {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -24,14 +42,11 @@ export default function Upload({ onCloseUpload }) {
     return `${value} ${sizes[i]}`;
   }
 
-  // When a new file is dropped into the dropzone, run onDrop
-  // useCallBack because:
-  //      - Every time setFiles -> state changes -> the whole Upload re-render (the whole Upload runs top-to-bottom again) -> re-create a new object onDrop (onDrop1, onDrop2) even though it is the same code
-  //      => useDropzone({onDrop}) call onDrop. Without useCallback, the useDropzone sees that onDrop changes (a new onDrop is created), so useDropzone needs to remove the old listener to the old onDrop and add new listener to the new onDrop when re-render.
-  //      . If useCallBack, the onDrop always stay the same, so when Upload re-renders, the useDropzone always just calls back to the old same one. => higher performance
-
+  // ===========================
+  // Handle file drop event
+  // ===========================
   const onDrop = useCallback((acceptedFiles) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]); //. setFiles with a new array of (taking all old files + new accepted files). Cant use add newfiles because it doesnt change state -> no re-render.
+    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
     acceptedFiles.forEach((file) => {
       console.log("File:", file.name);
       console.log("Type:", file.type);
@@ -39,6 +54,9 @@ export default function Upload({ onCloseUpload }) {
     });
   }, []);
 
+  // ===========================
+  // Configure dropzone behavior
+  // ===========================
   const {
     getRootProps,
     getInputProps,
@@ -47,36 +65,42 @@ export default function Upload({ onCloseUpload }) {
   } = useDropzone({
     onDrop,
     noClick: true,
-  }); //destructure
+  });
 
-  // Remove single file by name
+  // ===========================
+  // Remove a single file
+  // ===========================
   const handleRemoveFile = (fileName) => {
-    // setFile take all old files (prevFiles) => filter (only set the files to the array of (the files that are not "the file"))
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
 
-  const uploadAllUserFiles = async () => {
+  // ===========================
+  // Upload all selected files
+  // ===========================
+  const uploadAllUserFiles = async (title) => {
     if (files.length === 0) {
-      console.error("No files selected."); // When the user hit the remove => no files
+      console.error("No files selected.");
       return;
     }
 
-    for (const file of files) {
-      // formData : {file-name, file-type, raw binary bits of the files}. Can't use json because we can't send the raw binary bits (json doesnt support raw binary). If use json, we need to convert to base64 (increase the size of the file 33%)
-      const formData = new FormData(); // formData is like a form in html but invisible
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const formData = new FormData();
       formData.append("file", file);
       formData.append(
-        "upload_preset", // Handles how the data is sent (accepted formats, ...)
+        "upload_preset",
         import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
       );
       formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
 
       try {
         const response = await fetch(
-          // wait until fetch successfully and then continue
           `https://api.cloudinary.com/v1_1/${
             import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-          }/raw/upload`, // raw for pdf, zip (no docx, pptx)
+          }/raw/upload`,
           {
             method: "POST",
             body: formData,
@@ -85,28 +109,37 @@ export default function Upload({ onCloseUpload }) {
 
         const data = await response.json();
         console.log(`Uploaded URL for ${file.name}:`, data.secure_url);
-        // ✅ Optional: save each uploaded URL
         setUploadedURL((prevURLs) => [...prevURLs, data.secure_url]);
-        notifications.show({
-          title: "Upload Complete",
-          message: `${file.name} uploaded! 🎉`,
-        });
+
+        const progress = Math.round(((i + 1) / files.length) * 100);
+        setUploadProgress(progress);
       } catch (err) {
         console.error(`Error uploading ${file.name}:`, err);
       }
     }
+    setIsUploading(false);
+    notifications.show({
+      title: "Upload Complete",
+      message: `${title} Uploaded! 🎉`,
+      color: "#12b886",
+      icon: checkIcon,
+      styles: (theme) => ({
+        root: {
+          backgroundColor: "#ffffff",
+        },
+      }),
+    });
   };
 
-  //modal state manager
-  const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
-
+  // ===========================
+  // Component Rendering
+  // ===========================
   return (
-    <div className="relative w-[786px] h-[577px] bg-[#f9f9f9] rounded-[20px] mx-auto">
+    <div className="relative w-full h-full bg-[#f9f9f9] mx-auto">
+      {/* === Dropzone Area === */}
       <div className="px-16">
-        {/* getRootProps spread all the div: handle "onDragEnter", "onDragLeave", "onDrop", "onClick" */}
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          {/* isDragActive = true => do after ?, if isDragActive = false => do after :*/}
           {isDragActive ? (
             <div className="pt-10 pb-5">
               <div
@@ -114,8 +147,10 @@ export default function Upload({ onCloseUpload }) {
                 style={{ border: "2px dashed #b1d2ff" }}
               >
                 <div className="flex flex-col items-center">
-                  <img src={GREY_UP_IMG} alt="Upload" className="w-[80px]" />
-                  <p className="text-[15px] mt-5">Drag & Drop</p>
+                  <img src={BLUE_UP_IMG} alt="Upload" className="w-[80px]" />
+                  <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
+                    Drag & Drop
+                  </p>
                   <p className="text-[#a0a9b5] text-[11px] mb-5">
                     ( doc, pdf, pptx, zip )
                   </p>
@@ -129,7 +164,7 @@ export default function Upload({ onCloseUpload }) {
             <div className="pt-10 pb-5">
               <div className="relative w-full h-[350px] flex justify-center items-center text-center border-[2px] border-transparent">
                 <div className="flex flex-col items-center">
-                  <img src={GREY_UP_IMG} alt="Upload" className="w-[80px]" />
+                  <img src={BLUE_UP_IMG} alt="Upload" className="w-[80px]" />
                   <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
                     Drag & Drop
                   </p>
@@ -149,72 +184,81 @@ export default function Upload({ onCloseUpload }) {
         </div>
       </div>
 
+      {/* === Uploaded File List === */}
       {files.length > 0 && (
-        <div className="mx-auto flex flex-col justify-center items-center pb-5">
-          <ul>
-            {files.map((file) => (
-              <li key={file.name} className="m-4">
-                <div className="flex items-center w-[512px] h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-                  <div className="flex-shrink-0 w-8 h-8 mr-4">
-                    <img
-                      src="src/assets/ggdoc.png"
-                      alt="Document"
-                      className="w-full h-full object-contain"
-                    />
+        <div className="mx-auto flex flex-col justify-center items-center">
+          <div>
+            <ul className="mt-8">
+              {files.map((file) => (
+                <li key={file.name} className="mb-4">
+                  <div className="flex items-center w-full h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
+                    <div className="flex-shrink-0 w-8 h-8 mr-4">
+                      <img
+                        src={GGDOCS_IMG}
+                        alt="Document"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="flex-1 overflow-hidden">
+                      <p className="text-sm font-medium truncate">
+                        {file.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {formatBytes(file.size)}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveFile(file.name)}
+                      className="ml-4 text-[#C3C5C9] hover:text-red-600"
+                    >
+                      <i className="fa-solid fa-trash text-lg"></i>
+                    </button>
                   </div>
-                  <div className="flex-1 overflow-hidden">
-                    <p className="text-sm font-medium truncate">{file.name}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatBytes(file.size)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleRemoveFile(file.name)}
-                    className="ml-4 text-[#C3C5C9] hover:text-red-600"
-                  >
-                    <i className="fa-solid fa-trash text-lg"></i>
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          {/* button to open modal */}
+                </li>
+              ))}
+            </ul>
+            <span>
+              <span className="text-[#2596be]">{files.length}</span> Files
+              Uploaded.
+            </span>
+          </div>
+
+          {/* === Upload Button === */}
           <button
             onClick={openModal}
-            className="text-white bg-[#4e93fc] px-4 py-2 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
+            className="text-white bg-[#4e93fc] px-4 py-2 mt-5 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
           >
             <b className="text-[13px]">Upload</b>
           </button>
         </div>
       )}
-      {/* Mantine Modal */}
+
+      {/* === Upload Confirmation Modal === */}
       <Modal
         opened={opened}
         onClose={closeModal}
-        title="Upload Files"
-        size="auto"
+        title="Set File Details"
+        size="100%"
         radius="20px"
         overlayProps={{
           backgroundOpacity: 0.55,
           blur: 3,
         }}
         styles={{
-          // Change the modal box background
           content: {
-            backgroundColor: "#f9f9f9", // your custom bg
+            backgroundColor: "#f9f9f9",
+            height: "600px",
+            position: "relative",
           },
-          // Title text
           title: {
             fontSize: "24px",
             fontWeight: "500",
             color: "#333",
           },
-          // Close (X) button
           close: {
             color: "#333",
             marginRight: "30px",
           },
-          // Optional: header area if you want to style it
           header: {
             height: "100px",
             borderBottom: "1px solid #CECFD2",
@@ -223,11 +267,26 @@ export default function Upload({ onCloseUpload }) {
         }}
       >
         <SetFileName
-          onSubmit={uploadAllUserFiles}
+          onSubmit={(title) => uploadAllUserFiles(title)}
           onClose={closeModal}
           onCloseUp={onCloseUpload}
-        />{" "}
-        {/* ✅ Pass close if Upload needs it */}
+        />
+        {isUploading && (
+          <div className="absolute flex justify-center items-center mt-6 inset-0 z-[9999]">
+            <RingProgress
+              size={120}
+              thickness={12}
+              roundCaps
+              sections={[{ value: uploadProgress, color: "#439aff" }]}
+              rootColor="#bde7f7"
+              label={
+                <Text size="sm" ta="center">
+                  {uploadProgress}%
+                </Text>
+              }
+            />
+          </div>
+        )}
       </Modal>
     </div>
   );
