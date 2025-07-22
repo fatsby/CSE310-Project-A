@@ -10,9 +10,17 @@ import hr_ad from "../assets/HomePage/hr-ad.jpg"
 
 // COMPONENT IMPORTS
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { getCurrentUser, getItemsByUniversity, getSortedItemsByPurchase, getSortedItemsByRating } from '../data/SampleData.js';
+// DATA IMPORTS
+import {
+    getCurrentUser,
+    getItemsByUniversity,
+    getSortedItemsByPurchase,
+    getSortedItemsByRating,
+    getUniversityNames,
+    getCoursesByUniversity
+} from '../data/SampleData.js';
 
 
 function HomePage() {
@@ -20,14 +28,27 @@ function HomePage() {
     const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
     const [bestSellerItems, setBestSellerItems] = useState(null);
     const [highestRatingItems, setHighestRatingItems] = useState(null);
-
+    const [universityList, setUniversityList] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    // SELECTORS STATES
+    const [selectedUniversity, setSelectedUniversity] = useState(null);
+    const [availableCourses, setAvailableCourses] = useState([]);
+    const [selectedCourse, setSelectedCourse] = useState(null);
+
+    // HANDLER FUNCTION FOR ON UNIVERSITY SELECT
+    const handleUniversityChange = (universityName) => {
+        setSelectedUniversity(universityName);
+        const courses = getCoursesByUniversity(universityName);
+        setAvailableCourses(courses);
+        setSelectedCourse(null); // Reset course selection
+    };
 
     useEffect(() => {
         setUserData(getCurrentUser());
         setBestSellerItems(getSortedItemsByPurchase());
         setHighestRatingItems(getSortedItemsByRating());
+        setUniversityList(getUniversityNames());
     }, []);
 
     useEffect(() => {
@@ -63,21 +84,28 @@ function HomePage() {
                         <div className="w-1/2">
                             <Select
                                 checkIconPosition="right"
-                                data={['EIU', 'VNU', 'HUST', 'HUB']}
+                                data={universityList}
                                 pb={15}
                                 placeholder="Select University"
                                 radius="lg"
                                 size='md'
+                                searchable
+                                value={selectedUniversity}
+                                onChange={handleUniversityChange}
                             />
                         </div>
                         <div className="w-1/2">
                             <Select
                                 checkIconPosition="right"
-                                data={['EIU', 'VNU', 'HUST', 'HUB']}
+                                data={availableCourses}
                                 pb={15}
                                 placeholder="Select Course"
                                 radius="lg"
                                 size='md'
+                                searchable
+                                value={selectedCourse}
+                                onChange={setSelectedCourse}
+                                disabled={!selectedUniversity}
                             />
                         </div>
                     </div>

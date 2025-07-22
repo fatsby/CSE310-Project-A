@@ -21,6 +21,69 @@ const users = [
     { id: 6, name: "Le Minh Tri", profilePicture: "https://randomuser.me/api/portraits/men/6.jpg" },
 ];
 
+// University Array
+const universities = [
+    {
+        name: "Eastern International University",
+        suffix: "EIU",
+    },
+    {
+        name: "Vietnam National University",
+        suffix: "VNU",
+    },
+    {
+        name: "FPT University",
+        suffix: "FPT",
+    },
+    {
+        name: "RMIT University Vietnam",
+        suffix: "RMIT",
+    }
+];
+
+const coursesList = [
+    {
+        name: "Data Structure and Algorithms",
+        code: "CSE201",
+        university: "EIU",
+    },
+    {
+        name: "Calculus 1",
+        code: "MTH101",
+        university: "VNU",
+    },
+    {
+        name: "Physics 1B",
+        code: "PHY102",
+        university: "FPT",
+    },
+    {
+        name: "Level 3 English",
+        code: "ENG303",
+        university: "EIU",
+    },
+    {
+        name: "Business Fundamentals",
+        code: "BUS101",
+        university: "RMIT",
+    },
+    {
+        name: "Introduction to Chemistry",
+        code: "CHE101",
+        university: "VNU"
+    },
+    {
+        name: "Database Systems",
+        code: "CSE305",
+        university: "EIU",
+    },
+    {
+        name: "Microeconomics",
+        code: "ECO101",
+        university: "FPT",
+    }
+];
+
 // --- Base Items Data ---
 // raw data without the calculated average rating.
 const itemsList = [
@@ -286,3 +349,26 @@ export const getItemsByUniversity = (universityName) => {
         avgRating: calculateAvgRating(item.id),
     }));
 }
+
+export const getUniversityNames = () => {
+    return universities.map(item => item.name);
+}
+
+export const getCoursesByUniversity = (universityName) => {
+    if (!universityName) {
+        return [];
+    }
+
+    const university = universities.find(uni => uni.name === universityName);
+    if (!university) {
+        return [];
+    }
+    const universitySuffix = university.suffix;
+
+    const filteredCourses = coursesList.filter(course => course.university === universitySuffix);
+
+    return filteredCourses.map(course => ({
+        value: course.code,
+        label: `${course.code} - ${course.name}` //Returns "CSE201 - Data Structure and Algorithms"
+    }));
+};
