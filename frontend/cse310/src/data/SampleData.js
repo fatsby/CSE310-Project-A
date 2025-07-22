@@ -372,3 +372,23 @@ export const getCoursesByUniversity = (universityName) => {
         label: `${course.code} - ${course.name}` //Returns "CSE201 - Data Structure and Algorithms"
     }));
 };
+
+export const searchItems = ({ university, course, query }) => {
+    let results = itemsList;
+
+    if (university) {
+        results = results.filter(item => item.university === university);
+    }
+
+    if (course) {
+        results = results.filter(item => item.subject === course);
+    }
+
+    if (query) {
+        results = results.filter(item =>
+            item.name.toLowerCase().includes(query.toLowerCase())
+        );
+    }
+
+    return results.map(item => ({...item, avgRating: calculateAvgRating(item.id)}));
+};

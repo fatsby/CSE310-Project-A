@@ -16,6 +16,7 @@ import Landing from "./pages/Landing.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -55,6 +56,14 @@ const router = createBrowserRouter([
         element: (
             <UserLayout>
                 <HomePage />
+            </UserLayout>
+        ),
+    },
+    {
+        path: "/search",
+        element: (
+            <UserLayout>
+                <SearchResultsPage />
             </UserLayout>
         ),
     },

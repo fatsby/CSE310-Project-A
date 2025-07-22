@@ -1,13 +1,13 @@
-@font-face {
+/* @font-face {
   font-family: "Custom Sans";
-  src: url("/fonts/Regular.woff2") format("woff2");
+  src: url("/public/fonts/Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Custom Sans";
-  src: url("/fonts/Bold.woff2") format("woff2");
+  src: url("/public/fonts/Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
 }
@@ -15,4 +15,9 @@
 body {
   background-color: #f9f9f9;
   font-family: "Custom Sans";
+} */
+
+body{
+  background-color: #f9f9f9;
+  font-family: "Montserrat", sans-serif;
 }

@@ -1,16 +1,17 @@
 // MANTINE IMPORTS
-import { Select, TextInput, Button, Loader, Image } from '@mantine/core';
+import { Select, TextInput, Button, Loader, Image, Alert, Modal } from '@mantine/core';
 
 // LUCIDE ICONS
-import { Search } from "lucide-react"
+import { Search, AlertCircle } from "lucide-react"
 
 // IMAGE IMPORTS
-import Main_AD from "../assets/HomePage/main-ad.jpg";
 import hr_ad from "../assets/HomePage/hr-ad.jpg"
 
 // COMPONENT IMPORTS
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 // DATA IMPORTS
 import {
@@ -36,12 +37,39 @@ function HomePage() {
     const [availableCourses, setAvailableCourses] = useState([]);
     const [selectedCourse, setSelectedCourse] = useState(null);
 
+    // SEARCH & VALIDATIONS STATES
+    const [searchQuery, setSearchQuery] = useState('');
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+
     // HANDLER FUNCTION FOR ON UNIVERSITY SELECT
     const handleUniversityChange = (universityName) => {
         setSelectedUniversity(universityName);
         const courses = getCoursesByUniversity(universityName);
         setAvailableCourses(courses);
         setSelectedCourse(null); // Reset course selection
+    };
+
+    // FORM SUBMISSION HANDLER
+    const handleSearch = (event) => {
+        event.preventDefault();
+        setError(null);
+
+        // validate
+        if (!selectedUniversity || !selectedCourse) {
+            setError('Please select both a university and a course to search.');
+            return;
+        }
+
+        // build search params
+        const params = new URLSearchParams();
+        params.append('university', selectedUniversity);
+        params.append('course', selectedCourse);
+        if (searchQuery) {
+            params.append('q', searchQuery);
+        }
+
+        navigate(`/search?${params.toString()}`);
     };
 
     useEffect(() => {
@@ -78,8 +106,8 @@ function HomePage() {
             <div className="w-fit mx-auto">
                 <h1 className="text-center text-[50px] font-semibold">What are you looking for?</h1>
 
-                {/* SELECTOR DIV */}
-                <form action="">
+                {/* SEARCH SECTION */}
+                <form onSubmit={handleSearch}>
                     <div className="flex gap-x-3 pt-4">
                         <div className="w-1/2">
                             <Select
@@ -116,13 +144,30 @@ function HomePage() {
                                 leftSection={<Search size="16" />}
                                 radius="lg"
                                 size='md'
+                                value={searchQuery}
+                                onChange={(event) => setSearchQuery(event.currentTarget.value)}
                             />
                         </div>
                         <div className='flex-auto w-1/7'>
-                            <Button size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
+                            <Button type="submit" size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
                         </div>
                     </div>
                 </form>
+
+                {/* VALIDATION ERROR */}
+                {error && (
+                    <Alert
+                        icon={<AlertCircle size="1rem" />}
+                        title="Input Required"
+                        color="red"
+                        radius="md"
+                        mt="md"
+                        withCloseButton
+                        onClose={() => setError(null)}
+                    >
+                        {error}
+                    </Alert>
+                )}
             </div>
 
 
