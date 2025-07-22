@@ -1,11 +1,11 @@
 // MANTINE IMPORTS
-import { Select, TextInput, Button, Loader, Image, Alert, Modal } from '@mantine/core';
+import { Select, TextInput, Button, Loader, Image, Alert } from '@mantine/core';
 
 // LUCIDE ICONS
 import { Search, AlertCircle } from "lucide-react"
 
 // IMAGE IMPORTS
-import hr_ad from "../assets/HomePage/hr-ad.jpg"
+import AD_BackToSchool from "../assets/HomePage/hr-ad.jpg"
 
 // COMPONENT IMPORTS
 import ItemsRow from "../components/home_components/ItemsRow.jsx"
@@ -173,7 +173,7 @@ function HomePage() {
 
             {/* ADVERTISEMENT */}
             <div className="mt-10">
-                <Image src={hr_ad} radius="md" />
+                <Image src={AD_BackToSchool} radius="md" />
             </div>
 
             {/* MAIN CONTENT */}
