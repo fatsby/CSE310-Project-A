@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Container, Title, Text, Loader, SimpleGrid, Paper, Group, Badge } from '@mantine/core';
 import { searchItems } from '../data/SampleData'; 
+import { Link } from 'react-router-dom';
+
+// Lucide Imports
+import { ArrowLeft} from 'lucide-react';
 
 // COMPONENT IMPORTS
 import ItemCard from '../components/ItemCard';
@@ -24,27 +28,23 @@ function SearchResultsPage() {
     }, [searchParams, university, course, query]);
 
     if (isLoading) {
-        return <Container className="pt-[150px] flex justify-center"><Loader /></Container>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <Loader color="blue" />
+            </div>
+        );
     }
 
     return (
-        <Container size="lg" className="pt-[150px]">
-            <Title order={2} mb="xs">Search Results</Title>
-            <Text c="dimmed" mb="xl">
-                Showing results for course <Text span fw={700} c="dark">{course}</Text> at <Text span fw={700} c="dark">{university}</Text>
-                {query && <> with keyword "<Text span fw={700} c="dark">{query}</Text>"</>}
-            </Text>
-
-            {results.length > 0 ? (
-                <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
-                    {results.map(item => (
-                        <ItemCard key={item.id} itemData={item} />
-                    ))}
-                </SimpleGrid>
-            ) : (
-                <Text>No results found matching your criteria.</Text>
-            )}
-        </Container>
+        <div className='container mx-auto px-4 pb-4 pt-[125px]'>
+            <Link to="/home" className="flex gap-1 mb-3 text-2xl"> <ArrowLeft/> Back </Link>
+            <div className="w-fit"> 
+                <p className="text-lg">
+                    Showing results for course <span className="font-semibold">{course}</span> at <span className="font-semibold">{university}</span>
+                    {query && <> with keyword "<span className="font-semibold">{query}</span>"</>}
+                </p>
+            </div>
+        </div>
     );
 }
 
