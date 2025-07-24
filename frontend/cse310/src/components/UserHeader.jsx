@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Modal, ScrollArea } from "@mantine/core";
+import { Modal, ScrollArea, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Upload from "../pages/Upload";
+
+// Lucide Logo Imports
+import { User, LogOut, Wallet } from "lucide-react";
+
+// Data Getters
+import { getCurrentUser } from "../data/SampleData";
 
 // ===========================
 // Images
@@ -18,6 +24,13 @@ export default function UserHeader() {
   const CustomScrollArea = (props) => (
     <ScrollArea.Autosize type="never" {...props} />
   );
+
+  // TO DO: REPLACE THIS WITH USER CONTEXT
+  const [userData, setUserData] = useState();
+  useEffect(() => {
+    
+  }, []);
+  
 
   return (
     <header>
@@ -50,15 +63,23 @@ export default function UserHeader() {
 
           {/* ========= Right: User Avatar ========= */}
           <div className="flex items-center gap-4">
-            <Link to="/userinfo">
-              <div className="w-[43px] h-[43px] bg-black rounded-full overflow-hidden">
-                <img
+            <Menu trigger="click-hover" shadow="md" width={200} transitionProps={{transition: 'fade-down', duration: 150}}>
+              <Menu.Target>
+                <div className="w-[43px] h-[43px] bg-black rounded-full overflow-hidden">
+                  <img
                   src={avatarIMG}
                   alt="user-avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </Link>
+                  className="w-full h-full object-cover cursor-pointer"
+                  />
+                </div>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Label>User</Menu.Label>
+                <Menu.Item leftSection={<User size={16}/>}>Your profile</Menu.Item>
+                <Menu.Item color="red" leftSection={<LogOut size={16}/>}>Sign Out</Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           </div>
         </div>
       </nav>
