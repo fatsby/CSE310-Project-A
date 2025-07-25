@@ -46,6 +46,16 @@ function CartPage() {
         setCheckedItems(update);
     };
 
+    // Delete 1 item
+    const handleDeleteItem = (id) => {
+        setCheckedItems(checkedItems.filter((item) => item.id !== id));
+    };
+
+    // Delete selected items
+    const handleDeleteSelected = () => {
+        setCheckedItems(checkedItems.filter((item) => !item.selected));
+    };
+
     return (
         <>
             <div className="container mx-auto pt-[125px]">
@@ -62,6 +72,7 @@ function CartPage() {
                                     color="red"
                                     size="md"
                                     radius="md"
+                                    onClick={handleDeleteSelected}
                                 >
                                     <Trash2 />
                                     &nbsp; {selectedItems.length} selected
@@ -133,7 +144,13 @@ function CartPage() {
                                         </p>
                                     </div>
                                     <div className="col-span-1 content-center">
-                                        <Button variant="filled" color="red">
+                                        <Button
+                                            variant="filled"
+                                            color="red"
+                                            onClick={() =>
+                                                handleDeleteItem(item.id)
+                                            }
+                                        >
                                             <Trash2 />
                                         </Button>
                                     </div>
