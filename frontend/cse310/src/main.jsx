@@ -17,6 +17,7 @@ import HomePage from "./pages/HomePage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SearchResultsPage from "./pages/SearchResultsPage.jsx";
+import CartPage from "./pages/CartPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +26,15 @@ const router = createBrowserRouter([
             <LandingLayout>
                 <Landing />
             </LandingLayout>
+        ),
+    },
+
+    {
+        path: "/cart",
+        element: (
+            <UserLayout>
+                <CartPage></CartPage>
+            </UserLayout>
         ),
     },
     {

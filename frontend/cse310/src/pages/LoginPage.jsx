@@ -127,10 +127,14 @@ function LoginPage({ onSwitchToRegister }) {
                     </form>
                     <p className="text-center">
                         Don't have an account?{" "}
-                        <a className="text-blue-600 font-bold " href="" onClick={(e) => {
-                            e.preventDefault();
-                            onSwitchToRegister();
-                        }}>
+                        <a
+                            className="text-blue-600 font-bold "
+                            href=""
+                            onClick={(e) => {
+                                e.preventDefault();
+                                onSwitchToRegister();
+                            }}
+                        >
                             Sign up
                         </a>
                     </p>
