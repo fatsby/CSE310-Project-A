@@ -4,24 +4,46 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 function CartPage() {
-    const items = getItemsList();
+    const [discount, setDiscount] = useState(0);
 
-    const [checkedItems, setCheckItems] = useState(items.map(() => false));
+    const [checkedItems, setCheckedItems] = useState(
+        getItemsList().map((item) => {
+            return {
+                ...item,
+                selected: false,
+            };
+        })
+    );
+
+    // Caluculate bill
+    const selectedItems = checkedItems.filter((item) => item.selected);
+
+    const subtotal = selectedItems.reduce(
+        (sum, item) => sum + Number(item.price.replace(/,/g, "")),
+        0
+    );
+
+    const total = subtotal - discount;
 
     // Check all check boxes
-    const isAllChecked = checkedItems.every((item) => item === true);
+    const isAllChecked = checkedItems.every((item) => item.selected === true);
 
     const handleCheckAll = (e) => {
-        console.log(e);
         const checked = e.target.checked;
-        console.log(checked);
-        setCheckItems(items.map(() => checked));
+        setCheckedItems(
+            checkedItems.map((item) => {
+                return {
+                    ...item,
+                    selected: checked,
+                };
+            })
+        );
     };
 
     const handleItemCheck = (index) => {
         const update = [...checkedItems];
-        update[index] = !update[index];
-        setCheckItems(update);
+        update[index].selected = !update[index].selected;
+        setCheckedItems(update);
     };
 
     return (
@@ -32,7 +54,7 @@ function CartPage() {
                     <div className="col-span-9 shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] rounded-xl">
                         <div className="grid grid-cols-10 ">
                             <h2 className="col-span-7 font-bold text-[40px] pl-[20px] pt-[20px]">
-                                Your Cart ({items.length})
+                                Your Cart ({checkedItems.length})
                             </h2>
                             <div className="col-span-3 justify-end flex pr-[20px] pt-[20px] items-center">
                                 <Button
@@ -42,7 +64,8 @@ function CartPage() {
                                     radius="md"
                                 >
                                     <Trash2 />
-                                    &nbsp; selected item(s)
+                                    &nbsp; {selectedItems.length} selected
+                                    item(s)
                                 </Button>
                             </div>
                         </div>
@@ -64,7 +87,7 @@ function CartPage() {
                             </div>
 
                             {/* Products */}
-                            {items.map((item, index) => (
+                            {checkedItems.map((item, index) => (
                                 <div
                                     key={item.id}
                                     className="grid grid-cols-10 gap-4 py-[20px] border-b-2 border-[#dadada]"
@@ -72,7 +95,9 @@ function CartPage() {
                                     <div className="col-span-1 flex justify-center">
                                         <Checkbox
                                             className="content-center"
-                                            checked={checkedItems[index]}
+                                            checked={
+                                                checkedItems[index].selected
+                                            }
                                             onChange={() =>
                                                 handleItemCheck(index)
                                             }
@@ -127,13 +152,13 @@ function CartPage() {
                                 <div className="grid grid-cols-10">
                                     <div className="col-span-5">Subtotal</div>
                                     <div className="col-span-5 text-right">
-                                        1,000,000 VND
+                                        {subtotal} VND
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-10">
                                     <div className="col-span-5">Discount</div>
                                     <div className="col-span-5 text-right">
-                                        -0 VND
+                                        - {discount} VND
                                     </div>
                                 </div>
                             </div>
@@ -161,7 +186,7 @@ function CartPage() {
                                     Total
                                 </div>
                                 <div className="col-span-7 text-right font-medium text-[18px]">
-                                    1,000,000 VND
+                                    {total} VND
                                 </div>
                             </div>
 

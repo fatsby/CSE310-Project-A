@@ -1,16 +1,36 @@
 // --- Users Data ---
 const users = [
-    { 
-        id: 1, 
+    {
+        id: 1,
         name: "Trinh Tran Phuong Tuan",
         email: "tuanphuong97@gmail.com",
         profilePicture: "https://randomuser.me/api/portraits/men/1.jpg",
     },
-    { id: 2, name: "Nguyen Van An", profilePicture: "https://randomuser.me/api/portraits/men/2.jpg" },
-    { id: 3, name: "Le Thi Binh", profilePicture: "https://randomuser.me/api/portraits/women/3.jpg" },
-    { id: 4, name: "Pham Minh Cuong", profilePicture: "https://randomuser.me/api/portraits/men/4.jpg" },
-    { id: 5, name: "Vo Thi Dung", profilePicture: "https://randomuser.me/api/portraits/women/5.jpg" },
-    { id: 6, name: "Le Minh Tri", profilePicture: "https://randomuser.me/api/portraits/men/6.jpg" },
+    {
+        id: 2,
+        name: "Nguyen Van An",
+        profilePicture: "https://randomuser.me/api/portraits/men/2.jpg",
+    },
+    {
+        id: 3,
+        name: "Le Thi Binh",
+        profilePicture: "https://randomuser.me/api/portraits/women/3.jpg",
+    },
+    {
+        id: 4,
+        name: "Pham Minh Cuong",
+        profilePicture: "https://randomuser.me/api/portraits/men/4.jpg",
+    },
+    {
+        id: 5,
+        name: "Vo Thi Dung",
+        profilePicture: "https://randomuser.me/api/portraits/women/5.jpg",
+    },
+    {
+        id: 6,
+        name: "Le Minh Tri",
+        profilePicture: "https://randomuser.me/api/portraits/men/6.jpg",
+    },
 ];
 
 // University Array
@@ -30,7 +50,7 @@ const universities = [
     {
         name: "RMIT University Vietnam",
         suffix: "RMIT",
-    }
+    },
 ];
 
 const coursesList = [
@@ -62,7 +82,7 @@ const coursesList = [
     {
         name: "Introduction to Chemistry",
         code: "CHE101",
-        university: "VNU"
+        university: "VNU",
     },
     {
         name: "Database Systems",
@@ -73,7 +93,7 @@ const coursesList = [
         name: "Microeconomics",
         code: "ECO101",
         university: "FPT",
-    }
+    },
 ];
 
 // --- Base Items Data ---
@@ -83,11 +103,12 @@ const itemsList = [
         id: 1,
         name: "CSE201 Lab Files",
         authorId: 6, // Le Minh Tri
-        description: "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments. \n \nFiles included: \n- Lab 1: Introduction to Programming\n- Lab 2: Data Structures\n- Lab 3: Algorithms",
+        description:
+            "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments. \n \nFiles included: \n- Lab 1: Introduction to Programming\n- Lab 2: Data Structures\n- Lab 3: Algorithms",
         images: [
             "https://picsum.photos/1920/1080?random=10",
             "https://picsum.photos/1920/1080?random=11",
-            "https://picsum.photos/1920/1080?random=12"
+            "https://picsum.photos/1920/1080?random=12",
         ],
         price: "200,000",
         university: "Eastern International University",
@@ -99,28 +120,29 @@ const itemsList = [
         id: 2,
         name: "MTH101 Calculus Notes",
         authorId: 3, // Nguyen Van An
-        description: "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
+        description:
+            "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
         images: [
             "https://picsum.photos/1920/1080?random=20",
             "https://picsum.photos/1920/1080?random=21",
-            "https://picsum.photos/1920/1080?random=22"
+            "https://picsum.photos/1920/1080?random=22",
         ],
         price: "150,000",
         university: "Vietnam National University",
         subject: "MTH101",
         lastUpdated: "15/09/2024",
         purchaseCount: 254,
-
     },
     {
         id: 3,
         name: "PHY102 Physics Exam Prep",
         authorId: 3, // Le Thi Binh
-        description: "A complete exam preparation kit for PHY102. Contains summaries of key formulas, mock exam questions, and fully solved past papers.",
+        description:
+            "A complete exam preparation kit for PHY102. Contains summaries of key formulas, mock exam questions, and fully solved past papers.",
         images: [
             "https://picsum.photos/1920/1080?random=30",
             "https://picsum.photos/1920/1080?random=31",
-            "https://picsum.photos/1920/1080?random=32"
+            "https://picsum.photos/1920/1080?random=32",
         ],
         price: "250,000",
         university: "FPT University",
@@ -132,11 +154,12 @@ const itemsList = [
         id: 4,
         name: "ENG303 English Literature Essays",
         authorId: 4, // Pham Minh Cuong
-        description: "A collection of A-grade essays on major works of English literature. Perfect for inspiration and understanding complex themes for your ENG303 course.",
+        description:
+            "A collection of A-grade essays on major works of English literature. Perfect for inspiration and understanding complex themes for your ENG303 course.",
         images: [
             "https://picsum.photos/1920/1080?random=40",
             "https://picsum.photos/1920/1080?random=41",
-            "https://picsum.photos/1920/1080?random=42"
+            "https://picsum.photos/1920/1080?random=42",
         ],
         price: "180,000",
         university: "Eastern International University",
@@ -148,11 +171,12 @@ const itemsList = [
         id: 5,
         name: "BUS101 Business Management Slides",
         authorId: 5, // Vo Thi Dung
-        description: "Complete set of presentation slides for BUS101. Visually engaging and packed with key information, case studies, and business theories.",
+        description:
+            "Complete set of presentation slides for BUS101. Visually engaging and packed with key information, case studies, and business theories.",
         images: [
             "https://picsum.photos/1920/1080?random=50",
             "https://picsum.photos/1920/1080?random=51",
-            "https://picsum.photos/1920/1080?random=52"
+            "https://picsum.photos/1920/1080?random=52",
         ],
         price: "120,000",
         university: "RMIT University Vietnam",
@@ -164,11 +188,12 @@ const itemsList = [
         id: 6,
         name: "CHE101 Chemistry Lab Guide",
         authorId: 6, // Le Minh Tri
-        description: "A step-by-step guide for all CHE101 lab experiments. Includes safety protocols, expected results, and tips for writing excellent lab reports.",
+        description:
+            "A step-by-step guide for all CHE101 lab experiments. Includes safety protocols, expected results, and tips for writing excellent lab reports.",
         images: [
             "https://picsum.photos/1920/1080?random=60",
             "https://picsum.photos/1920/1080?random=61",
-            "https://picsum.photos/1920/1080?random=62"
+            "https://picsum.photos/1920/1080?random=62",
         ],
         price: "220,000",
         university: "Vietnam National University",
@@ -180,11 +205,12 @@ const itemsList = [
         id: 7,
         name: "CSE305 Database Systems Project",
         authorId: 1, // Trinh Tran Phuong Tuan
-        description: "A full project implementation for CSE305, featuring a relational database schema, SQL queries, and a front-end interface. Great for reference.",
+        description:
+            "A full project implementation for CSE305, featuring a relational database schema, SQL queries, and a front-end interface. Great for reference.",
         images: [
             "https://picsum.photos/1920/1080?random=70",
             "https://picsum.photos/1920/1080?random=71",
-            "https://picsum.photos/1920/1080?random=72"
+            "https://picsum.photos/1920/1080?random=72",
         ],
         price: "350,000",
         university: "Eastern International University",
@@ -196,11 +222,12 @@ const itemsList = [
         id: 8,
         name: "ECO101 Microeconomics Summary",
         authorId: 2, // Nguyen Van An
-        description: "Concise summary of all key concepts in ECO101. Perfect for last-minute revision before midterms or finals. Includes graphs and charts.",
+        description:
+            "Concise summary of all key concepts in ECO101. Perfect for last-minute revision before midterms or finals. Includes graphs and charts.",
         images: [
             "https://picsum.photos/1920/1080?random=80",
             "https://picsum.photos/1920/1080?random=81",
-            "https://picsum.photos/1920/1080?random=82"
+            "https://picsum.photos/1920/1080?random=82",
         ],
         price: "90,000",
         university: "FPT University",
@@ -213,7 +240,8 @@ const itemsList = [
         id: 9,
         name: "CSE201 Midterm Exam Solutions",
         authorId: 1,
-        description: "Fully solved midterm exam from last semester. A great study resource.",
+        description:
+            "Fully solved midterm exam from last semester. A great study resource.",
         images: ["https://picsum.photos/1920/1080?random=90"],
         price: "150,000",
         university: "Eastern International University",
@@ -225,7 +253,8 @@ const itemsList = [
         id: 10,
         name: "CSE201 Full Lecture Notes",
         authorId: 2,
-        description: "All lecture notes from the beginning to the end of the semester.",
+        description:
+            "All lecture notes from the beginning to the end of the semester.",
         images: ["https://picsum.photos/1920/1080?random=100"],
         price: "300,000",
         university: "Eastern International University",
@@ -237,7 +266,8 @@ const itemsList = [
         id: 11,
         name: "CSE201 Algorithm Practice Problems",
         authorId: 3,
-        description: "A curated list of practice problems focusing on algorithms.",
+        description:
+            "A curated list of practice problems focusing on algorithms.",
         images: ["https://picsum.photos/1920/1080?random=110"],
         price: "120,000",
         university: "Eastern International University",
@@ -261,7 +291,8 @@ const itemsList = [
         id: 13,
         name: "CSE201 Final Project Sample",
         authorId: 5,
-        description: "An A+ graded final project to use as a reference for your own.",
+        description:
+            "An A+ graded final project to use as a reference for your own.",
         images: ["https://picsum.photos/1920/1080?random=130"],
         price: "400,000",
         university: "Eastern International University",
@@ -285,7 +316,8 @@ const itemsList = [
         id: 15,
         name: "CSE201 Linked List Tutorial",
         authorId: 1,
-        description: "A deep dive into linked lists with code examples in C++ and Python.",
+        description:
+            "A deep dive into linked lists with code examples in C++ and Python.",
         images: ["https://picsum.photos/1920/1080?random=150"],
         price: "80,000",
         university: "Eastern International University",
@@ -297,7 +329,8 @@ const itemsList = [
         id: 16,
         name: "CSE201 Sorting Algorithms Visualizer",
         authorId: 2,
-        description: "An interactive tool to visualize how different sorting algorithms work.",
+        description:
+            "An interactive tool to visualize how different sorting algorithms work.",
         images: ["https://picsum.photos/1920/1080?random=160"],
         price: "220,000",
         university: "Eastern International University",
@@ -309,7 +342,8 @@ const itemsList = [
         id: 17,
         name: "CSE201 Binary Tree Notes",
         authorId: 3,
-        description: "Clear and concise notes on binary trees, BSTs, and traversal methods.",
+        description:
+            "Clear and concise notes on binary trees, BSTs, and traversal methods.",
         images: ["https://picsum.photos/1920/1080?random=170"],
         price: "95,000",
         university: "Eastern International University",
@@ -321,7 +355,8 @@ const itemsList = [
         id: 18,
         name: "CSE201 Graph Theory Explained",
         authorId: 4,
-        description: "An easy-to-follow guide on graph theory concepts for the final exam.",
+        description:
+            "An easy-to-follow guide on graph theory concepts for the final exam.",
         images: ["https://picsum.photos/1920/1080?random=180"],
         price: "110,000",
         university: "Eastern International University",
@@ -333,7 +368,8 @@ const itemsList = [
         id: 19,
         name: "CSE201 Hashing Techniques Guide",
         authorId: 5,
-        description: "A guide covering various hashing techniques and collision resolution.",
+        description:
+            "A guide covering various hashing techniques and collision resolution.",
         images: ["https://picsum.photos/1920/1080?random=190"],
         price: "70,000",
         university: "Eastern International University",
@@ -345,7 +381,8 @@ const itemsList = [
         id: 20,
         name: "CSE201 Dynamic Programming Problems",
         authorId: 6,
-        description: "A set of challenging dynamic programming problems with solutions.",
+        description:
+            "A set of challenging dynamic programming problems with solutions.",
         images: ["https://picsum.photos/1920/1080?random=200"],
         price: "160,000",
         university: "Eastern International University",
@@ -376,7 +413,7 @@ const itemsList = [
         subject: "CSE201",
         lastUpdated: "05/06/2025",
         purchaseCount: 278,
-    }
+    },
     // --- END: Added items for pagination testing ---
 ];
 
@@ -395,7 +432,7 @@ const currentUserData = {
             purchaseDate: "2023-11-10",
             price: "250,000",
             name: "PHY102 Physics Exam Prep",
-        }
+        },
     ],
     favoriteItems: [2, 7], //item IDs
     money: "550,000",
@@ -406,42 +443,122 @@ const currentUserData = {
 
 // --- Reviews Data ---
 const reviews = [
-    { id: 1, itemId: 1, userId: 1, rating: 5, comment: "Great lab files, very helpful!", date: "2023-10-03" },
-    { id: 2, itemId: 2, userId: 2, rating: 4, comment: "Good notes, but could use more examples.", date: "2023-09-20" },
-    { id: 3, itemId: 3, userId: 1, rating: 5, comment: "This exam prep was a lifesaver!", date: "2023-11-15" },
-    { id: 4, itemId: 1, userId: 3, rating: 4, comment: "Well-organized and saved me a lot of time.", date: "2023-10-05" },
-    { id: 5, itemId: 4, userId: 4, rating: 5, comment: "The essays provided great insight.", date: "2023-10-25" },
-    { id: 6, itemId: 5, userId: 5, rating: 3, comment: "The slides are okay, but a bit too basic.", date: "2023-12-10" },
-    { id: 7, itemId: 3, userId: 2, rating: 4, comment: "Very helpful, thank you.", date: "2023-11-16" },
-    { id: 8, itemId: 6, userId: 2, rating: 5, comment: "Good notes, but could use more examples.", date: "2023-09-20" },
-    { id: 9, itemId: 9, userId: 3, rating: 5, comment: "Perfect for studying the midterm!", date: "2025-05-20" },
-    { id: 10, itemId: 12, userId: 4, rating: 4, comment: "Super useful cheatsheet, thanks!", date: "2025-07-11" },
-    { id: 11, itemId: 13, userId: 1, rating: 5, comment: "The project sample was incredible.", date: "2025-07-20" },
+    {
+        id: 1,
+        itemId: 1,
+        userId: 1,
+        rating: 5,
+        comment: "Great lab files, very helpful!",
+        date: "2023-10-03",
+    },
+    {
+        id: 2,
+        itemId: 2,
+        userId: 2,
+        rating: 4,
+        comment: "Good notes, but could use more examples.",
+        date: "2023-09-20",
+    },
+    {
+        id: 3,
+        itemId: 3,
+        userId: 1,
+        rating: 5,
+        comment: "This exam prep was a lifesaver!",
+        date: "2023-11-15",
+    },
+    {
+        id: 4,
+        itemId: 1,
+        userId: 3,
+        rating: 4,
+        comment: "Well-organized and saved me a lot of time.",
+        date: "2023-10-05",
+    },
+    {
+        id: 5,
+        itemId: 4,
+        userId: 4,
+        rating: 5,
+        comment: "The essays provided great insight.",
+        date: "2023-10-25",
+    },
+    {
+        id: 6,
+        itemId: 5,
+        userId: 5,
+        rating: 3,
+        comment: "The slides are okay, but a bit too basic.",
+        date: "2023-12-10",
+    },
+    {
+        id: 7,
+        itemId: 3,
+        userId: 2,
+        rating: 4,
+        comment: "Very helpful, thank you.",
+        date: "2023-11-16",
+    },
+    {
+        id: 8,
+        itemId: 6,
+        userId: 2,
+        rating: 5,
+        comment: "Good notes, but could use more examples.",
+        date: "2023-09-20",
+    },
+    {
+        id: 9,
+        itemId: 9,
+        userId: 3,
+        rating: 5,
+        comment: "Perfect for studying the midterm!",
+        date: "2025-05-20",
+    },
+    {
+        id: 10,
+        itemId: 12,
+        userId: 4,
+        rating: 4,
+        comment: "Super useful cheatsheet, thanks!",
+        date: "2025-07-11",
+    },
+    {
+        id: 11,
+        itemId: 13,
+        userId: 1,
+        rating: 5,
+        comment: "The project sample was incredible.",
+        date: "2025-07-20",
+    },
 ];
 
 // --- Data Access Functions ---
 
 // Calculates the average rating for a single item
 const calculateAvgRating = (itemId) => {
-    const itemReviews = reviews.filter(review => review.itemId === itemId);
+    const itemReviews = reviews.filter((review) => review.itemId === itemId);
     if (itemReviews.length === 0) {
         return 0;
     }
-    const totalRating = itemReviews.reduce((sum, review) => sum + review.rating, 0);
+    const totalRating = itemReviews.reduce(
+        (sum, review) => sum + review.rating,
+        0
+    );
     // Return the average rounded to one decimal place
     return parseFloat((totalRating / itemReviews.length).toFixed(1));
 };
 
 export const getItemsList = () => {
     // Enrich each item with its calculated average rating
-    return itemsList.map(item => ({
+    return itemsList.map((item) => ({
         ...item,
         avgRating: calculateAvgRating(item.id),
     }));
 };
 
 export const getItemById = (id) => {
-    const item = itemsList.find(item => item.id === id);
+    const item = itemsList.find((item) => item.id === id);
     if (!item) {
         return null;
     }
@@ -454,10 +571,10 @@ export const getItemById = (id) => {
 
 export const getUsers = () => {
     return users;
-}
+};
 
 export const getUserById = (id) => {
-    return users.find(user => user.id === id);
+    return users.find((user) => user.id === id);
 };
 
 export const getCurrentUser = () => {
@@ -466,33 +583,39 @@ export const getCurrentUser = () => {
 };
 
 export const getReviewsByItemId = (itemId) => {
-    return reviews.filter(review => review.itemId === itemId);
+    return reviews.filter((review) => review.itemId === itemId);
 };
 
 export const getItemsBySubject = (subject) => {
-    return itemsList.filter(item => item.subject === subject).map(item => ({
-        ...item,
-        avgRating: calculateAvgRating(item.id),
-    }));
-}
+    return itemsList
+        .filter((item) => item.subject === subject)
+        .map((item) => ({
+            ...item,
+            avgRating: calculateAvgRating(item.id),
+        }));
+};
 
 export const getOtherItemsBySubject = (subject, currentItemId) => {
-    return itemsList.filter(item => item.subject === subject && item.id !== currentItemId).map(item => ({
-        ...item,
-        avgRating: calculateAvgRating(item.id),
-    }));
-}
+    return itemsList
+        .filter((item) => item.subject === subject && item.id !== currentItemId)
+        .map((item) => ({
+            ...item,
+            avgRating: calculateAvgRating(item.id),
+        }));
+};
 
 export const getOtherItems = (currentItemId) => {
-    return itemsList.filter(item => item.id !== currentItemId).map(item => ({
-        ...item,
-        avgRating: calculateAvgRating(item.id),
-    }));
-}
+    return itemsList
+        .filter((item) => item.id !== currentItemId)
+        .map((item) => ({
+            ...item,
+            avgRating: calculateAvgRating(item.id),
+        }));
+};
 
 export const getSortedItemsByPurchase = () => {
     return itemsList
-        .map(item => ({
+        .map((item) => ({
             ...item,
             avgRating: calculateAvgRating(item.id),
         }))
@@ -501,7 +624,7 @@ export const getSortedItemsByPurchase = () => {
 
 export const getSortedItemsByRating = () => {
     return itemsList
-        .map(item => ({
+        .map((item) => ({
             ...item,
             avgRating: calculateAvgRating(item.id),
         }))
@@ -509,32 +632,36 @@ export const getSortedItemsByRating = () => {
 };
 
 export const getItemsByUniversity = (universityName) => {
-    return itemsList.filter(item => item.university === universityName).map(item => ({
-        ...item,
-        avgRating: calculateAvgRating(item.id),
-    }));
-}
+    return itemsList
+        .filter((item) => item.university === universityName)
+        .map((item) => ({
+            ...item,
+            avgRating: calculateAvgRating(item.id),
+        }));
+};
 
 export const getUniversityNames = () => {
-    return universities.map(item => item.name);
-}
+    return universities.map((item) => item.name);
+};
 
 export const getCoursesByUniversity = (universityName) => {
     if (!universityName) {
         return [];
     }
 
-    const university = universities.find(uni => uni.name === universityName);
+    const university = universities.find((uni) => uni.name === universityName);
     if (!university) {
         return [];
     }
     const universitySuffix = university.suffix;
 
-    const filteredCourses = coursesList.filter(course => course.university === universitySuffix);
+    const filteredCourses = coursesList.filter(
+        (course) => course.university === universitySuffix
+    );
 
-    return filteredCourses.map(course => ({
+    return filteredCourses.map((course) => ({
         value: course.code,
-        label: `${course.code} - ${course.name}` //Returns "CSE201 - Data Structure and Algorithms"
+        label: `${course.code} - ${course.name}`, //Returns "CSE201 - Data Structure and Algorithms"
     }));
 };
 
@@ -542,18 +669,21 @@ export const searchItems = ({ university, course, query }) => {
     let results = itemsList;
 
     if (university) {
-        results = results.filter(item => item.university === university);
+        results = results.filter((item) => item.university === university);
     }
 
     if (course) {
-        results = results.filter(item => item.subject === course);
+        results = results.filter((item) => item.subject === course);
     }
 
     if (query) {
-        results = results.filter(item =>
+        results = results.filter((item) =>
             item.name.toLowerCase().includes(query.toLowerCase())
         );
     }
 
-    return results.map(item => ({...item, avgRating: calculateAvgRating(item.id)}));
+    return results.map((item) => ({
+        ...item,
+        avgRating: calculateAvgRating(item.id),
+    }));
 };
