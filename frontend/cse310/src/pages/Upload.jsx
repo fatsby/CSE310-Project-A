@@ -7,6 +7,7 @@ import {
   CheckIcon,
   Modal,
   RingProgress,
+  ScrollArea,
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -29,6 +30,9 @@ export default function Upload({ onCloseUpload }) {
   const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
   const checkIcon = <CheckIcon size={20} />;
+  const CustomScrollArea = (props) => (
+    <ScrollArea.Autosize type="never" {...props} />
+  );
 
   // ===========================
   // Utility: Format file size
@@ -240,6 +244,7 @@ export default function Upload({ onCloseUpload }) {
         title="Set File Details"
         size="100%"
         radius="20px"
+        scrollAreaComponent={CustomScrollArea}
         overlayProps={{
           backgroundOpacity: 0.55,
           blur: 3,
