@@ -9,7 +9,7 @@ import GreenBgIMG from "../assets/Landing/green-bg.png";
 import PurpleBgIMG from "../assets/Landing/purple-bg.png";
 import LapIMG from "../assets/Landing/sky.png";
 import YellowBgIMG from "../assets/Landing/yellow-bg.png";
-import LogoIMG from "../assets/logo.png";
+import LogoIMG from "../assets/LogoBanner_Trans.png";
 import CHPlayIMG from "../assets/Landing/chPlay.png";
 import AppStoreIMG from "../assets/Landing/appStore.png";
 import PhoneIMG from "../assets/Landing/phone.png";
@@ -101,6 +101,7 @@ export default function Landing() {
         {/* === Hero Section Start === */}
         {/* =========================== */}
         <section ref={heroRef} className="pb-6 pt-26">
+          <img src={LogoIMG} alt="Logo" className="mx-auto max-w-[500px]" />
           <h1
             className={`text-center text-[60px] font-semibold text-black transition-all duration-700 ease-in transform ${
               showHero
@@ -257,7 +258,7 @@ export default function Landing() {
         {/* =========================== */}
         <section ref={premiumRef} className="w-full px-18 flex flex-col">
           <h2 className="text-3xl md:text-[40px] font-semibold my-[90px] text-center">
-            Unlock Logo’s full potential with <br className="hidden md:block" />{" "}
+            Elevate your game now with <br className="hidden md:block" />{" "}
             Premium
           </h2>
           <div className="grid grid-cols-2 mt-0 gap-[33px]">
@@ -352,8 +353,8 @@ export default function Landing() {
               }`}
             >
               <div className="flex items-end">
-                <img src={LogoIMG} alt="Logo" className="max-w-[100px]" />
-                <span className="ml-2">
+                <img src={LogoIMG} alt="Logo" className="max-w-[160px]" />
+                <span className="ml-3">
                   <b>Get our App</b>
                 </span>
               </div>

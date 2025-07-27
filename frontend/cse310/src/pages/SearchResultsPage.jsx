@@ -31,9 +31,6 @@ function SearchResultsPage() {
     const sortItems = (items, sortType) => {
         const sorted = [...items];
 
-        // Helper function to convert price string "200,000" to number 200000
-        const parsePrice = (priceString) => parseInt(priceString.replace(/,/g, ''), 10);
-
         switch (sortType) {
             case 'bestSelling':
                 sorted.sort((a, b) => b.purchaseCount - a.purchaseCount);
@@ -47,10 +44,10 @@ function SearchResultsPage() {
                 });
                 break;
             case 'price-high-to-low':
-                sorted.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+                sorted.sort((a, b) => b.price - a.price);
                 break;
             case 'price-low-to-high':
-                sorted.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+                sorted.sort((a, b) => a.price - b.price);
                 break;
             case 'relevant':
             default:
@@ -95,7 +92,7 @@ function SearchResultsPage() {
     return (
         <div className='container mx-auto px-4 pb-4 pt-[125px]'>
             <Link
-                to="/home"
+                to="/"
                 className="group inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-base font-medium text-gray-700 shadow-sm transition-all duration-200 hover:bg-gray-200 hover:text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-4"
             >
                 <ArrowLeft className="h-5 w-5 transition-transform duration-200 group-hover:-translate-x-1" />

@@ -192,7 +192,7 @@ function ItemPage() {
                             <p className="text-lg font-light text-gray-800">{itemData.lastUpdated}</p>
                         </div>
 
-                        <p className="text-3xl font-bold text-blue-600 mb-4">{itemData.price} VND</p>
+                        <p className="text-3xl font-bold text-blue-600 mb-4">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemData.price)}</p>
 
                         {/* ADD TO CART AND FAVORITE */}
                         <div className="grid grid-cols-12 mb-3 gap-2">

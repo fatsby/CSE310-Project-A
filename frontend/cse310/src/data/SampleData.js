@@ -110,7 +110,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=11",
             "https://picsum.photos/1920/1080?random=12",
         ],
-        price: "200,000",
+        price: "200000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "01/10/2024",
@@ -127,7 +127,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=21",
             "https://picsum.photos/1920/1080?random=22",
         ],
-        price: "150,000",
+        price: "150000",
         university: "Vietnam National University",
         subject: "MTH101",
         lastUpdated: "15/09/2024",
@@ -144,7 +144,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=31",
             "https://picsum.photos/1920/1080?random=32",
         ],
-        price: "250,000",
+        price: "250000",
         university: "FPT University",
         subject: "PHY102",
         lastUpdated: "11/06/2025",
@@ -161,7 +161,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=41",
             "https://picsum.photos/1920/1080?random=42",
         ],
-        price: "180,000",
+        price: "180000",
         university: "Eastern International University",
         subject: "ENG303",
         lastUpdated: "09/07/2025",
@@ -178,7 +178,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=51",
             "https://picsum.photos/1920/1080?random=52",
         ],
-        price: "120,000",
+        price: "120000",
         university: "RMIT University Vietnam",
         subject: "BUS101",
         lastUpdated: "01/12/2024",
@@ -195,7 +195,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=61",
             "https://picsum.photos/1920/1080?random=62",
         ],
-        price: "220,000",
+        price: "220000",
         university: "Vietnam National University",
         subject: "CHE101",
         lastUpdated: "01/10/2023",
@@ -212,7 +212,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=71",
             "https://picsum.photos/1920/1080?random=72",
         ],
-        price: "350,000",
+        price: "350000",
         university: "Eastern International University",
         subject: "CSE305",
         lastUpdated: "15/02/2024",
@@ -229,7 +229,7 @@ const itemsList = [
             "https://picsum.photos/1920/1080?random=81",
             "https://picsum.photos/1920/1080?random=82",
         ],
-        price: "90,000",
+        price: "90000",
         university: "FPT University",
         subject: "ECO101",
         lastUpdated: "23/12/2024",
@@ -243,7 +243,7 @@ const itemsList = [
         description:
             "Fully solved midterm exam from last semester. A great study resource.",
         images: ["https://picsum.photos/1920/1080?random=90"],
-        price: "150,000",
+        price: "150000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "15/05/2025",
@@ -256,7 +256,7 @@ const itemsList = [
         description:
             "All lecture notes from the beginning to the end of the semester.",
         images: ["https://picsum.photos/1920/1080?random=100"],
-        price: "300,000",
+        price: "300000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "01/06/2025",
@@ -269,7 +269,7 @@ const itemsList = [
         description:
             "A curated list of practice problems focusing on algorithms.",
         images: ["https://picsum.photos/1920/1080?random=110"],
-        price: "120,000",
+        price: "120000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "20/06/2025",
@@ -281,7 +281,7 @@ const itemsList = [
         authorId: 4,
         description: "A 2-page cheatsheet summarizing all key data structures.",
         images: ["https://picsum.photos/1920/1080?random=120"],
-        price: "50,000",
+        price: "50000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "10/07/2025",
@@ -294,7 +294,7 @@ const itemsList = [
         description:
             "An A+ graded final project to use as a reference for your own.",
         images: ["https://picsum.photos/1920/1080?random=130"],
-        price: "400,000",
+        price: "400000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "18/07/2025",
@@ -306,7 +306,7 @@ const itemsList = [
         authorId: 6,
         description: "Answers to all weekly quizzes. Use responsibly!",
         images: ["https://picsum.photos/1920/1080?random=140"],
-        price: "180,000",
+        price: "180000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "05/04/2025",
@@ -319,7 +319,7 @@ const itemsList = [
         description:
             "A deep dive into linked lists with code examples in C++ and Python.",
         images: ["https://picsum.photos/1920/1080?random=150"],
-        price: "80,000",
+        price: "80000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "12/04/2025",
@@ -332,7 +332,7 @@ const itemsList = [
         description:
             "An interactive tool to visualize how different sorting algorithms work.",
         images: ["https://picsum.photos/1920/1080?random=160"],
-        price: "220,000",
+        price: "220000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "25/03/2025",
@@ -345,7 +345,7 @@ const itemsList = [
         description:
             "Clear and concise notes on binary trees, BSTs, and traversal methods.",
         images: ["https://picsum.photos/1920/1080?random=170"],
-        price: "95,000",
+        price: "95000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "30/03/2025",
@@ -358,7 +358,7 @@ const itemsList = [
         description:
             "An easy-to-follow guide on graph theory concepts for the final exam.",
         images: ["https://picsum.photos/1920/1080?random=180"],
-        price: "110,000",
+        price: "110000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "02/05/2025",
@@ -371,7 +371,7 @@ const itemsList = [
         description:
             "A guide covering various hashing techniques and collision resolution.",
         images: ["https://picsum.photos/1920/1080?random=190"],
-        price: "70,000",
+        price: "70000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "10/05/2025",
@@ -384,7 +384,7 @@ const itemsList = [
         description:
             "A set of challenging dynamic programming problems with solutions.",
         images: ["https://picsum.photos/1920/1080?random=200"],
-        price: "160,000",
+        price: "160000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "19/05/2025",
@@ -396,7 +396,7 @@ const itemsList = [
         authorId: 1,
         description: "A collection of final exams from the past 3 years.",
         images: ["https://picsum.photos/1920/1080?random=210"],
-        price: "250,000",
+        price: "250000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "28/05/2025",
@@ -408,7 +408,7 @@ const itemsList = [
         authorId: 2,
         description: "Printable quick reference cards for all major topics.",
         images: ["https://picsum.photos/1920/1080?random=220"],
-        price: "90,000",
+        price: "90000",
         university: "Eastern International University",
         subject: "CSE201",
         lastUpdated: "05/06/2025",
@@ -424,20 +424,20 @@ const currentUserData = {
         {
             id: 1,
             purchaseDate: "2023-10-02",
-            price: "200,000",
+            price: "200000",
             name: "CSE201 Lab Files",
         },
         {
             id: 3,
             purchaseDate: "2023-11-10",
-            price: "250,000",
+            price: "250000",
             name: "PHY102 Physics Exam Prep",
         },
     ],
     favoriteItems: [2, 7], //item IDs
-    money: "550,000",
-    moneyearned: "500,000",
-    moneyspent: "450,000",
+    balance: "550000",
+    moneyearned: "500000",
+    moneyspent: "450000",
     university: "Eastern International University",
 };
 
@@ -554,6 +554,7 @@ export const getItemsList = () => {
     return itemsList.map((item) => ({
         ...item,
         avgRating: calculateAvgRating(item.id),
+        data: `./DataFromCourse/${item.name}`,
     }));
 };
 
@@ -686,4 +687,14 @@ export const searchItems = ({ university, course, query }) => {
         ...item,
         avgRating: calculateAvgRating(item.id),
     }));
+};
+
+export const getUserPurchased = () => {
+    const purchasedItemIds = new Set(currentUserData.purchasedItems.map(item => item.id));
+
+    const fullPurchasedItems = itemsList.filter(item =>
+        purchasedItemIds.has(item.id)
+    );
+
+    return fullPurchasedItems;
 };
