@@ -554,6 +554,7 @@ export const getItemsList = () => {
     return itemsList.map((item) => ({
         ...item,
         avgRating: calculateAvgRating(item.id),
+        data: `./DataFromCourse/${item.name}`,
     }));
 };
 
