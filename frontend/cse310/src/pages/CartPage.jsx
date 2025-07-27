@@ -2,6 +2,7 @@ import { Checkbox, Input, Button } from "@mantine/core";
 import { getItemsList } from "../data/SampleData.js";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function CartPage() {
     const [discount, setDiscount] = useState(0);
@@ -114,7 +115,10 @@ function CartPage() {
                                             }
                                         ></Checkbox>
                                     </div>
-                                    <div className="col-span-6">
+                                    <Link
+                                        to={`/item/${item.id}`}
+                                        className="col-span-6"
+                                    >
                                         <div className="grid grid-cols-10">
                                             <div className="col-span-3 flex content-center">
                                                 <img
@@ -137,7 +141,7 @@ function CartPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                     <div className="col-span-2 flex">
                                         <p className="font-bold text-blue-600 text-[22px] content-center">
                                             {item.price} VND
