@@ -1,5 +1,5 @@
-import { Input, Select, Button } from "@mantine/core";
-import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+import { TextInput, Select, Button } from "@mantine/core";
+import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
 import { getUserPurchased } from "../data/SampleData.js";
 import { useEffect, useState } from "react";
 
@@ -82,15 +82,16 @@ function PurchasedPage() {
                 <h2 className="col-span-7 font-bold text-[40px] pl-[20px] pt-[20px] ">
                     Your Purchased Courses ({allItems.length})
                 </h2>
-                <p className="font-bold text-[20px] pl-[20px] pt-[20px] text-[#FF4747]">
+                <p className="font-bold text-[20px] pl-[20px] pt-[20px] text-blue-700">
                     Showing {filteredItems.length} item(s)
                 </p>
                 <div className="py-[20px] mt-[40px] border-y border-solid">
                     <div className="flex gap-4 px-[20px]">
                         <div className="">
-                            <Input
+                            <TextInput
+                                leftSection={<Search size="16px"/>}
                                 radius="xl"
-                                placeholder="Input component"
+                                placeholder="Search..."
                                 value={searchValue}
                                 onChange={handleSearchInput}
                             />
@@ -142,10 +143,10 @@ function PurchasedPage() {
                                         <h2 className="font-medium text-[18px] ">
                                             {item.name}
                                         </h2>
-                                        <p className="bg-[#547792] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                        <p className="bg-blue-700 text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
                                             {item.subject}
                                         </p>
-                                        <p className="bg-[#DDA853] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                        <p className="bg-yellow-500 text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
                                             {item.university}
                                         </p>
                                     </div>
