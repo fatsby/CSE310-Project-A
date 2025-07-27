@@ -8,7 +8,7 @@ import LoginPage from "../pages/LoginPage.jsx";
 // ===========================
 // Assets
 // ===========================
-import LogoIMG from "../assets/logo.png";
+import LogoIMG from "../assets/LogoBanner_Trans.png";
 
 // ===========================
 // Component: LandingHeader
@@ -61,7 +61,7 @@ export default function LandingHeader() {
               <img
                 src={LogoIMG}
                 alt="Logo"
-                className="max-w-[80px] min-w-[80px] cursor-pointer"
+                className="max-w-[160px] min-w-[160px] cursor-pointer"
               />
             </Link>
           </div>

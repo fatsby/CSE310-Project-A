@@ -9,7 +9,7 @@ import useUserStore from "../stores/userStore";
 import { User, LogOut, Wallet, Archive } from "lucide-react";
 
 // Images
-import LogoIMG from "../assets/logo.png";
+import LogoIMG from "../assets/LogoBanner_Trans.png";
 import avatarIMG from "../assets/dog.jpg";
 
 export default function UserHeader() {
@@ -36,7 +36,7 @@ export default function UserHeader() {
               <img
                 src={LogoIMG}
                 alt="logo"
-                className="max-w-[80px] min-w-[80px] cursor-pointer"
+                className="max-w-[160px] min-w-[160px] cursor-pointer"
               />
             </Link>
             <button
@@ -91,6 +91,8 @@ export default function UserHeader() {
                   color="red"
                   leftSection={<LogOut size={16} />}
                   onClick={() => useUserStore.getState().clearUser()}
+                  component={Link}
+                  to="/"
                 >
                   Sign Out
                 </Menu.Item>
