@@ -18,6 +18,7 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CartPage from "./pages/CartPage.jsx";
+import PurchasedPage from "./pages/PurchasedPage.jsx";
 
 const router = createBrowserRouter([
     {
@@ -28,12 +29,19 @@ const router = createBrowserRouter([
             </LandingLayout>
         ),
     },
-
+    {
+        path: "/purchased",
+        element: (
+            <UserLayout>
+                <PurchasedPage />
+            </UserLayout>
+        ),
+    },
     {
         path: "/cart",
         element: (
             <UserLayout>
-                <CartPage></CartPage>
+                <CartPage />
             </UserLayout>
         ),
     },
