@@ -1,6 +1,6 @@
 import { Input, Select, Button } from "@mantine/core";
 import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
-import { getItemsList } from "../data/SampleData.js";
+import { getUserPurchased } from "../data/SampleData.js";
 import { useEffect, useState } from "react";
 
 function PurchasedPage() {
@@ -19,7 +19,7 @@ function PurchasedPage() {
     const courseList = [...new Set(allItems.map((item) => item.subject))];
 
     useEffect(() => {
-        const data = getItemsList();
+        const data = getUserPurchased();
         setAllItems(data);
         setFilteredItems(data);
     }, []);
@@ -80,7 +80,7 @@ function PurchasedPage() {
         <>
             <div className="container mx-auto pt-[125px]">
                 <h2 className="col-span-7 font-bold text-[40px] pl-[20px] pt-[20px] ">
-                    Your Purchased Course ({allItems.length})
+                    Your Purchased Courses ({allItems.length})
                 </h2>
                 <p className="font-bold text-[20px] pl-[20px] pt-[20px] text-[#FF4747]">
                     Showing {filteredItems.length} item(s)

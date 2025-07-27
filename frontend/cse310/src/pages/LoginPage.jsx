@@ -1,24 +1,31 @@
 import apple from "../assets/apple-logo.png";
 import google from "../assets/google-logo.png";
 import { AtSign } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import useUserStore from '../stores/userStore';
 import {
     TextInput,
     PasswordInput,
-    Input,
     Button,
     Checkbox,
+    Notification,
 } from "@mantine/core";
 import {
     useForm,
-    isNotEmpty,
-    isEmail,
-    isInRange,
-    hasLength,
-    matches,
 } from "@mantine/form";
 
 function LoginPage({ onSwitchToRegister }) {
+    const navigate = useNavigate();
+    
+    // Zustand store selectors
+    const login = useUserStore((state) => state.login);
+    const isLoading = useUserStore((state) => state.isLoading);
+    const error = useUserStore((state) => state.error);
+    
+    // Local state for notifications
+    const [loginError, setLoginError] = useState(null);
+    
     const form = useForm({
         mode: "uncontrolled",
         initialValues: {
@@ -28,7 +35,6 @@ function LoginPage({ onSwitchToRegister }) {
         },
 
         validate: {
-            email: isEmail("Invalid email"),
             username: (value) => {
                 if (value.trim().length === 0)
                     return "Username can not be empty";
@@ -45,48 +51,74 @@ function LoginPage({ onSwitchToRegister }) {
             },
         },
     });
+
+    const handleLogin = async (values) => {
+        setLoginError(null);
+        
+        const result = await login({
+            username: values.username,
+            password: values.password,
+            remember: values.remember
+        });
+
+        if (result.success) {
+            // Redirect to home
+            console.log("Login Success");
+            navigate('/');
+        } else {
+            setLoginError(result.error || 'Login failed. Please try again.');
+        }
+    };
+
     return (
         <>
             <div className="flex flex-col w-[400px] mx-auto px-[20px]">
-                {/* <h2 className="text-center text-[30px] font-bold">Log in</h2> */}
+                {/* Error notification */}
+                {loginError && (
+                    <Notification
+                        color="red"
+                        title="Login Error"
+                        onClose={() => setLoginError(null)}
+                        className="mb-4"
+                    >
+                        {loginError}
+                    </Notification>
+                )}
+
                 <p className="text-center">with</p>
+                
                 {/* Login via google/apple */}
-                <div className="grid grid-cols-2 gap-4 p-[10px] ">
+                <div className="grid grid-cols-2 gap-4 p-[10px]">
                     <Link
-                        className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-white rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
+                        className="flex justify-center cursor-pointer pt-[5px] pb-[5px] bg-white rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
                         to={""}
                     >
-                        <img
-                            className="w-[30px] h-[30px] "
-                            src={google}
-                            alt=""
-                        />
+                        <img className="w-[30px] h-[30px]" src={google} alt="" />
                     </Link>
                     <Link
-                        className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-black rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
+                        className="flex justify-center cursor-pointer pt-[5px] pb-[5px] bg-black rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
                         to={""}
                     >
                         <img className="w-[30px] h-[30px]" src={apple} alt="" />
                     </Link>
                 </div>
+                
                 <div className="flex items-center w-full">
                     <hr className="flex-grow border-t border-gray-300" />
                     <span className="px-4 text-gray-500 text-sm">or</span>
                     <hr className="flex-grow border-t border-gray-300" />
                 </div>
+                
                 {/* Login form */}
                 <div className="">
-                    <form
-                        onSubmit={form.onSubmit((values) =>
-                            console.log(values)
-                        )}
-                    >
+                    <form onSubmit={form.onSubmit(handleLogin)}>
                         <TextInput
                             className="my-3"
                             size="md"
                             radius="xl"
                             withAsterisk
                             placeholder="Username"
+                            disabled={isLoading}
                             key={form.key("username")}
                             {...form.getInputProps("username")}
                         />
@@ -96,6 +128,7 @@ function LoginPage({ onSwitchToRegister }) {
                             radius="xl"
                             withAsterisk
                             placeholder="Password"
+                            disabled={isLoading}
                             key={form.key("password")}
                             {...form.getInputProps("password")}
                         />
@@ -103,15 +136,13 @@ function LoginPage({ onSwitchToRegister }) {
                             <Checkbox
                                 size="xs"
                                 label="Remember me"
+                                disabled={isLoading}
                                 key={form.key("remember")}
                                 {...form.getInputProps("remember", {
                                     type: "checkbox",
                                 })}
                             />
-                            <a
-                                className="text-blue-600 text-right text-xs"
-                                href=""
-                            >
+                            <a className="text-blue-600 text-right text-xs" href="">
                                 Forgot password?
                             </a>
                         </div>
@@ -121,14 +152,16 @@ function LoginPage({ onSwitchToRegister }) {
                             className="my-3"
                             size="md"
                             radius="xl"
+                            loading={isLoading}
+                            disabled={isLoading}
                         >
-                            Log in
+                            {isLoading ? 'Logging in...' : 'Log in'}
                         </Button>
                     </form>
                     <p className="text-center">
                         Don't have an account?{" "}
                         <a
-                            className="text-blue-600 font-bold "
+                            className="text-blue-600 font-bold"
                             href=""
                             onClick={(e) => {
                                 e.preventDefault();

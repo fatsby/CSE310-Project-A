@@ -1,97 +1,111 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.jsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import App from "./App.jsx"
+import { 
+  createBrowserRouter, 
+  RouterProvider, 
+  redirect,
+  Outlet,
+  useLoaderData
+} from "react-router-dom";
 
 // MANTINE IMPORTS
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 
-// PAGES IMPORT
+// PAGES & LAYOUTS IMPORT
 import ItemPage from "./pages/ItemPage.jsx";
 import UserLayout from "./layouts/UserLayout.jsx";
 import LandingLayout from "./layouts/LandingLayout.jsx";
 import Landing from "./pages/Landing.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import RegisterPage from "./pages/RegisterPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
 import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import PurchasedPage from "./pages/PurchasedPage.jsx";
 
+
+const checkAuth = () => {
+  try {
+    const userStorage = localStorage.getItem('user-storage');
+    if (!userStorage) {
+      return false;
+    }
+    const { state } = JSON.parse(userStorage);
+    return !!state.userData;
+  } catch (error) {
+    console.error("Error validating authentication status:", error);
+    return false;
+  }
+};
+
+
+const RootElement = () => {
+    const { isAuthenticated } = useLoaderData();
+
+    return isAuthenticated ? (
+        <UserLayout>
+            <HomePage />
+        </UserLayout>
+    ) : (
+        <LandingLayout>
+            <Landing />
+        </LandingLayout>
+    );
+};
+
+
 const router = createBrowserRouter([
-    {
-        path: "/",
-        element: (
-            <LandingLayout>
-                <Landing />
-            </LandingLayout>
-        ),
+  {
+    path: "/",
+
+    loader: () => {
+      return { isAuthenticated: checkAuth() };
     },
-    {
+    element: <RootElement />,
+  },
+  {
+    // layout for all protected routes
+    element: (
+      <UserLayout>
+        <Outlet /> {/* outlet is the children */}
+      </UserLayout>
+    ),
+    // protect all children
+    loader: () => {
+      // if not authenticated, go to home
+      if (!checkAuth()) {
+        return redirect("/");
+      }
+      return null;
+    },
+    // For Luu and Tuoi: ADD ALL PROTECTED ROUTES HERE!!!!!!!
+    children: [
+      {
         path: "/purchased",
-        element: (
-            <UserLayout>
-                <PurchasedPage />
-            </UserLayout>
-        ),
-    },
-    {
+        element: <PurchasedPage />,
+      },
+      {
         path: "/cart",
-        element: (
-            <UserLayout>
-                <CartPage />
-            </UserLayout>
-        ),
-    },
-    {
-        path: "/login",
-        element: <LoginPage></LoginPage>,
-    },
-    {
-        path: "/register",
-        element: <RegisterPage></RegisterPage>,
-    },
-    {
-        path: "/testupload",
-        element: (
-            <UserLayout>
-                <Landing />
-            </UserLayout>
-        ),
-    },
-    {
+        element: <CartPage />,
+      },
+      {
         path: "/item/:id",
-        element: (
-            <UserLayout>
-                <ItemPage />
-            </UserLayout>
-        ),
-    },
-    {
-        path: "/home",
-        element: (
-            <UserLayout>
-                <HomePage />
-            </UserLayout>
-        ),
-    },
-    {
+        element: <ItemPage />,
+      },
+      {
         path: "/search",
-        element: (
-            <UserLayout>
-                <SearchResultsPage />
-            </UserLayout>
-        ),
-    },
+        element: <SearchResultsPage />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <MantineProvider>
-            <Notifications />
-            <RouterProvider router={router} />
-        </MantineProvider>
-    </StrictMode>
+  <StrictMode>
+    <MantineProvider>
+      <Notifications />
+      <RouterProvider router={router} />
+    </MantineProvider>
+  </StrictMode>
 );
