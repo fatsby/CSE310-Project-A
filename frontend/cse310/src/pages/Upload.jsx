@@ -166,7 +166,10 @@ export default function Upload({ onCloseUpload }) {
             </div>
           ) : (
             <div className="pt-10 pb-5">
-              <div className="relative w-full h-[350px] flex justify-center items-center text-center border-[2px] border-transparent">
+              <div
+                className="relative w-full h-[350px] flex justify-center items-center text-center rounded-[15px]"
+                style={{ border: "2px dashed #b1d2ff" }}
+              >
                 <div className="flex flex-col items-center">
                   <img src={BLUE_UP_IMG} alt="Upload" className="w-[80px]" />
                   <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
@@ -195,7 +198,7 @@ export default function Upload({ onCloseUpload }) {
             <ul className="mt-8">
               {files.map((file) => (
                 <li key={file.name} className="mb-4">
-                  <div className="flex items-center w-full h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
+                  <div className="flex items-center w-[800px] h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
                     <div className="flex-shrink-0 w-8 h-8 mr-4">
                       <img
                         src={GGDOCS_IMG}
@@ -242,18 +245,21 @@ export default function Upload({ onCloseUpload }) {
         opened={opened}
         onClose={closeModal}
         title="Set File Details"
-        size="100%"
+        size="calc(100% - 20px)"
         radius="20px"
         scrollAreaComponent={CustomScrollArea}
         overlayProps={{
-          backgroundOpacity: 0.55,
-          blur: 3,
+          backgroundOpacity: 0,
+          blur: 0,
         }}
         styles={{
+          modal: {
+            margin: "18px",
+            maxHeight: "calc(100% - 18px)",
+          },
           content: {
-            backgroundColor: "#f9f9f9",
-            height: "600px",
-            position: "relative",
+            backgroundColor: "#ffffff",
+            height: "100%",
           },
           title: {
             fontSize: "24px",
@@ -272,7 +278,7 @@ export default function Upload({ onCloseUpload }) {
         }}
       >
         <SetFileName
-          onSubmit={(title) => uploadAllUserFiles(title)}
+          onSubmit={(formData) => uploadAllUserFiles(formData)}
           onClose={closeModal}
           onCloseUp={onCloseUpload}
         />

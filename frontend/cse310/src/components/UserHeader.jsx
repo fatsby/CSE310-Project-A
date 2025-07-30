@@ -52,22 +52,33 @@ export default function UserHeader() {
           {/* Right: User section */}
           <div className="flex items-center gap-4">
             {/* Balance */}
-            <div className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 ${userData && balance > 0 ? 'opacity-100' : 'opacity-0'
-              }`}>
+            <div
+              className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 ${
+                userData && balance > 0 ? "opacity-100" : "opacity-0"
+              }`}
+            >
               <Wallet size={16} />
               <span>
-                {new Intl.NumberFormat('vi-VN', {
-                  style: 'currency',
-                  currency: 'VND'
+                {new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
                 }).format(balance)}
               </span>
             </div>
 
-            <Menu trigger="click-hover" shadow="md" width={200} transitionProps={{ transition: 'fade-down', duration: 150 }}>
+            <Menu
+              trigger="click-hover"
+              shadow="md"
+              width={200}
+              transitionProps={{ transition: "fade-down", duration: 150 }}
+            >
               <Menu.Target>
                 <div className="w-[43px] h-[43px] bg-black rounded-full overflow-hidden">
-                  <div className={`w-full h-full transition-all duration-300 ${userData ? 'opacity-100' : 'opacity-70'
-                    }`}>
+                  <div
+                    className={`w-full h-full transition-all duration-300 ${
+                      userData ? "opacity-100" : "opacity-70"
+                    }`}
+                  >
                     <img
                       src={profilePicture || avatarIMG}
                       alt="user-avatar"
@@ -78,13 +89,15 @@ export default function UserHeader() {
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Label>
-                  {userData ? userName : "Loading...."}
-                </Menu.Label>
+                <Menu.Label>{userData ? userName : "Loading...."}</Menu.Label>
                 <Menu.Item leftSection={<User size={16} />}>
                   Your profile
                 </Menu.Item>
-                <Menu.Item component={Link} to="/purchased" leftSection={<Archive size={16} />}>
+                <Menu.Item
+                  component={Link}
+                  to="/purchased"
+                  leftSection={<Archive size={16} />}
+                >
                   Your Purchased
                 </Menu.Item>
                 <Menu.Item
@@ -107,7 +120,7 @@ export default function UserHeader() {
         opened={opened}
         onClose={close}
         title="Upload Files"
-        size="50%"
+        size="calc(100% - 20px)"
         radius="20px"
         scrollAreaComponent={CustomScrollArea}
         overlayProps={{
@@ -115,10 +128,18 @@ export default function UserHeader() {
           blur: 3,
         }}
         styles={{
-          content: { backgroundColor: "#f9f9f9", height: "600px" },
+          modal: {
+            margin: "20px",
+            maxHeight: "calc(100% - 20px)",
+          },
+          content: { backgroundColor: "#f9f9f9", height: "100%" },
           title: { fontSize: "24px", fontWeight: "500", color: "#333" },
           close: { color: "#333", marginRight: "30px" },
-          header: { height: "100px", borderBottom: "1px solid #CECFD2", paddingLeft: "50px" },
+          header: {
+            height: "100px",
+            borderBottom: "1px solid #CECFD2",
+            paddingLeft: "50px",
+          },
         }}
       >
         <Upload onCloseUpload={close} />
