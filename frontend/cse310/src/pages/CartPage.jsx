@@ -3,6 +3,7 @@ import { getItemsList } from "../data/SampleData.js";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { modals } from "@mantine/modals";
 
 function CartPage() {
     const [discount, setDiscount] = useState(0);
@@ -48,13 +49,40 @@ function CartPage() {
     };
 
     // Delete 1 item
-    const handleDeleteItem = (id) => {
-        setCheckedItems(checkedItems.filter((item) => item.id !== id));
-    };
+    const handleDeleteItem = (id) =>
+        modals.openConfirmModal({
+            title: "Confirm deletion",
+            centered: true,
+            children: (
+                <p>
+                    Are you sure you want to delete ? This action cannot be
+                    undone.
+                </p>
+            ),
+            labels: { confirm: "Delete", cancel: "Cancel" },
+            confirmProps: { color: "red" },
+            onConfirm: () => {
+                setCheckedItems(checkedItems.filter((item) => item.id !== id));
+            },
+        });
 
     // Delete selected items
     const handleDeleteSelected = () => {
-        setCheckedItems(checkedItems.filter((item) => !item.selected));
+        modals.openConfirmModal({
+            title: "Confirm deletion",
+            centered: true,
+            children: (
+                <p>
+                    Are you sure you want to delete ? This action cannot be
+                    undone.
+                </p>
+            ),
+            labels: { confirm: "Delete", cancel: "Cancel" },
+            confirmProps: { color: "red" },
+            onConfirm: () => {
+                setCheckedItems(checkedItems.filter((item) => !item.selected));
+            },
+        });
     };
 
     return (
@@ -70,10 +98,11 @@ function CartPage() {
                             <div className="col-span-3 justify-end flex pr-[20px] pt-[20px] items-center">
                                 <Button
                                     variant="filled"
-                                    color="red"
+                                    color="#E32929"
                                     size="md"
                                     radius="md"
                                     onClick={handleDeleteSelected}
+                                    disabled={selectedItems.length === 0}
                                 >
                                     <Trash2 />
                                     &nbsp; {selectedItems.length} selected
@@ -132,10 +161,10 @@ function CartPage() {
                                                     <h2 className="font-medium text-[20px] ">
                                                         {item.name}
                                                     </h2>
-                                                    <p className="bg-[#547792] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                                    <p className="bg-[#6C8BA4] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
                                                         {item.subject}
                                                     </p>
-                                                    <p className="bg-[#DDA853] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                                    <p className="bg-[#A68E7C] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
                                                         {item.university}
                                                     </p>
                                                 </div>
@@ -144,13 +173,16 @@ function CartPage() {
                                     </Link>
                                     <div className="col-span-2 flex">
                                         <p className="font-bold text-blue-600 text-[22px] content-center">
-                                            {item.price} VND
+                                            {Number(
+                                                item.price
+                                            ).toLocaleString()}{" "}
+                                            VND
                                         </p>
                                     </div>
                                     <div className="col-span-1 content-center">
                                         <Button
                                             variant="filled"
-                                            color="red"
+                                            color="#E32929"
                                             onClick={() =>
                                                 handleDeleteItem(item.id)
                                             }
@@ -173,13 +205,14 @@ function CartPage() {
                                 <div className="grid grid-cols-10">
                                     <div className="col-span-5">Subtotal</div>
                                     <div className="col-span-5 text-right">
-                                        {subtotal} VND
+                                        {Number(subtotal).toLocaleString()} VND
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-10">
                                     <div className="col-span-5">Discount</div>
                                     <div className="col-span-5 text-right">
-                                        - {discount} VND
+                                        - {Number(discount).toLocaleString()}{" "}
+                                        VND
                                     </div>
                                 </div>
                             </div>
@@ -207,7 +240,7 @@ function CartPage() {
                                     Total
                                 </div>
                                 <div className="col-span-7 text-right font-medium text-[18px]">
-                                    {total} VND
+                                    {Number(total).toLocaleString()} VND
                                 </div>
                             </div>
 

@@ -1,17 +1,16 @@
 // MANTINE IMPORTS
-import { Select, TextInput, Button, Loader, Image, Alert } from '@mantine/core';
+import { Select, TextInput, Button, Loader, Image, Alert } from "@mantine/core";
 
 // LUCIDE ICONS
-import { Search, AlertCircle } from "lucide-react"
+import { Search, AlertCircle } from "lucide-react";
 
 // IMAGE IMPORTS
-import AD_BackToSchool from "../assets/HomePage/hr-ad.jpg"
+import AD_BackToSchool from "../assets/HomePage/hr-ad.jpg";
 
 // COMPONENT IMPORTS
-import ItemsRow from "../components/home_components/ItemsRow.jsx"
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
+import ItemsRow from "../components/home_components/ItemsRow.jsx";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // DATA IMPORTS
 import {
@@ -20,9 +19,8 @@ import {
     getSortedItemsByPurchase,
     getSortedItemsByRating,
     getUniversityNames,
-    getCoursesByUniversity
-} from '../data/SampleData.js';
-
+    getCoursesByUniversity,
+} from "../data/SampleData.js";
 
 function HomePage() {
     const [userData, setUserData] = useState(null);
@@ -38,7 +36,7 @@ function HomePage() {
     const [selectedCourse, setSelectedCourse] = useState(null);
 
     // SEARCH & VALIDATIONS STATES
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery, setSearchQuery] = useState("");
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -57,16 +55,16 @@ function HomePage() {
 
         // validate
         if (!selectedUniversity || !selectedCourse) {
-            setError('Please select both a university and a course to search.');
+            setError("Please select both a university and a course to search.");
             return;
         }
 
         // build search params
         const params = new URLSearchParams();
-        params.append('university', selectedUniversity);
-        params.append('course', selectedCourse);
+        params.append("university", selectedUniversity);
+        params.append("course", selectedCourse);
         if (searchQuery) {
-            params.append('q', searchQuery);
+            params.append("q", searchQuery);
         }
 
         navigate(`/search?${params.toString()}`);
@@ -87,10 +85,15 @@ function HomePage() {
     }, [userData]);
 
     useEffect(() => {
-        if (userData && itemsFromUserUni && bestSellerItems && highestRatingItems) {
+        if (
+            userData &&
+            itemsFromUserUni &&
+            bestSellerItems &&
+            highestRatingItems
+        ) {
             setIsLoading(false);
         }
-    }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems])
+    }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems]);
 
     if (isLoading) {
         return (
@@ -104,7 +107,9 @@ function HomePage() {
         <div className="container mx-auto px-4 pb-4 pt-[125px]">
             {/* HEADER TEXT */}
             <div className="w-fit mx-auto">
-                <h1 className="text-center text-[50px] font-semibold">What are you looking for?</h1>
+                <h1 className="text-center text-[50px] font-semibold">
+                    What are you looking for?
+                </h1>
 
                 {/* SEARCH SECTION */}
                 <form onSubmit={handleSearch}>
@@ -116,7 +121,7 @@ function HomePage() {
                                 pb={15}
                                 placeholder="Select University"
                                 radius="lg"
-                                size='md'
+                                size="md"
                                 searchable
                                 value={selectedUniversity}
                                 onChange={handleUniversityChange}
@@ -129,7 +134,7 @@ function HomePage() {
                                 pb={15}
                                 placeholder="Select Course"
                                 radius="lg"
-                                size='md'
+                                size="md"
                                 searchable
                                 value={selectedCourse}
                                 onChange={setSelectedCourse}
@@ -143,13 +148,24 @@ function HomePage() {
                                 placeholder="Search for documents name, notes, and more... (Optional)"
                                 leftSection={<Search size="16" />}
                                 radius="lg"
-                                size='md'
+                                size="md"
                                 value={searchQuery}
-                                onChange={(event) => setSearchQuery(event.currentTarget.value)}
+                                onChange={(event) =>
+                                    setSearchQuery(event.currentTarget.value)
+                                }
                             />
                         </div>
-                        <div className='flex-auto w-1/7'>
-                            <Button type="submit" size='md' variant="filled" radius="lg" fullWidth color="#0052cc">Find</Button>
+                        <div className="flex-auto w-1/7">
+                            <Button
+                                type="submit"
+                                size="md"
+                                variant="filled"
+                                radius="lg"
+                                fullWidth
+                                color="#0052cc"
+                            >
+                                Find
+                            </Button>
                         </div>
                     </div>
                 </form>
@@ -170,7 +186,6 @@ function HomePage() {
                 )}
             </div>
 
-
             {/* ADVERTISEMENT */}
             <div className="mt-10">
                 <Image src={AD_BackToSchool} radius="md" />
@@ -179,9 +194,15 @@ function HomePage() {
             {/* MAIN CONTENT */}
             <div className="pt-5">
                 {/* ITEMS FROM USER UNI */}
-                <ItemsRow title={userData.university} itemsArray={itemsFromUserUni} />
+                <ItemsRow
+                    title={userData.university}
+                    itemsArray={itemsFromUserUni}
+                />
                 <ItemsRow title="Best Selling" itemsArray={bestSellerItems} />
-                <ItemsRow title="Highest Rating" itemsArray={highestRatingItems} />
+                <ItemsRow
+                    title="Highest Rating"
+                    itemsArray={highestRatingItems}
+                />
             </div>
         </div>
     );
