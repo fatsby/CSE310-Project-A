@@ -120,7 +120,7 @@ export default function UserHeader() {
         opened={opened}
         onClose={close}
         title="Upload Files"
-        size="calc(100% - 20px)"
+        size="55vw"
         radius="20px"
         scrollAreaComponent={CustomScrollArea}
         overlayProps={{
@@ -128,11 +128,9 @@ export default function UserHeader() {
           blur: 3,
         }}
         styles={{
-          modal: {
-            margin: "20px",
-            maxHeight: "calc(100% - 20px)",
+          content: {
+            backgroundColor: "#f9f9f9",
           },
-          content: { backgroundColor: "#f9f9f9", height: "100%" },
           title: { fontSize: "24px", fontWeight: "500", color: "#333" },
           close: { color: "#333", marginRight: "30px" },
           header: {

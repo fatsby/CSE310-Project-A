@@ -1,17 +1,8 @@
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
-import { notifications } from "@mantine/notifications";
-import {
-  ActionIcon,
-  Center,
-  CheckIcon,
-  Modal,
-  RingProgress,
-  ScrollArea,
-  Text,
-} from "@mantine/core";
+import { CheckIcon, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import SetFileName from "./SetFileName";
 
 // ===========================
 // Assets
@@ -21,12 +12,14 @@ import GGDOCS_IMG from "../assets/Upload/ggdoc.png";
 
 export default function Upload({ onCloseUpload }) {
   // ===========================
+  // Navigate
+  // ===========================
+  const navigate = useNavigate();
+
+  // ===========================
   // State Management
   // ===========================
   const [files, setFiles] = useState([]);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadedURL, setUploadedURL] = useState([]);
   const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
 
   const checkIcon = <CheckIcon size={20} />;
@@ -79,83 +72,29 @@ export default function Upload({ onCloseUpload }) {
   };
 
   // ===========================
-  // Upload all selected files
-  // ===========================
-  const uploadAllUserFiles = async (title) => {
-    if (files.length === 0) {
-      console.error("No files selected.");
-      return;
-    }
-
-    setIsUploading(true);
-    setUploadProgress(0);
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
-      );
-      formData.append("api_key", import.meta.env.VITE_CLOUDINARY_API_KEY);
-
-      try {
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/${
-            import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-          }/raw/upload`,
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        const data = await response.json();
-        console.log(`Uploaded URL for ${file.name}:`, data.secure_url);
-        setUploadedURL((prevURLs) => [...prevURLs, data.secure_url]);
-
-        const progress = Math.round(((i + 1) / files.length) * 100);
-        setUploadProgress(progress);
-      } catch (err) {
-        console.error(`Error uploading ${file.name}:`, err);
-      }
-    }
-    setIsUploading(false);
-    notifications.show({
-      title: "Upload Complete",
-      message: `${title} Uploaded! 🎉`,
-      color: "#12b886",
-      icon: checkIcon,
-      styles: (theme) => ({
-        root: {
-          backgroundColor: "#ffffff",
-        },
-      }),
-    });
-  };
-
-  // ===========================
   // Component Rendering
   // ===========================
   return (
-    <div className="relative w-full h-full bg-[#f9f9f9] mx-auto">
+    <div className="relative w-full h-full bg-[#f9f9f9] mx-auto aspect-[12/7]">
       {/* === Dropzone Area === */}
-      <div className="px-16">
-        <div {...getRootProps()}>
+      <div className="flex justify-center items-center h-full">
+        <div
+          {...getRootProps()}
+          className="w-full h-full flex justify-center items-center rounded-[15px] "
+        >
           <input {...getInputProps()} />
           {isDragActive ? (
-            <div className="pt-10 pb-5">
+            <div className="w-full h-full flex justify-center items-center rounded-[15px] p-10">
               <div
-                className="relative w-full h-[350px] flex justify-center items-center text-center rounded-[15px] bg-[#f2f7fe]"
+                className="relative w-full h-full flex justify-center items-center text-center bg-[#f2f7fe] rounded-[15px]"
                 style={{ border: "2px dashed #b1d2ff" }}
               >
                 <div className="flex flex-col items-center">
                   <img src={BLUE_UP_IMG} alt="Upload" className="w-[80px]" />
-                  <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
+                  <p className="text-[15px] text-[#4e5966] font-bold">
                     Drag & Drop
                   </p>
-                  <p className="text-[#a0a9b5] text-[11px] mb-5">
+                  <p className="text-[#a0a9b5] text-[11px]">
                     ( doc, pdf, pptx, zip )
                   </p>
                   <div className="text-transparent bg-transparent px-4 py-2 rounded-[10px] text-[13px] font-bold">
@@ -165,17 +104,14 @@ export default function Upload({ onCloseUpload }) {
               </div>
             </div>
           ) : (
-            <div className="pt-10 pb-5">
-              <div
-                className="relative w-full h-[350px] flex justify-center items-center text-center rounded-[15px]"
-                style={{ border: "2px dashed #b1d2ff" }}
-              >
+            <div className="w-full h-full flex justify-center items-center rounded-[15px]">
+              <div className="relative w-full flex justify-center items-center text-center rounded-[15px] border-2 border-transparent">
                 <div className="flex flex-col items-center">
                   <img src={BLUE_UP_IMG} alt="Upload" className="w-[80px]" />
-                  <p className="text-[15px] mt-5 text-[#4e5966] font-bold">
+                  <p className="text-[15px] text-[#4e5966] font-bold">
                     Drag & Drop
                   </p>
-                  <p className="text-[#a0a9b5] text-[11px] mb-5">
+                  <p className="text-[#a0a9b5] text-[11px]">
                     ( doc, pdf, pptx, zip )
                   </p>
                   <button
@@ -193,12 +129,12 @@ export default function Upload({ onCloseUpload }) {
 
       {/* === Uploaded File List === */}
       {files.length > 0 && (
-        <div className="mx-auto flex flex-col justify-center items-center">
+        <div className="mx-auto flex flex-col justify-center items-center pt-5 pb-8">
           <div>
-            <ul className="mt-8">
+            <ul className="">
               {files.map((file) => (
                 <li key={file.name} className="mb-4">
-                  <div className="flex items-center w-[800px] h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
+                  <div className="flex items-center w-[500px] h-[60px] px-4 bg-white rounded-[10px] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
                     <div className="flex-shrink-0 w-8 h-8 mr-4">
                       <img
                         src={GGDOCS_IMG}
@@ -232,73 +168,16 @@ export default function Upload({ onCloseUpload }) {
 
           {/* === Upload Button === */}
           <button
-            onClick={openModal}
+            onClick={() => {
+              onCloseUpload?.();
+              navigate("/set-file-name");
+            }}
             className="text-white bg-[#4e93fc] px-4 py-2 mt-5 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
           >
             <b className="text-[13px]">Upload</b>
           </button>
         </div>
       )}
-
-      {/* === Upload Confirmation Modal === */}
-      <Modal
-        opened={opened}
-        onClose={closeModal}
-        title="Set File Details"
-        size="calc(100% - 20px)"
-        radius="20px"
-        scrollAreaComponent={CustomScrollArea}
-        overlayProps={{
-          backgroundOpacity: 0,
-          blur: 0,
-        }}
-        styles={{
-          modal: {
-            margin: "18px",
-            maxHeight: "calc(100% - 18px)",
-          },
-          content: {
-            backgroundColor: "#ffffff",
-            height: "100%",
-          },
-          title: {
-            fontSize: "24px",
-            fontWeight: "500",
-            color: "#333",
-          },
-          close: {
-            color: "#333",
-            marginRight: "30px",
-          },
-          header: {
-            height: "100px",
-            borderBottom: "1px solid #CECFD2",
-            paddingLeft: "50px",
-          },
-        }}
-      >
-        <SetFileName
-          onSubmit={(formData) => uploadAllUserFiles(formData)}
-          onClose={closeModal}
-          onCloseUp={onCloseUpload}
-        />
-        {isUploading && (
-          <div className="absolute flex justify-center items-center mt-6 inset-0 z-[9999]">
-            <RingProgress
-              size={120}
-              thickness={12}
-              roundCaps
-              sections={[{ value: uploadProgress, color: "#439aff" }]}
-              rootColor="#bde7f7"
-              label={
-                <Text size="sm" ta="center">
-                  {uploadProgress}%
-                </Text>
-              }
-            />
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }
