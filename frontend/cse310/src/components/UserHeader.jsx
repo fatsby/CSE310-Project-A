@@ -90,7 +90,7 @@ export default function UserHeader() {
 
               <Menu.Dropdown>
                 <Menu.Label>{userData ? userName : "Loading...."}</Menu.Label>
-                <Menu.Item leftSection={<User size={16} />}>
+                <Menu.Item component={Link} to={`/profile/${userData.id}`} leftSection={<User size={16} />}>
                   Your profile
                 </Menu.Item>
                 <Menu.Item
