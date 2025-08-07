@@ -26,6 +26,7 @@ import CartPage from "./pages/CartPage.jsx";
 import PurchasedPage from "./pages/PurchasedPage.jsx";
 import SetFileName from "./pages/SetFileName.jsx";
 import DataPage from "./pages/DataPage.jsx";
+import ProfileController from "./pages/ProfileController.jsx";
 
 const checkAuth = () => {
     try {
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
                 path: "/set-file-name",
                 element: <SetFileName />,
             },
+            {
+              path: "/profile/:id",
+              element: <ProfileController />,
+            }
         ],
     },
 ]);
