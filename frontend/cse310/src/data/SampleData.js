@@ -414,7 +414,6 @@ const itemsList = [
         lastUpdated: "05/06/2025",
         purchaseCount: 278,
     },
-    // --- END: Added items for pagination testing ---
 ];
 
 // --- Current Logged-In User's Data ---
@@ -434,7 +433,8 @@ const currentUserData = {
             name: "PHY102 Physics Exam Prep",
         },
     ],
-    favoriteItems: [2, 7], //item IDs
+    favoriteItems: [2, 7], //item IDs //NOTE: this is unnecessary, deprecate it later
+    uploadedItems: [7, 9, 15, 21], //item IDs
     balance: "550000",
     moneyearned: "500000",
     moneyspent: "450000",
