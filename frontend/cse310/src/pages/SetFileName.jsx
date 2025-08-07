@@ -10,11 +10,11 @@ import {
   Radio,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconHelpOctagon } from "@tabler/icons-react";
 
 // ===========================
 // Assets
 // ===========================
-import PurpleBgIMG from "../assets/Landing/purple-bg.png";
 import { useEffect, useRef, useState } from "react";
 
 export default function SetFileName({ onSubmit, onClose, onCloseUp }) {
@@ -59,6 +59,23 @@ export default function SetFileName({ onSubmit, onClose, onCloseUp }) {
       <form className="px-13 py-10 pt-[125px]">
         <div className="flex md:flex-row gap-7">
           <div className="w-2/3 px-4">
+            <div class="relative">
+              <input
+                type="text"
+                id="floating_helper"
+                aria-describedby="floating_helper_text"
+                class="block rounded-lg px-4 pb-2.5 pt-7 w-full text-[14px] text-gray-900 bg-transparent border-[1px] border-[#ced4da] appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder="Add a title that describes your material"
+              />
+              <label
+                for="floating_helper"
+                class="absolute flex items-center text-[18px] text-[#676767] dark:text-gray-400 font-semibold scale-75 -translate-y-4 top-5 z-10 origin-[0] start-4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              >
+                Title{" "}
+                <IconHelpOctagon size={18} stroke={1.25} className="pl-0.5" />
+              </label>
+            </div>
+
             {/* Filename input */}
             <TextInput
               label="Title"
