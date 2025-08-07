@@ -2,6 +2,7 @@ import { TextInput, Select, Button } from "@mantine/core";
 import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
 import { getUserPurchased } from "../data/SampleData.js";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function PurchasedPage() {
     const [allItems, setAllItems] = useState([]);
@@ -56,7 +57,7 @@ function PurchasedPage() {
                     .map((item) => item.subject)
             ),
         ]);
-        filterItems(value, null, searchValue);
+        filterItems(value, selectedSubject, searchValue);
     };
 
     // Filter by Subject
@@ -144,7 +145,10 @@ function PurchasedPage() {
                     <div className="grid grid-cols-2 gap-4 pt-[20px] px-[10px]">
                         {filteredItems.map((item) => (
                             <div key={item.id} className="col-span-1">
-                                <div className="grid grid-cols-10 shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] rounded-xl p-[5px]">
+                                <Link
+                                    to={`/data/${item.id}`}
+                                    className="grid grid-cols-10 shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] rounded-xl p-[5px]"
+                                >
                                     <div className="col-span-3 flex content-center">
                                         <img
                                             src={item.images}
@@ -165,7 +169,7 @@ function PurchasedPage() {
                                             </p>
                                         </div>
                                     </div>
-                                </div>
+                                </Link>
                             </div>
                         ))}
                     </div>

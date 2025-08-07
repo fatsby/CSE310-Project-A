@@ -4,7 +4,6 @@ import viteLogo from "/vite.svg";
 import "@mantine/core/styles.css";
 import "@mantine/carousel/styles.css";
 import "@mantine/notifications/styles.css";
-import "@mantine/modals";
 import "./App.css";
 
 function App() {
