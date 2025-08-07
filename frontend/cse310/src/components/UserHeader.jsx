@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Modal, ScrollArea, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Upload from "../pages/Upload";
 import useUserStore from "../stores/userStore";
+import { getCurrentUser } from "../data/SampleData"; // Import for simulated fetch
 
 // Lucide Logo Imports
 import { User, LogOut, Wallet, Archive } from "lucide-react";
@@ -16,11 +17,35 @@ export default function UserHeader() {
   // Modal state
   const [opened, { open, close }] = useDisclosure(false);
 
-  // Zustand selectors
+  // ZUSTAND SELECTORS
   const userData = useUserStore((state) => state.userData);
-  const userName = useUserStore((state) => state.getUserName());
-  const balance = useUserStore((state) => state.getBalance());
   const profilePicture = useUserStore((state) => state.getProfilePicture());
+  const loadUser = useUserStore((state) => state.loadUser);
+  const clearUser = useUserStore((state) => state.clearUser);
+
+  // SENSITIVE user data that must be fetched
+  const [sensitiveUserData, setSensitiveUserData] = useState(null);
+
+  // Effect 1: load basic user data
+  useEffect(() => {
+    if (!userData) {
+      loadUser();
+    }
+  }, [userData, loadUser]);
+
+  // Effect 2: load sensitive user data
+  useEffect(() => {
+    if (userData) { // Checks if non-sensitive data exists
+      // On backend implementation, replace this with secure API call:
+      // const data = await fetch('/api/user/details');
+      // For now, we simulate it by getting the full user object again.
+      const fullUserData = getCurrentUser(); 
+      setSensitiveUserData(fullUserData);
+    } else {
+      // If userData is null (user logged out), clear sensitive data too
+      setSensitiveUserData(null);
+    }
+  }, [userData]); // This effect runs when the user logs in or out
 
   const CustomScrollArea = (props) => (
     <ScrollArea.Autosize type="never" {...props} />
@@ -51,18 +76,18 @@ export default function UserHeader() {
 
           {/* Right: User section */}
           <div className="flex items-center gap-4">
-            {/* Balance */}
+            {/* Balance - reads from sensitiveUserData */}
             <div
               className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 ${
-                userData && balance > 0 ? "opacity-100" : "opacity-0"
+                sensitiveUserData && sensitiveUserData.balance > 0 ? "opacity-100" : "opacity-0"
               }`}
             >
               <Wallet size={16} />
               <span>
-                {new Intl.NumberFormat("vi-VN", {
+                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
-                }).format(balance)}
+                }).format(sensitiveUserData.balance)}
               </span>
             </div>
 
@@ -89,10 +114,19 @@ export default function UserHeader() {
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Label>{userData ? userName : "Loading...."}</Menu.Label>
-                <Menu.Item component={Link} to={`/profile/${userData.id}`} leftSection={<User size={16} />}>
+                {/* Menu Label - Reads name from sensitiveUserData */}
+                <Menu.Label>{sensitiveUserData ? sensitiveUserData.name : "Loading..."}</Menu.Label>
+                
+                {/* Profile Link - Reads ID from sensitiveUserData */}
+                <Menu.Item 
+                  component={Link} 
+                  to={`/profile/${sensitiveUserData?.id}`} 
+                  disabled={!sensitiveUserData}
+                  leftSection={<User size={16} />}
+                >
                   Your profile
                 </Menu.Item>
+                
                 <Menu.Item
                   component={Link}
                   to="/purchased"
@@ -103,7 +137,10 @@ export default function UserHeader() {
                 <Menu.Item
                   color="red"
                   leftSection={<LogOut size={16} />}
-                  onClick={() => useUserStore.getState().clearUser()}
+                  onClick={() => {
+                    clearUser();
+                    setSensitiveUserData(null); // Also clear local sensitive state
+                  }}
                   component={Link}
                   to="/"
                 >

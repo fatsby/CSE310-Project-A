@@ -7,7 +7,7 @@ const useUserStore = create()(
     persist(
       (set, get) => ({
         // State
-        userData: null,
+        userData: null, // This only hold non-sensitive data
         error: null,
         isLoading: false,
 
@@ -15,8 +15,9 @@ const useUserStore = create()(
         loadUser: async () => {
           try {
             const user = getCurrentUser();
+            const { id, balance, moneyearned, moneyspent, university, purchasedItems, name, email, ...safeUserData } = user;
             set({ 
-              userData: user, 
+              userData: safeUserData, 
               error: null 
             });
           } catch (error) {
@@ -28,23 +29,16 @@ const useUserStore = create()(
           }
         },
 
-        //LOGIN ACTION
         login: async (credentials) => {
           set({ isLoading: true, error: null });
-          
           try {
-            // const response = await fetch('/api/login', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify(credentials)
-            // });
-            // const userData = await response.json();
-
-            // Simulate login with sample data
-            const user = getCurrentUser(); // DELETE THIS ON BACKEND IMPLEMENTATION
+            // Simulate login with sample data, REPLACE with actual login logic ON BACKEND IMPLEMENTATION
+            // This is a placeholder for actual authentication logic
+            const user = getCurrentUser();
+            const { id, balance, moneyearned, moneyspent, university, purchasedItems, name, email, ...safeUserData } = user;
             
             set({ 
-              userData: user, 
+              userData: safeUserData, 
               isLoading: false,
               error: null 
             });
@@ -64,22 +58,13 @@ const useUserStore = create()(
         updateUser: (updates) => {
           const currentUser = get().userData;
           if (currentUser) {
+            const { id, balance, moneyearned, moneyspent, university, purchasedItems, name, email, ...safeUpdates } = updates;
             set({ 
-              userData: { ...currentUser, ...updates } 
+              userData: { ...currentUser, ...safeUpdates } 
             });
           }
         },
         
-        // DELETE THIS ON BACKEND IMPLEMENTATION
-        updateBalance: (newBalance) => {
-          const currentUser = get().userData;
-          if (currentUser) {
-            set({ 
-              userData: { ...currentUser, balance: newBalance } 
-            });
-          }
-        },
-
         clearUser: () => {
           set({ 
             userData: null, 
@@ -89,14 +74,13 @@ const useUserStore = create()(
 
         // Selectors
         getUser: () => get().userData,
-        getBalance: () => get().userData?.balance || 0,
         getProfilePicture: () => get().userData?.profilePicture,
-        getUserName: () => get().userData?.name || 'User',
+        // Removed getBalance and getUserName
       }),
       {
         name: 'user-storage',
         partialize: (state) => ({ 
-          userData: state.userData 
+          userData: state.userData
         }),
       }
     ),
