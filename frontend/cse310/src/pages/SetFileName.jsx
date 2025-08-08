@@ -9,11 +9,11 @@ import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 
 // import Mantine Icon
-import { IconHelpOctagon } from "@tabler/icons-react";
-import { IconCurrencyDong } from "@tabler/icons-react";
-import { IconPhotoPlus } from "@tabler/icons-react";
-import { IconX } from "@tabler/icons-react";
-import { IconCheck } from "@tabler/icons-react";
+// import { IconHelpOctagon } from "@tabler/icons-react";
+// import { IconCurrencyDong } from "@tabler/icons-react";
+// import { IconPhotoPlus } from "@tabler/icons-react";
+// import { IconX } from "@tabler/icons-react";
+// import { IconCheck } from "@tabler/icons-react";
 
 // import Img
 import defaultIMG from "../assets/Upload/SetFileName/mountain.jpg";

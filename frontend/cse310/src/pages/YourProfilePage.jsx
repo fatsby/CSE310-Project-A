@@ -1,9 +1,9 @@
 import useUserStore from "../stores/userStore";
-import { Tabs, Loader, LoadingOverlay, Button } from "@mantine/core";
-import { CloudUpload, BanknoteArrowDown, BanknoteArrowUp, BookCheck, TriangleAlert, Pencil } from "lucide-react";
+import { Tabs, Loader, LoadingOverlay } from "@mantine/core";
+import { CloudUpload, BanknoteArrowDown, BanknoteArrowUp, BookCheck, TriangleAlert, Pencil, History } from "lucide-react";
 import { getItemById, getCurrentUser } from "../data/SampleData";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import UploadedItemCard from "../components/UserProfilePage_components/UploadedItemCard";
 // import avatarIMG from '../path/to/default/avatar.png';
 
 export default function YourProfilePage() {
@@ -40,46 +40,14 @@ export default function YourProfilePage() {
   };
   const itemsArray = uploadedItems(userData?.uploadedItems);
 
-  function UploadedItemCard({ item, onEdit, onDelete }) {
-    if (!item) return null;
-
-    return (
-      <div className="border p-4 mb-4 rounded-lg shadow-sm">
-        <div className="flex items-center justify-between mb-2">
-          {/* Container for item details on the left */}
-          <div className="flex items-center space-x-1">
-            <Link to={`/item/${item.id}`}>
-              <h3 className="text-lg font-semibold hover:underline">
-                {item.name}
-              </h3>
-            </Link>
-            <p className="bg-blue-700 text-white font-semibold rounded-lg p-1.5 text-sm">
-              {item.subject}
-            </p>
-            <p className="bg-rose-600 text-white font-semibold rounded-lg p-1.5 text-sm">
-              {item.university}
-            </p>
-          </div>
-
-          {/* Container for buttons on the right */}
-          <div className="flex space-x-2">
-            <Button variant="light" radius="md" rightSection={<Pencil size="16"/>}>Edit</Button>
-            <Button variant="filled" radius="md" color="#c10007" rightSection={<TriangleAlert size="16" color="yellow"/>}>Delete</Button>
-          </div>
-        </div>
-        <p className="text-gray-600">Price: ${item.price}</p>
-      </div>
-    );
-  }
-
 
 
   if (isLoading || !sensitiveUserData) {
     return (
-      <div className="container mx-auto px-4 pb-4 pt-[125px]">
-        <Loader visible={true} overlayBlur={2} />
-      </div>
-    );
+            <div className="flex justify-center items-center h-screen">
+                <Loader color="blue" />
+            </div>
+        );
   }
 
   return (
@@ -106,15 +74,30 @@ export default function YourProfilePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             <div className="bg-gray-100 p-4 rounded-lg text-center">
               <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BanknoteArrowDown color="green" /> Money Earned</h3>
-              <p className="text-2xl font-bold">${sensitiveUserData?.moneyearned || 0}</p>
+              <p className="text-2xl font-bold">
+                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(sensitiveUserData.moneyearned)}
+              </p>
             </div>
             <div className="bg-gray-100 p-4 rounded-lg text-center">
               <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BanknoteArrowUp color="red" /> Money Spent</h3>
-              <p className="text-2xl font-bold">${sensitiveUserData?.moneyspent || 0}</p>
+              <p className="text-2xl font-bold">
+                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(sensitiveUserData.moneyspent)}
+              </p>
             </div>
             <div className="bg-gray-100 p-4 rounded-lg text-center">
               <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BookCheck color="orange" /> Total Purchases</h3>
-              <p className="text-2xl font-bold">{sensitiveUserData?.purchasedItems?.length || 0}</p>
+              <p className="text-2xl font-bold">
+                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(sensitiveUserData.balance)}
+              </p>
             </div>
           </div>
         </div>
@@ -126,6 +109,9 @@ export default function YourProfilePage() {
           <Tabs.List>
             <Tabs.Tab value="uploaded" leftSection={<CloudUpload />}>
               Uploaded Items
+            </Tabs.Tab>
+            <Tabs.Tab value="history" leftSection={<History />}>
+              Balance History
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel className="p-6 relative" value="uploaded">
