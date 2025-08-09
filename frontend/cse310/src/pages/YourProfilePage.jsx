@@ -1,9 +1,10 @@
 import useUserStore from "../stores/userStore";
-import { Tabs, Loader, LoadingOverlay } from "@mantine/core";
+import { Tabs, Loader, LoadingOverlay, ScrollArea } from "@mantine/core";
 import { CloudUpload, BanknoteArrowDown, BanknoteArrowUp, BookCheck, TriangleAlert, Pencil, History } from "lucide-react";
 import { getItemById, getCurrentUser } from "../data/SampleData";
 import { useState, useEffect } from "react";
 import UploadedItemCard from "../components/UserProfilePage_components/UploadedItemCard";
+import BalanceHistoryItem from "../components/UserProfilePage_components/BalanceHistoryItem";
 // import avatarIMG from '../path/to/default/avatar.png';
 
 export default function YourProfilePage() {
@@ -44,10 +45,10 @@ export default function YourProfilePage() {
 
   if (isLoading || !sensitiveUserData) {
     return (
-            <div className="flex justify-center items-center h-screen">
-                <Loader color="blue" />
-            </div>
-        );
+      <div className="flex justify-center items-center h-screen">
+        <Loader color="blue" />
+      </div>
+    );
   }
 
   return (
@@ -71,7 +72,7 @@ export default function YourProfilePage() {
 
         {/* RIGHT COLUMN */}
         <div className="lg:col-span-8 bg-[#fff] shadow-md rounded-2xl p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
             <div className="bg-gray-100 p-4 rounded-lg text-center">
               <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BanknoteArrowDown color="green" /> Money Earned</h3>
               <p className="text-2xl font-bold">
@@ -104,7 +105,7 @@ export default function YourProfilePage() {
       </div>
 
       {/* TABS */}
-      <div className="mt-6 bg-[#fff] shadow-md rounded-2xl p-6 min-h-[500px]">
+      <div className="mt-6 bg-[#fff] shadow-md rounded-2xl p-6 min-h-[500px] max-h-[500px]">
         <Tabs color="indigo" variant="pills" radius="xl" defaultValue="uploaded">
           <Tabs.List>
             <Tabs.Tab value="uploaded" leftSection={<CloudUpload />}>
@@ -114,15 +115,31 @@ export default function YourProfilePage() {
               Balance History
             </Tabs.Tab>
           </Tabs.List>
+
+          {/* UPLOADED ITEMS */}
           <Tabs.Panel className="p-6 relative" value="uploaded">
-            <LoadingOverlay visible={isLoading} overlayBlur={2} />
-            {itemsArray.length > 0 ? (
-              itemsArray.map((item) => (
-                item && <UploadedItemCard key={item.id} item={item} />
-              ))
-            ) : (
-              !isLoading && <p>You have not uploaded any items yet.</p>
-            )}
+            <ScrollArea h={400} type="always" offsetScrollbars>
+              <LoadingOverlay visible={isLoading} overlayBlur={2} />
+              {itemsArray.length > 0 ? (
+                itemsArray.map((item) => (
+                  item && <UploadedItemCard key={item.id} item={item} />
+                ))
+              ) : (
+                !isLoading && <p>You have not uploaded any items yet.</p>
+              )}
+            </ScrollArea>
+          </Tabs.Panel>
+
+          {/* BALANCE HISTORY */}
+          <Tabs.Panel className="p-6 relative" value="history" offsetScrollbars>
+            <ScrollArea h={400} type="always">
+              <BalanceHistoryItem item={{ date: "12/01/2023", description: "Profit from selling CSE301 Final Database", amount: 100000 }} />
+              <BalanceHistoryItem item={{ date: "12/01/2023", description: "Profit from selling CSE301 Final Database", amount: 100000 }} />
+              <BalanceHistoryItem item={{ date: "12/01/2023", description: "Profit from selling CSE301 Final Database", amount: 100000 }} />
+              <BalanceHistoryItem item={{ date: "11/01/2023", description: "Refund for CSE101 Course Material", amount: -20000 }} />
+              <BalanceHistoryItem item={{ date: "10/01/2023", description: "Added from bank account", amount: 50000 }} />
+              <BalanceHistoryItem item={{ date: "10/01/2023", description: "Purchased CSE201 Exam Preps", amount: -50000 }} />
+            </ScrollArea>
           </Tabs.Panel>
         </Tabs>
       </div>
