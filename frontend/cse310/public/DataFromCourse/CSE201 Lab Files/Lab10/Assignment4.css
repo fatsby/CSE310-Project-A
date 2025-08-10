@@ -1,0 +1,59 @@
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+li {
+    padding: 10px 15px 10px 40px;
+    cursor: pointer;
+    position: relative;
+}
+
+li:nth-child(odd) {
+    background-color: white;
+    color: gray;
+}
+
+li:nth-child(even) {
+    background-color: gray;
+    color: white;
+}
+
+.check::before {
+    position: absolute;
+    /* Set the font for this icon style */
+    font-family: "Font Awesome 6 Free";
+    /* Set the weight for this icon style */
+    font-weight: 900;
+    /* Make sure icons render pixel-perfect */
+    -webkit-font-smoothing: antialiased;
+    /* Set the Unicode value for the "fa-ghost" icon */
+    content: "\f00c";
+    left: 15px;
+    top: 10px;
+}
+
+.check {
+    text-decoration: line-through;
+}
+
+.remove {
+    position: absolute;
+    right: 15px;
+}
+
+.wrapper {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.input-wrapper {
+    background-color: #659ff7;
+    padding: 10px;
+}
+
+.input-wrapper > h3 {
+    display: inline-block;
+    color: white;
+}

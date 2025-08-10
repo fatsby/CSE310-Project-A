@@ -1,24 +1,13 @@
 import { useParams } from "react-router-dom";
 import { TextInput, Select, Button } from "@mantine/core";
-import {
-    getItemById,
-    getUserById,
-    getReviewsByItemId,
-    getOtherItems,
-} from "../data/SampleData";
+import { getItemById } from "../data/SampleData";
 import { ArrowDownToLine } from "lucide-react";
-import { Worker } from "@react-pdf-viewer/core";
-import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
-import { fullScreenPlugin } from "@react-pdf-viewer/full-screen";
 import "@react-pdf-viewer/full-screen/lib/styles/index.css";
-import { SpecialZoomLevel } from "@react-pdf-viewer/core";
-import {
-    ExitFullScreenIcon,
-    FullScreenIcon,
-} from "@react-pdf-viewer/full-screen";
+
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
+import TreePdfBrowser from "../components/TreePdfBrowser";
 
 function DataPage() {
     const { id } = useParams();
@@ -44,17 +33,7 @@ function DataPage() {
                         </Button>
                     </div>
                 </div>
-                <div>
-                    <Worker
-                        workerUrl={`https://unpkg.com/pdfjs-dist@^3.4.120/build/pdf.worker.min.js`}
-                    >
-                        <Toolbar />
-                        <Viewer
-                            fileUrl="/Lab4.pdf"
-                            plugins={[toolbarPluginInstance]}
-                        />
-                    </Worker>
-                </div>
+                <TreePdfBrowser courseCode={data.name} />
             </div>
         </>
     );

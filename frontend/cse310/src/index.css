@@ -3,11 +3,11 @@
 @import "tailwindcss";
 
 @layer base {
-  html {
-    height: 100%;
-  }
+    html {
+        height: 100%;
+    }
 
-  body {
-    font-family: "Montserrat", sans-serif;
-  }
+    body {
+        font-family: "Montserrat", sans-serif;
+    }
 }

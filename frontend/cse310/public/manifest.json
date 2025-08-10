@@ -1,0 +1,1030 @@
+{
+  "BUS101 Business Management Slides": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/BUS101%20Business%20Management%20Slides/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CHE101 Chemistry Lab Guide": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CHE101%20Chemistry%20Lab%20Guide/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Algorithm Practice Problems": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Algorithm%20Practice%20Problems/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Binary Tree Notes": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Binary%20Tree%20Notes/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Data Structures Cheatsheet": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Data%20Structures%20Cheatsheet/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Dynamic Programming Problems": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Dynamic%20Programming%20Problems/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Final Project Sample": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Final%20Project%20Sample/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Full Lecture Notes": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Full%20Lecture%20Notes/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Graph Theory Explained": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Graph%20Theory%20Explained/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Hashing Techniques Guide": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Hashing%20Techniques%20Guide/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Lab Files": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Lab%20Files/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    },
+    {
+      "label": "Lab10",
+      "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/",
+      "children": [
+        {
+          "label": "image",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/image/",
+          "children": [
+            {
+              "label": "pic1.jpg",
+              "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/image/pic1.jpg",
+              "isLeaf": true,
+              "ext": ".jpg"
+            },
+            {
+              "label": "pic2.jpg",
+              "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/image/pic2.jpg",
+              "isLeaf": true,
+              "ext": ".jpg"
+            },
+            {
+              "label": "pic3.jpg",
+              "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/image/pic3.jpg",
+              "isLeaf": true,
+              "ext": ".jpg"
+            },
+            {
+              "label": "pic4.jpg",
+              "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/image/pic4.jpg",
+              "isLeaf": true,
+              "ext": ".jpg"
+            }
+          ]
+        },
+        {
+          "label": "Assignment1.html",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment1.html",
+          "isLeaf": true,
+          "ext": ".html"
+        },
+        {
+          "label": "Assignment2.html",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment2.html",
+          "isLeaf": true,
+          "ext": ".html"
+        },
+        {
+          "label": "Assignment3.css",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment3.css",
+          "isLeaf": true,
+          "ext": ".css"
+        },
+        {
+          "label": "Assignment3.html",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment3.html",
+          "isLeaf": true,
+          "ext": ".html"
+        },
+        {
+          "label": "Assignment4.css",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment4.css",
+          "isLeaf": true,
+          "ext": ".css"
+        },
+        {
+          "label": "Assignment4.html",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment4.html",
+          "isLeaf": true,
+          "ext": ".html"
+        },
+        {
+          "label": "Assignment5.html",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Assignment5.html",
+          "isLeaf": true,
+          "ext": ".html"
+        },
+        {
+          "label": "Lab 10 - Javascript - jQuery.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Lab%2010%20-%20Javascript%20-%20jQuery.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Slide",
+      "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/",
+      "children": [
+        {
+          "label": "0. Policy.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/0.%20Policy.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "1. Web Basics.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/1.%20Web%20Basics.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "2. Web Developer Tools.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/2.%20Web%20Developer%20Tools.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "3. HTML Fundamentals, SEO.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/3.%20HTML%20Fundamentals%2C%20SEO.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "4. HTML Tables.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/4.%20HTML%20Tables.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "5. HTML Forms and Frames.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/5.%20HTML%20Forms%20and%20Frames.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "6. CSS Overview.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/6.%20CSS%20Overview.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "7. Font Awesome, Bootstrap.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/7.%20Font%20Awesome%2C%20Bootstrap.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "8. CSS Presentation.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/8.%20CSS%20Presentation.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "9. Layout.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/9.%20Layout.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "10.  Responsive Design, Bootstrap.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/10.%20%20Responsive%20Design%2C%20Bootstrap.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "11. Introduction to JS, Data types, Variables.pptx.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/11.%20Introduction%20to%20JS%2C%20Data%20types%2C%20Variables.pptx.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "12 - DOM, DOM Operations.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/12%20-%20DOM%2C%20DOM%20Operations.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "13. Operations and Expressions, Conditional Statement, Loops, Arrays.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/13.%20Operations%20and%20Expressions%2C%20Conditional%20Statement%2C%20Loops%2C%20Arrays.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "14. Functions, Using Objects.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/14.%20Functions%2C%20Using%20Objects.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "15. Event Model, Fetch.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/15.%20Event%20Model%2C%20Fetch.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "16. jQuery Overview, jQuery Plugins.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/16.%20jQuery%20Overview%2C%20jQuery%20Plugins.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    }
+  ],
+  "CSE201 Linked List Tutorial": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Linked%20List%20Tutorial/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Midterm Exam Solutions": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Midterm%20Exam%20Solutions/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Past Final Exam Collection": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Past%20Final%20Exam%20Collection/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Quick Reference Cards": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Quick%20Reference%20Cards/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Sorting Algorithms Visualizer": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Sorting%20Algorithms%20Visualizer/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE201 Weekly Quiz Answers": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE201%20Weekly%20Quiz%20Answers/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "CSE305 Database Systems Project": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/CSE305%20Database%20Systems%20Project/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "ECO101 Microeconomics Summary": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/ECO101%20Microeconomics%20Summary/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "ENG303 English Literature Essays": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/ENG303%20English%20Literature%20Essays/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "MTH101 Calculus Notes": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/MTH101%20Calculus%20Notes/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ],
+  "PHY102 Physics Exam Prep": [
+    {
+      "label": "Document",
+      "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Document/",
+      "children": [
+        {
+          "label": "Doc_sample1.docx",
+          "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Document/Doc_sample1.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        },
+        {
+          "label": "Doc_sample2.pdf",
+          "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Document/Doc_sample2.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        }
+      ]
+    },
+    {
+      "label": "Lab",
+      "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Lab/",
+      "children": [
+        {
+          "label": "Lab_sample1.pdf",
+          "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Lab/Lab_sample1.pdf",
+          "isLeaf": true,
+          "ext": ".pdf"
+        },
+        {
+          "label": "Lab_sample2.docx",
+          "value": "/DataFromCourse/PHY102%20Physics%20Exam%20Prep/Lab/Lab_sample2.docx",
+          "isLeaf": true,
+          "ext": ".docx"
+        }
+      ]
+    }
+  ]
+}

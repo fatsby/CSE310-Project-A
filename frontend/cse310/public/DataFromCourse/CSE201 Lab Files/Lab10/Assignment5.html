@@ -1,0 +1,299 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Assignment 5</title>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+        <style>
+            input[type="text"],
+            input[type="password"],
+            input[type="email"],
+            textarea {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .city {
+                width: 40% !important;
+            }
+
+            .state {
+                width: calc(100% - 40% - 43px) !important;
+            }
+
+            .error {
+                display: none;
+                color: red;
+                padding: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <form name="myForm" onsubmit="getValue(event)">
+                <table border="1">
+                    <tr>
+                        <th>Full name*</th>
+                        <td>
+                            <input
+                                id="fname-input"
+                                type="text"
+                                name="fullName"
+                                value=""
+                            />
+                            <div class="error" id="name-error">
+                                Please input your name
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Email*</th>
+                        <td>
+                            <input
+                                type="email"
+                                name="email"
+                                value=""
+                                id="email-input"
+                            />
+                            <div class="error" id="email-error">
+                                Please input your email
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Password*</th>
+                        <td>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                id="pass-input"
+                            />
+                            <div class="error" id="password-error">
+                                Please input your password (min-length = 6)
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Confirm Password*</th>
+                        <td>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="Enter your password again"
+                                id="pass-confirm"
+                            />
+                            <div class="error" id="confirm-error">
+                                It's does not match your password
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Phone number*</th>
+                        <td>
+                            <input
+                                type="text"
+                                name="phoneNumber"
+                                value=""
+                                required
+                                maxlength="10"
+                                minlength="10"
+                                id="phone-input"
+                                onkeypress="return isNumber(event)"
+                            />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Address</th>
+                        <td>
+                            <textarea
+                                name="address"
+                                cols="50"
+                                rows="3"
+                            ></textarea>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>City</th>
+                        <td>
+                            <input
+                                class="city"
+                                type="text"
+                                name="city"
+                                maxlength="100"
+                                value=""
+                                placeholder="Enter your city"
+                            />
+                            <b>State</b>
+                            <input
+                                class="state"
+                                type="text"
+                                name="state"
+                                value=""
+                                placeholder="Enter your state"
+                            />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Zip/Postal Code</th>
+                        <td>
+                            <input
+                                type="text"
+                                name="zipCode"
+                                value=""
+                                placeholder="Enter your Zip/Postal Code"
+                            />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Country</th>
+                        <td>
+                            <select name="country">
+                                <option value="" selected>
+                                    [Select your country]
+                                </option>
+                                <option value="VietNam">Viet Nam</option>
+                                <option value="Korea">Korea</option>
+                                <option value="Russia">Russia</option>
+                                <option value="German">German</option>
+                                <option value="Japan">Japan</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Birthday</th>
+                        <td>
+                            <input
+                                type="date"
+                                name="birthday"
+                                placeholder="mm/dd/yy"
+                            />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Gender</th>
+                        <td>
+                            <select name="gender">
+                                <option value="Male" selected>Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Starting date</th>
+                        <td>
+                            <input type="radio" name="starting" id="Spring" />
+                            <label for="Spring">Spring</label>
+
+                            <input type="radio" name="starting" id="Summer" />
+                            <label for="Summer">Summer</label>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Comments</th>
+                        <td>
+                            <textarea
+                                name="comment"
+                                placeholder="Please send us more information"
+                                cols="50"
+                                rows="3"
+                            ></textarea>
+                        </td>
+                    </tr>
+
+                    <tr style="text-align: center">
+                        <td colspan="2">
+                            <button type="submit">Submit</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+            <div><h2>Information</h2></div>
+
+            <table border="1">
+                <tr>
+                    <th>Full Name</th>
+                    <td id="fname"></td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td id="email"></td>
+                </tr>
+                <tr>
+                    <th>Password</th>
+                    <td id="pass"></td>
+                </tr>
+                <tr>
+                    <th>Phone Number</th>
+                    <td id="phone"></td>
+                </tr>
+            </table>
+        </main>
+        <script>
+            function isNumber(event) {
+                const char = event.keyCode;
+                if (char >= 48 && char <= 57) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+            function getValue(event) {
+                event.preventDefault();
+                let flag = true;
+                if ($("#fname-input").val() === "") {
+                    $("#name-error").show();
+                    flag = false;
+                } else {
+                    $("#name-error").hide();
+                }
+
+                if ($("#email-input").val() === "") {
+                    $("#email-error").show();
+                    flag = false;
+                } else {
+                    $("#email-error").hide();
+                }
+
+                if ($("#pass-input").val().length < 6) {
+                    $("#password-error").show();
+                    flag = false;
+                } else {
+                    $("#password-error").hide();
+                }
+
+                if ($("#pass-confirm").val() !== $("#pass-input").val()) {
+                    $("#confirm-error").show();
+                    flag = false;
+                } else {
+                    $("#confirm-error").hide();
+                }
+
+                if (flag === true) {
+                    $("#fname").html($("#fname-input").val());
+                    $("#email").html($("#email-input").val());
+                    $("#pass").html($("#pass-input").val());
+                    $("#phone").html($("#phone-input").val());
+                }
+            }
+        </script>
+    </body>
+</html>
