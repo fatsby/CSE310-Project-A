@@ -7,7 +7,7 @@ import useUserStore from "../stores/userStore";
 import { getCurrentUser } from "../data/SampleData"; // Import for simulated fetch
 
 // Lucide Logo Imports
-import { User, LogOut, Wallet, Archive } from "lucide-react";
+import { User, LogOut, Wallet, Archive, ShoppingCart } from "lucide-react";
 
 // Images
 import LogoIMG from "../assets/LogoBanner_Trans.png";
@@ -35,11 +35,12 @@ export default function UserHeader() {
 
   // Effect 2: load sensitive user data
   useEffect(() => {
-    if (userData) { // Checks if non-sensitive data exists
+    if (userData) {
+      // Checks if non-sensitive data exists
       // On backend implementation, replace this with secure API call:
       // const data = await fetch('/api/user/details');
       // For now, we simulate it by getting the full user object again.
-      const fullUserData = getCurrentUser(); 
+      const fullUserData = getCurrentUser();
       setSensitiveUserData(fullUserData);
     } else {
       // If userData is null (user logged out), clear sensitive data too
@@ -53,8 +54,8 @@ export default function UserHeader() {
 
   return (
     <header>
-      <nav className="fixed top-0 z-50 w-full flex items-center justify-between h-[92px] transition-transform duration-300 bg-[#F6F8FA] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
-        <div className="container w-full mx-auto px-18 flex items-center justify-between">
+      <nav className="fixed top-0 z-50 w-full flex items-center justify-between transition-transform duration-300 bg-[#F6F8FA] drop-shadow-[0_4px_12px_rgba(22,34,55,0.06)]">
+        <div className="container w-full mx-auto px-18 py-[17px] flex items-center justify-between">
           {/* Left section */}
           <div className="flex items-center gap-8 text-2xl font-bold">
             <Link to="/">
@@ -64,31 +65,40 @@ export default function UserHeader() {
                 className="max-w-[160px] min-w-[160px] cursor-pointer"
               />
             </Link>
-            <button
+            <div
               onClick={open}
-              className="hover:underline rounded-full cursor-pointer"
+              className="hover:text-[#68a8fd] hover:bg-[#ecf2fb] cursor-pointer h-[42px] flex items-center px-4 rounded-[4px]"
             >
-              <span className="text-base text-black font-medium px-4 py-2">
-                Upload
-              </span>
-            </button>
+              <span className="text-base font-medium">Upload</span>
+            </div>
           </div>
 
           {/* Right: User section */}
           <div className="flex items-center gap-4">
             {/* Balance - reads from sensitiveUserData */}
-            <div
-              className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 ${
-                sensitiveUserData && sensitiveUserData.balance > 0 ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <Wallet size={16} />
-              <span>
-                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(sensitiveUserData.balance)}
-              </span>
+            <div className="flex flex-row gap-10">
+              <Link
+                to="/cart"
+                className="hover:text-[#68a8fd] hover:bg-[#ecf2fb] cursor-pointer flex items-center h-[42px] w-[42px] justify-center rounded-[4px]"
+              >
+                <ShoppingCart size={17} />
+              </Link>
+              <div
+                className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 hover:text-[#68a8fd] hover:bg-[#ecf2fb] px-4 rounded-[4px] ${
+                  sensitiveUserData && sensitiveUserData.balance > 0
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
+              >
+                <Wallet size={16} />
+                <span>
+                  {sensitiveUserData &&
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(sensitiveUserData.balance)}
+                </span>
+              </div>
             </div>
 
             <Menu
@@ -115,18 +125,20 @@ export default function UserHeader() {
 
               <Menu.Dropdown>
                 {/* Menu Label - Reads name from sensitiveUserData */}
-                <Menu.Label>{sensitiveUserData ? sensitiveUserData.name : "Loading..."}</Menu.Label>
-                
+                <Menu.Label>
+                  {sensitiveUserData ? sensitiveUserData.name : "Loading..."}
+                </Menu.Label>
+
                 {/* Profile Link - Reads ID from sensitiveUserData */}
-                <Menu.Item 
-                  component={Link} 
-                  to={`/profile/${sensitiveUserData?.id}`} 
+                <Menu.Item
+                  component={Link}
+                  to={`/profile/${sensitiveUserData?.id}`}
                   disabled={!sensitiveUserData}
                   leftSection={<User size={16} />}
                 >
                   Your profile
                 </Menu.Item>
-                
+
                 <Menu.Item
                   component={Link}
                   to="/purchased"

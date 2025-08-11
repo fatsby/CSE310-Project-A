@@ -8,12 +8,14 @@ import { Select, TextInput, Radio, RingProgress, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 
-// import Mantine Icon
-// import { IconHelpOctagon } from "@tabler/icons-react";
-// import { IconCurrencyDong } from "@tabler/icons-react";
-// import { IconPhotoPlus } from "@tabler/icons-react";
-// import { IconX } from "@tabler/icons-react";
-// import { IconCheck } from "@tabler/icons-react";
+// import Lucide React Icon
+import {
+  BadgeQuestionMark,
+  DollarSign,
+  ImagePlus,
+  X,
+  Check,
+} from "lucide-react";
 
 // import Img
 import defaultIMG from "../assets/Upload/SetFileName/mountain.jpg";
@@ -125,7 +127,7 @@ export default function SetFileName({ onSubmit }) {
                 title: "Upload Complete",
                 message: `${values.filename || "Your file"} Uploaded! 🎉`,
                 color: "green",
-                icon: <IconCheck size={20} />,
+                icon: <Check size={20} />,
                 styles: () => ({
                   root: { backgroundColor: "#ffffff" },
                 }),
@@ -184,7 +186,11 @@ export default function SetFileName({ onSubmit }) {
                 className="absolute flex items-center text-[18px] text-[#606060] dark:text-gray-400 font-semibold scale-75 -translate-y-4 top-5 z-10 origin-[0] start-4"
               >
                 Title{" "}
-                <IconHelpOctagon size={18} stroke={1.75} className="pl-0.5" />
+                <BadgeQuestionMark
+                  size={18}
+                  strokeWidth={1.75}
+                  className="pl-0.5"
+                />
               </label>
 
               {form.errors.filename && (
@@ -214,7 +220,11 @@ export default function SetFileName({ onSubmit }) {
                 className="absolute flex items-center text-[18px] text-[#606060] dark:text-gray-400 font-semibold scale-75 -translate-y-4 top-5 z-10 origin-[0] start-4"
               >
                 Description{" "}
-                <IconHelpOctagon size={18} stroke={1.75} className="pl-0.5" />
+                <BadgeQuestionMark
+                  size={18}
+                  strokeWidth={1.75}
+                  className="pl-0.5"
+                />
               </label>
 
               {form.errors.description && (
@@ -254,7 +264,7 @@ export default function SetFileName({ onSubmit }) {
                     }}
                     className="absolute top-0 right-0 bg-black bg-opacity-50 text-white text-xs px-[6px] py-[3px]"
                   >
-                    <IconX stroke={2} size={17} />
+                    <X strokeWidth={2} size={17} />
                   </button>
                 </div>
               ))}
@@ -265,7 +275,7 @@ export default function SetFileName({ onSubmit }) {
               >
                 <input {...getInputProps()} />
 
-                <IconPhotoPlus stroke={2} size={15} />
+                <ImagePlus strokeWidth={2} size={15} />
                 <span className="text-[#606060] text-[8px] font-medium">
                   Upload
                 </span>
@@ -336,7 +346,7 @@ export default function SetFileName({ onSubmit }) {
                       type="number"
                       radius="md"
                       rightSectionPointerEvents="none"
-                      rightSection={<IconCurrencyDong size={18} stroke={1.5} />}
+                      rightSection={<DollarSign size={18} strokeWidth={1.5} />}
                       className={`w-[330px] transition-opacity duration-200 ${
                         accessType === "Paid"
                           ? "opacity-100"
