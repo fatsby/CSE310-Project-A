@@ -494,7 +494,7 @@
         },
         {
           "label": "Lab 10 - Javascript - jQuery.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Lab%2010%20-%20Javascript%20-%20jQuery.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Lab10/Lab 10 - Javascript - jQuery.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         }
@@ -506,103 +506,103 @@
       "children": [
         {
           "label": "0. Policy.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/0.%20Policy.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/0. Policy.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "1. Web Basics.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/1.%20Web%20Basics.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/1. Web Basics.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "2. Web Developer Tools.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/2.%20Web%20Developer%20Tools.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/2. Web Developer Tools.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "3. HTML Fundamentals, SEO.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/3.%20HTML%20Fundamentals%2C%20SEO.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/3. HTML Fundamentals, SEO.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "4. HTML Tables.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/4.%20HTML%20Tables.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/4. HTML Tables.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "5. HTML Forms and Frames.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/5.%20HTML%20Forms%20and%20Frames.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/5. HTML Forms and Frames.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "6. CSS Overview.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/6.%20CSS%20Overview.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/6. CSS Overview.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "7. Font Awesome, Bootstrap.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/7.%20Font%20Awesome%2C%20Bootstrap.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/7. Font Awesome, Bootstrap.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "8. CSS Presentation.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/8.%20CSS%20Presentation.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/8. CSS Presentation.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "9. Layout.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/9.%20Layout.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/9. Layout.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "10.  Responsive Design, Bootstrap.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/10.%20%20Responsive%20Design%2C%20Bootstrap.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/10.  Responsive Design, Bootstrap.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "11. Introduction to JS, Data types, Variables.pptx.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/11.%20Introduction%20to%20JS%2C%20Data%20types%2C%20Variables.pptx.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/11. Introduction to JS, Data types, Variables.pptx.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "12 - DOM, DOM Operations.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/12%20-%20DOM%2C%20DOM%20Operations.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/12 - DOM, DOM Operations.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "13. Operations and Expressions, Conditional Statement, Loops, Arrays.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/13.%20Operations%20and%20Expressions%2C%20Conditional%20Statement%2C%20Loops%2C%20Arrays.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/13. Operations and Expressions, Conditional Statement, Loops, Arrays.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "14. Functions, Using Objects.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/14.%20Functions%2C%20Using%20Objects.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/14. Functions, Using Objects.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "15. Event Model, Fetch.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/15.%20Event%20Model%2C%20Fetch.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/15. Event Model, Fetch.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         },
         {
           "label": "16. jQuery Overview, jQuery Plugins.pdf",
-          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/16.%20jQuery%20Overview%2C%20jQuery%20Plugins.pdf",
+          "value": "/DataFromCourse/CSE201%20Lab%20Files/Slide/16. jQuery Overview, jQuery Plugins.pdf",
           "isLeaf": true,
           "ext": ".pdf"
         }

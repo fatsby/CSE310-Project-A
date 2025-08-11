@@ -129,9 +129,11 @@ export default function TreePdfBrowser({ courseCode }) {
                 <div className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 border-b">
                     <span className="truncate">
                         <span className="font-medium">{courseCode}</span>{" "}
-                        <span className="opacity-60">/ Tổng file</span>
                     </span>
-                    <Badge>{totalFiles}</Badge>
+                    <span>
+                        <span className="font-bold">Total file:</span>{" "}
+                        <Badge>{totalFiles}</Badge>
+                    </span>
                 </div>
 
                 <ScrollArea className="h-[30vh] ">
@@ -193,11 +195,17 @@ export default function TreePdfBrowser({ courseCode }) {
                 <div className="px-3 py-2 border-b bg-gray-50 text-sm text-gray-700">
                     {pdfUrl ? (
                         <span className="truncate inline-block max-w-full">
-                            <span className="opacity-70">{courseCode} / </span>
+                            <span className="opacity-70">{courseCode} /</span>
                             <span className="font-medium">{crumb}</span>
                         </span>
                     ) : (
-                        <span>Chọn file PDF ở phần trên để xem.</span>
+                        <span className="font-bold">
+                            Choose a PDF file above to view.&nbsp;
+                            <span className="text-red-600">
+                                Choosing other file types will open/download the
+                                file
+                            </span>
+                        </span>
                     )}
                 </div>
 
