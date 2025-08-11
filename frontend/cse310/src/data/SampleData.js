@@ -567,6 +567,7 @@ export const getItemById = (id) => {
     return {
         ...item,
         avgRating: calculateAvgRating(item.id),
+        data: `./DataFromCourse/${item.name}`,
     };
 };
 
@@ -690,9 +691,11 @@ export const searchItems = ({ university, course, query }) => {
 };
 
 export const getUserPurchased = () => {
-    const purchasedItemIds = new Set(currentUserData.purchasedItems.map(item => item.id));
+    const purchasedItemIds = new Set(
+        currentUserData.purchasedItems.map((item) => item.id)
+    );
 
-    const fullPurchasedItems = itemsList.filter(item =>
+    const fullPurchasedItems = itemsList.filter((item) =>
         purchasedItemIds.has(item.id)
     );
 

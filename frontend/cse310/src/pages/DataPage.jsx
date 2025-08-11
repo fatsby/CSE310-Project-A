@@ -25,7 +25,7 @@ function DataPage() {
                     <div className="ml-auto flex items-center pr-[20px]">
                         <Button
                             variant="filled"
-                            color="rgba(117, 117, 117, 1)"
+                            color="#2986E3"
                             radius="md"
                             size="lg"
                         >

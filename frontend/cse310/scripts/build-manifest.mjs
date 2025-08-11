@@ -18,9 +18,9 @@ function walkDir(absDir, baseUrl) {
     const nodes = [];
 
     for (const e of entries) {
-        if (e.name.startsWith(".")) continue; // ẩn
+        if (e.name.startsWith(".")) continue;
         const abs = path.join(absDir, e.name);
-        const url = urlJoin(baseUrl, encodeURIComponent(e.name));
+        const url = urlJoin(baseUrl, e.name);
 
         if (e.isDirectory()) {
             nodes.push({
