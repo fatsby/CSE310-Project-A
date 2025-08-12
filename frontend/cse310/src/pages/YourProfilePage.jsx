@@ -1,11 +1,10 @@
 import useUserStore from "../stores/userStore";
 import { Tabs, Loader, LoadingOverlay, ScrollArea } from "@mantine/core";
-import { CloudUpload, BanknoteArrowDown, BanknoteArrowUp, BookCheck, TriangleAlert, Pencil, History } from "lucide-react";
+import { CloudUpload, BanknoteArrowDown, BanknoteArrowUp, History, Star } from "lucide-react";
 import { getItemById, getCurrentUser } from "../data/SampleData";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import UploadedItemCard from "../components/UserProfilePage_components/UploadedItemCard";
 import BalanceHistoryItem from "../components/UserProfilePage_components/BalanceHistoryItem";
-// import avatarIMG from '../path/to/default/avatar.png';
 
 export default function YourProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,33 +14,55 @@ export default function YourProfilePage() {
   const profilePicture = useUserStore((state) => state.getProfilePicture());
   const loadUser = useUserStore((state) => state.loadUser);
 
-  // State for data that should be fetched from a server
+  // Sensitive data (balance, money earned/spent, email, etc.)
   const [sensitiveUserData, setSensitiveUserData] = useState(null);
 
-  // Non-sensitive data loading effect
+  // Load non-sensitive from store
   useEffect(() => {
-    if (!userData) {
-      loadUser();
-    }
+    if (!userData) loadUser();
   }, [userData, loadUser]);
 
-  // Sensitive data fetching effect
+  // Fetch sensitive data (simulate; replace with API later)
   useEffect(() => {
     if (userData) {
-
       const fullUserData = getCurrentUser();
       setSensitiveUserData(fullUserData);
-
       setIsLoading(false);
     }
   }, [userData]);
 
-  const uploadedItems = (uploadedItemIDs = []) => {
-    return uploadedItemIDs.map(itemID => getItemById(itemID)).filter(Boolean);
-  };
-  const itemsArray = uploadedItems(userData?.uploadedItems);
+  // Resolve uploaded items to full item objects (with avgRating from SampleData)
+  const itemsArray = useMemo(() => {
+    const ids = userData?.uploadedItems || [];
+    return ids
+      .map((id) => getItemById(id))
+      .filter(Boolean);
+  }, [userData]);
 
+  // ---- Helpers (swap with API-calculated fields later) ----
+  const formatVND = (n) =>
+    new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(n || 0);
 
+  /* TODO: REPLACE THIS WITH ACTUAL AMOUNT FROM API FETCH */
+  // Total sales amount across all uploaded items (price * purchaseCount)
+  const totalSalesAmount = useMemo(() => {
+    if (!itemsArray?.length) return 0;
+    return itemsArray.reduce((sum, item) => {
+      const price = Number(item.price) || 0;
+      const pcs = Number(item.purchaseCount) || 0;
+      return sum + price * pcs;
+    }, 0);
+  }, [itemsArray]);
+
+  /* TODO: REPLACE THIS WITH ACTUAL AMOUNT FROM API FETCH */
+  // Average rating across uploaded items (only items that have a rating > 0)
+  const avgRatingAcrossUploads = useMemo(() => {
+    if (!itemsArray?.length) return 0;
+    const rated = itemsArray.filter((i) => Number(i.avgRating) > 0);
+    if (!rated.length) return 0;
+    const sum = rated.reduce((s, i) => s + Number(i.avgRating || 0), 0);
+    return Number((sum / rated.length).toFixed(1));
+  }, [itemsArray]);
 
   if (isLoading || !sensitiveUserData) {
     return (
@@ -73,31 +94,34 @@ export default function YourProfilePage() {
         {/* RIGHT COLUMN */}
         <div className="lg:col-span-8 bg-[#fff] shadow-md rounded-2xl p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-8">
+
+            {/* TODO: REPLACE THIS WITH ACTUAL AMOUNT FROM API FETCH */}
             <div className="bg-gray-100 p-4 rounded-lg text-center">
-              <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BanknoteArrowDown color="green" /> Money Earned</h3>
+              <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
+                <BanknoteArrowUp color="red" /> Money Spent
+              </h3>
               <p className="text-2xl font-bold">
-                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(sensitiveUserData.moneyearned)}
+                {formatVND(Number(sensitiveUserData?.moneyspent))}
               </p>
             </div>
+
+            {/* TODO: REPLACE THIS WITH ACTUAL AMOUNT FROM API FETCH */}
             <div className="bg-gray-100 p-4 rounded-lg text-center">
-              <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BanknoteArrowUp color="red" /> Money Spent</h3>
+              <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
+                <BanknoteArrowDown color="green" /> Money Earned
+              </h3>
               <p className="text-2xl font-bold">
-                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(sensitiveUserData.moneyspent)}
+                {formatVND(totalSalesAmount)}
               </p>
+              <p className="text-xs text-gray-500 mt-1">Sum of your item sales</p>
             </div>
+
             <div className="bg-gray-100 p-4 rounded-lg text-center">
-              <h3 className="text-lg font-semibold flex items-center justify-center gap-2"><BookCheck color="orange" /> Total Purchases</h3>
+              <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
+                <Star color="gold" /> Avg Rating
+              </h3>
               <p className="text-2xl font-bold">
-                {sensitiveUserData && new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(sensitiveUserData.balance)}
+                {avgRatingAcrossUploads.toFixed(1)}<span className="text-base text-gray-600">/5</span>
               </p>
             </div>
           </div>
