@@ -15,7 +15,7 @@ import ItemCard from '../components/ItemCard';
 import ReviewCard from '../components/ReviewCard';
 
 // --- Sample Data ---
-import { getItemById, getUserById, getReviewsByItemId, getOtherItems } from '../data/SampleData';
+import { getItemById, getUserById, getReviewsByItemId, getOtherItems, getCurrentUser } from '../data/SampleData';
 
 // --- Icons ---
 import { Star, Heart, CheckIcon, XIcon } from 'lucide-react';
@@ -25,17 +25,15 @@ import { Link } from 'react-router-dom';
 
 function ItemPage() {
     const { id } = useParams();
-
-    const [currentUser, setCurrentUser] = useState(null);
-
     const [itemData, setItemData] = useState(null);
     const [authorData, setAuthorData] = useState(null);
     const [reviewsData, setReviewsData] = useState([]);
     const [otherItems, setOtherItems] = useState([]);
-
+    const [currentUser, setCurrentUser] = useState(null);
+    const [isPurchased, setIsPurchased] = useState(false);
 
     useEffect(() => {
-        // --- 1. Show loading notification ---
+        // Show loading notifications
         notifications.show({
             id: 'load-item-data',
             loading: true,
@@ -45,8 +43,9 @@ function ItemPage() {
             withCloseButton: false,
         });
 
-        // --- Fetch data ---
         const data = getItemById(parseInt(id, 10));
+        const user = getCurrentUser();
+        setCurrentUser(user);
 
         if (data) {
             setItemData(data);
@@ -57,7 +56,10 @@ function ItemPage() {
             const itemsInSameSubject = getOtherItems(data.id);
             setOtherItems(itemsInSameSubject);
 
-            // --- Update notification to SUCCESS ---
+            // fresh boolean to check if the user owns the item
+            const owned = !!user?.purchasedItems?.some((p) => p.id === data.id);
+            setIsPurchased(owned);
+
             notifications.update({
                 id: 'load-item-data',
                 color: 'teal',
@@ -67,7 +69,9 @@ function ItemPage() {
                 autoClose: 3000,
             });
         } else {
-            // --- Update notification to ERROR ---
+            // make sure dont leave a stale true behind
+            setIsPurchased(false);
+
             notifications.update({
                 id: 'load-item-data',
                 color: 'red',
@@ -131,8 +135,12 @@ function ItemPage() {
 
                     {/* AUTHOR INFO */}
                     <div className="author-info mt-2 flex items-center gap-x-4 mb-10">
-                        <Link to={`/profile/${authorData.id}`}><img src={authorData.profilePicture} alt={authorData.name} className="w-12 h-12 rounded-full" /></Link>
-                        <Link to={`/profile/${authorData.id}`}><p className="text-lg font-semibold">{authorData.name}</p></Link>
+                        <Link to={`/profile/${authorData.id}`}>
+                            <img src={authorData.profilePicture} alt={authorData.name} className="w-12 h-12 rounded-full" />
+                        </Link>
+                        <Link to={`/profile/${authorData.id}`}>
+                            <p className="text-lg font-semibold">{authorData.name}</p>
+                        </Link>
                     </div>
 
                     {/* PRODUCT DESCRIPTION */}
@@ -144,22 +152,20 @@ function ItemPage() {
                     <div className="reviews mt-16">
                         <h1 className="text-2xl font-bold text-zinc-700 mb-4">Reviews ({reviewsData.length})</h1>
                         <div className="space-y-4">
-                            {reviewsData.length > 0 && (
-                                reviewsData.map(review => {
-                                    const user = getUserById(review.userId);
-                                    if (!user) return null;
+                            {reviewsData.length > 0 && reviewsData.map(review => {
+                                const user = getUserById(review.userId);
+                                if (!user) return null;
 
-                                    return (
-                                        <ReviewCard key={review.id} reviewData={review} userName={user.name} userProfilePic={user.profilePicture} />
-                                    );
-                                })
-                            )}
+                                return (
+                                    <ReviewCard key={review.id} reviewData={review} userName={user.name} userProfilePic={user.profilePicture} />
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
+
                 {/* RIGHT COLUMN */}
                 <div className="lg:col-span-4">
-
                     {/* BREADCRUMBS */}
                     <Breadcrumbs className="mb-4">{breadcrumbItems}</Breadcrumbs>
 
@@ -191,28 +197,56 @@ function ItemPage() {
                             <p className="text-lg font-light text-gray-800">{itemData.lastUpdated}</p>
                         </div>
 
-                        <p className="text-3xl font-bold text-blue-600 mb-4">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemData.price)}</p>
+                        <p className="text-3xl font-bold text-blue-600 mb-4">
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemData.price)}
+                        </p>
 
                         {/* ADD TO CART AND FAVORITE */}
                         <div className="grid grid-cols-12 mb-3 gap-2">
                             <div className="col-span-10">
-                                <Button fullWidth variant="outline" color="#000" size="md">Add to Cart</Button>
+                                <Button
+                                    fullWidth
+                                    variant="outline"
+                                    color="#000"
+                                    size="md"
+                                    disabled={isPurchased}
+                                >
+                                    {isPurchased ? "Already Purchased" : "Add to Cart"}
+                                </Button>
                             </div>
                             <div className="col-span-2">
-                                <Button onClick={() =>
-                                    notifications.show({
-                                        title: "New Favourite Item ❤️",
-                                        message: "Added a new item to your favourite collection!",
-                                        color: "pink",
-                                    })
-                                } fullWidth variant="outline" color="#000" size="md"><Heart /></Button>
+                                <Button
+                                    onClick={() =>
+                                        notifications.show({
+                                            title: "New Favourite Item ❤️",
+                                            message: "Added a new item to your favourite collection!",
+                                            color: "pink",
+                                        })
+                                    }
+                                    fullWidth
+                                    variant="outline"
+                                    color="#000"
+                                    size="md"
+                                    disabled={isPurchased}
+                                >
+                                    <Heart />
+                                </Button>
                             </div>
                         </div>
+
                         {/* PURCHASE BUTTON */}
-                        <Button fullWidth variant="filled" color="#0052CC" size="md">Purchase</Button>
+                        <Button
+                            fullWidth
+                            variant="filled"
+                            color="#0052CC"
+                            size="md"
+                            disabled={isPurchased}
+                        >
+                            {isPurchased ? "Already Purchased" : "Purchase"}
+                        </Button>
                     </div>
 
-                    {/* OTHER ITEMS IN SAME SUBJECT */}
+                    {/* OTHER ITEMS */}
                     <div className="mt-65">
                         <h2 className="text-xl font-bold text-slate-600 mb-4">You may also like</h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">

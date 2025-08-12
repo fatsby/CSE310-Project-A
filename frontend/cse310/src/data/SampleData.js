@@ -123,9 +123,9 @@ const itemsList = [
         description:
             "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
         images: [
-      "https://boringapi.com/api/v1/static/photos/13.jpeg",
-      "https://boringapi.com/api/v1/static/photos/14.jpeg",
-      "https://boringapi.com/api/v1/static/photos/15.jpeg"
+      "https://boringapi.com/api/v1/static/photos/300.jpeg",
+      "https://boringapi.com/api/v1/static/photos/299.jpeg",
+      "https://boringapi.com/api/v1/static/photos/298.jpeg"
     ],
         price: "150000",
         university: "Vietnam National University",
