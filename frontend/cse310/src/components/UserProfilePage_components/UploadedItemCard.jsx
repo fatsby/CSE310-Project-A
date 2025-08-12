@@ -25,7 +25,7 @@ export default function UploadedItemCard({ item, onEdit, onDelete }) {
 
           {/* Container for buttons on the right */}
           <div className="flex space-x-2">
-            <Button variant="light" radius="md" rightSection={<Pencil size="16"/>}>Edit</Button>
+            <Link to={`/item/${item.id}/edit`}><Button variant="light" radius="md" rightSection={<Pencil size="16"/>}>Edit</Button></Link>
             <Button variant="filled" radius="md" color="#c10007" rightSection={<TriangleAlert size="16" color="yellow"/>}>Delete</Button>
           </div>
         </div>

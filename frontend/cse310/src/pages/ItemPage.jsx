@@ -33,7 +33,6 @@ function ItemPage() {
     const [isPurchased, setIsPurchased] = useState(false);
 
     useEffect(() => {
-        // Show loading notifications
         notifications.show({
             id: 'load-item-data',
             loading: true,
@@ -56,9 +55,10 @@ function ItemPage() {
             const itemsInSameSubject = getOtherItems(data.id);
             setOtherItems(itemsInSameSubject);
 
-            // fresh boolean to check if the user owns the item
+            // disable if purchased OR user is the owner
             const owned = !!user?.purchasedItems?.some((p) => p.id === data.id);
-            setIsPurchased(owned);
+            const isOwner = user?.id === data.authorId;
+            setIsPurchased(owned || isOwner);
 
             notifications.update({
                 id: 'load-item-data',
@@ -69,9 +69,7 @@ function ItemPage() {
                 autoClose: 3000,
             });
         } else {
-            // make sure dont leave a stale true behind
             setIsPurchased(false);
-
             notifications.update({
                 id: 'load-item-data',
                 color: 'red',

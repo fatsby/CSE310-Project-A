@@ -27,6 +27,7 @@ import PurchasedPage from "./pages/PurchasedPage.jsx";
 import SetFileName from "./pages/SetFileName.jsx";
 import DataPage from "./pages/DataPage.jsx";
 import ProfileController from "./pages/ProfileController.jsx";
+import EditItemPage from "./pages/EditItemPage.jsx";
 
 const checkAuth = () => {
     try {
@@ -109,7 +110,11 @@ const router = createBrowserRouter([
             {
               path: "/profile/:id",
               element: <ProfileController />,
-            }
+            },
+            {
+                path: "/item/:id/edit",
+                element: <EditItemPage />,
+            },
         ],
     },
 ]);
