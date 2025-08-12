@@ -151,7 +151,7 @@ function PurchasedPage() {
                                 >
                                     <div className="col-span-3 flex content-center">
                                         <img
-                                            src={item.images}
+                                            src={item.images?.[0]}
                                             alt=""
                                             className="rounded-xl"
                                         />
