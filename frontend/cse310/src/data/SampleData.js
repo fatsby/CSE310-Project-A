@@ -106,10 +106,10 @@ const itemsList = [
         description:
             "Comprehensive lab files for CSE201, covering all major topics and experiments. Includes commented code and detailed explanations to help you ace your assignments. \n \nFiles included: \n- Lab 1: Introduction to Programming\n- Lab 2: Data Structures\n- Lab 3: Algorithms",
         images: [
-            "https://picsum.photos/1920/1080?random=10",
-            "https://picsum.photos/1920/1080?random=11",
-            "https://picsum.photos/1920/1080?random=12",
-        ],
+      "https://boringapi.com/api/v1/static/photos/10.jpeg",
+      "https://boringapi.com/api/v1/static/photos/11.jpeg",
+      "https://boringapi.com/api/v1/static/photos/12.jpeg"
+    ],
         price: "200000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -123,10 +123,10 @@ const itemsList = [
         description:
             "Detailed and easy-to-understand lecture notes for MTH101. Covers everything from limits to integration, with solved examples and practice problems.",
         images: [
-            "https://picsum.photos/1920/1080?random=20",
-            "https://picsum.photos/1920/1080?random=21",
-            "https://picsum.photos/1920/1080?random=22",
-        ],
+      "https://boringapi.com/api/v1/static/photos/13.jpeg",
+      "https://boringapi.com/api/v1/static/photos/14.jpeg",
+      "https://boringapi.com/api/v1/static/photos/15.jpeg"
+    ],
         price: "150000",
         university: "Vietnam National University",
         subject: "MTH101",
@@ -140,10 +140,10 @@ const itemsList = [
         description:
             "A complete exam preparation kit for PHY102. Contains summaries of key formulas, mock exam questions, and fully solved past papers.",
         images: [
-            "https://picsum.photos/1920/1080?random=30",
-            "https://picsum.photos/1920/1080?random=31",
-            "https://picsum.photos/1920/1080?random=32",
-        ],
+      "https://boringapi.com/api/v1/static/photos/16.jpeg",
+      "https://boringapi.com/api/v1/static/photos/17.jpeg",
+      "https://boringapi.com/api/v1/static/photos/18.jpeg"
+    ],
         price: "250000",
         university: "FPT University",
         subject: "PHY102",
@@ -157,10 +157,10 @@ const itemsList = [
         description:
             "A collection of A-grade essays on major works of English literature. Perfect for inspiration and understanding complex themes for your ENG303 course.",
         images: [
-            "https://picsum.photos/1920/1080?random=40",
-            "https://picsum.photos/1920/1080?random=41",
-            "https://picsum.photos/1920/1080?random=42",
-        ],
+      "https://boringapi.com/api/v1/static/photos/19.jpeg",
+      "https://boringapi.com/api/v1/static/photos/20.jpeg",
+      "https://boringapi.com/api/v1/static/photos/21.jpeg"
+    ],
         price: "180000",
         university: "Eastern International University",
         subject: "ENG303",
@@ -174,10 +174,10 @@ const itemsList = [
         description:
             "Complete set of presentation slides for BUS101. Visually engaging and packed with key information, case studies, and business theories.",
         images: [
-            "https://picsum.photos/1920/1080?random=50",
-            "https://picsum.photos/1920/1080?random=51",
-            "https://picsum.photos/1920/1080?random=52",
-        ],
+      "https://boringapi.com/api/v1/static/photos/22.jpeg",
+      "https://boringapi.com/api/v1/static/photos/23.jpeg",
+      "https://boringapi.com/api/v1/static/photos/24.jpeg"
+    ],
         price: "120000",
         university: "RMIT University Vietnam",
         subject: "BUS101",
@@ -191,10 +191,10 @@ const itemsList = [
         description:
             "A step-by-step guide for all CHE101 lab experiments. Includes safety protocols, expected results, and tips for writing excellent lab reports.",
         images: [
-            "https://picsum.photos/1920/1080?random=60",
-            "https://picsum.photos/1920/1080?random=61",
-            "https://picsum.photos/1920/1080?random=62",
-        ],
+      "https://boringapi.com/api/v1/static/photos/25.jpeg",
+      "https://boringapi.com/api/v1/static/photos/26.jpeg",
+      "https://boringapi.com/api/v1/static/photos/27.jpeg"
+    ],
         price: "220000",
         university: "Vietnam National University",
         subject: "CHE101",
@@ -208,10 +208,10 @@ const itemsList = [
         description:
             "A full project implementation for CSE305, featuring a relational database schema, SQL queries, and a front-end interface. Great for reference.",
         images: [
-            "https://picsum.photos/1920/1080?random=70",
-            "https://picsum.photos/1920/1080?random=71",
-            "https://picsum.photos/1920/1080?random=72",
-        ],
+      "https://boringapi.com/api/v1/static/photos/28.jpeg",
+      "https://boringapi.com/api/v1/static/photos/29.jpeg",
+      "https://boringapi.com/api/v1/static/photos/30.jpeg"
+    ],
         price: "350000",
         university: "Eastern International University",
         subject: "CSE305",
@@ -225,10 +225,10 @@ const itemsList = [
         description:
             "Concise summary of all key concepts in ECO101. Perfect for last-minute revision before midterms or finals. Includes graphs and charts.",
         images: [
-            "https://picsum.photos/1920/1080?random=80",
-            "https://picsum.photos/1920/1080?random=81",
-            "https://picsum.photos/1920/1080?random=82",
-        ],
+      "https://boringapi.com/api/v1/static/photos/31.jpeg",
+      "https://boringapi.com/api/v1/static/photos/32.jpeg",
+      "https://boringapi.com/api/v1/static/photos/33.jpeg"
+    ],
         price: "90000",
         university: "FPT University",
         subject: "ECO101",
@@ -242,7 +242,9 @@ const itemsList = [
         authorId: 1,
         description:
             "Fully solved midterm exam from last semester. A great study resource.",
-        images: ["https://picsum.photos/1920/1080?random=90"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/34.jpeg"
+    ],
         price: "150000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -255,7 +257,9 @@ const itemsList = [
         authorId: 2,
         description:
             "All lecture notes from the beginning to the end of the semester.",
-        images: ["https://picsum.photos/1920/1080?random=100"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/35.jpeg"
+    ],
         price: "300000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -268,7 +272,9 @@ const itemsList = [
         authorId: 3,
         description:
             "A curated list of practice problems focusing on algorithms.",
-        images: ["https://picsum.photos/1920/1080?random=110"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/36.jpeg"
+    ],
         price: "120000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -280,7 +286,9 @@ const itemsList = [
         name: "CSE201 Data Structures Cheatsheet",
         authorId: 4,
         description: "A 2-page cheatsheet summarizing all key data structures.",
-        images: ["https://picsum.photos/1920/1080?random=120"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/37.jpeg"
+    ],
         price: "50000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -293,7 +301,9 @@ const itemsList = [
         authorId: 5,
         description:
             "An A+ graded final project to use as a reference for your own.",
-        images: ["https://picsum.photos/1920/1080?random=130"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/38.jpeg"
+    ],
         price: "400000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -305,7 +315,9 @@ const itemsList = [
         name: "CSE201 Weekly Quiz Answers",
         authorId: 6,
         description: "Answers to all weekly quizzes. Use responsibly!",
-        images: ["https://picsum.photos/1920/1080?random=140"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/39.jpeg"
+    ],
         price: "180000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -318,7 +330,9 @@ const itemsList = [
         authorId: 1,
         description:
             "A deep dive into linked lists with code examples in C++ and Python.",
-        images: ["https://picsum.photos/1920/1080?random=150"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/40.jpeg"
+    ],
         price: "80000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -331,7 +345,9 @@ const itemsList = [
         authorId: 2,
         description:
             "An interactive tool to visualize how different sorting algorithms work.",
-        images: ["https://picsum.photos/1920/1080?random=160"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/41.jpeg"
+    ],
         price: "220000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -344,7 +360,9 @@ const itemsList = [
         authorId: 3,
         description:
             "Clear and concise notes on binary trees, BSTs, and traversal methods.",
-        images: ["https://picsum.photos/1920/1080?random=170"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/42.jpeg"
+    ],
         price: "95000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -357,7 +375,9 @@ const itemsList = [
         authorId: 4,
         description:
             "An easy-to-follow guide on graph theory concepts for the final exam.",
-        images: ["https://picsum.photos/1920/1080?random=180"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/43.jpeg"
+    ],
         price: "110000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -370,7 +390,9 @@ const itemsList = [
         authorId: 5,
         description:
             "A guide covering various hashing techniques and collision resolution.",
-        images: ["https://picsum.photos/1920/1080?random=190"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/44.jpeg"
+    ],
         price: "70000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -383,7 +405,9 @@ const itemsList = [
         authorId: 6,
         description:
             "A set of challenging dynamic programming problems with solutions.",
-        images: ["https://picsum.photos/1920/1080?random=200"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/45.jpeg"
+    ],
         price: "160000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -395,7 +419,9 @@ const itemsList = [
         name: "CSE201 Past Final Exam Collection",
         authorId: 1,
         description: "A collection of final exams from the past 3 years.",
-        images: ["https://picsum.photos/1920/1080?random=210"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/46.jpeg"
+    ],
         price: "250000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -407,7 +433,9 @@ const itemsList = [
         name: "CSE201 Quick Reference Cards",
         authorId: 2,
         description: "Printable quick reference cards for all major topics.",
-        images: ["https://picsum.photos/1920/1080?random=220"],
+        images: [
+      "https://boringapi.com/api/v1/static/photos/47.jpeg"
+    ],
         price: "90000",
         university: "Eastern International University",
         subject: "CSE201",
@@ -567,7 +595,6 @@ export const getItemById = (id) => {
     return {
         ...item,
         avgRating: calculateAvgRating(item.id),
-        data: `./DataFromCourse/${item.name}`,
     };
 };
 
@@ -691,11 +718,9 @@ export const searchItems = ({ university, course, query }) => {
 };
 
 export const getUserPurchased = () => {
-    const purchasedItemIds = new Set(
-        currentUserData.purchasedItems.map((item) => item.id)
-    );
+    const purchasedItemIds = new Set(currentUserData.purchasedItems.map(item => item.id));
 
-    const fullPurchasedItems = itemsList.filter((item) =>
+    const fullPurchasedItems = itemsList.filter(item =>
         purchasedItemIds.has(item.id)
     );
 

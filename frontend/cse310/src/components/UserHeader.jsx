@@ -144,7 +144,7 @@ export default function UserHeader() {
                   to="/purchased"
                   leftSection={<Archive size={16} />}
                 >
-                  Your Purchased
+                  Your purchased
                 </Menu.Item>
                 <Menu.Item
                   color="red"
