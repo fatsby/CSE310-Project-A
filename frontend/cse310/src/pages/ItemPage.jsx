@@ -20,6 +20,7 @@ import { getItemById, getUserById, getReviewsByItemId, getOtherItems } from '../
 // --- Icons ---
 import { Star, Heart, CheckIcon, XIcon } from 'lucide-react';
 
+import { Link } from 'react-router-dom';
 
 
 function ItemPage() {
@@ -130,10 +131,8 @@ function ItemPage() {
 
                     {/* AUTHOR INFO */}
                     <div className="author-info mt-2 flex items-center gap-x-4 mb-10">
-                        <img src={authorData.profilePicture} alt={authorData.name} className="w-12 h-12 rounded-full" />
-                        <div>
-                            <p className="text-lg font-semibold">{authorData.name}</p>
-                        </div>
+                        <Link to={`/profile/${authorData.id}`}><img src={authorData.profilePicture} alt={authorData.name} className="w-12 h-12 rounded-full" /></Link>
+                        <Link to={`/profile/${authorData.id}`}><p className="text-lg font-semibold">{authorData.name}</p></Link>
                     </div>
 
                     {/* PRODUCT DESCRIPTION */}
