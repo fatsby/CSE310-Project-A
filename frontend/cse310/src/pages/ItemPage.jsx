@@ -209,7 +209,7 @@ function ItemPage() {
                                     size="md"
                                     disabled={isPurchased}
                                 >
-                                    {isPurchased ? "Already Purchased" : "Add to Cart"}
+                                    {isPurchased ? "Item Owned" : "Add to Cart"}
                                 </Button>
                             </div>
                             <div className="col-span-2">
@@ -240,7 +240,7 @@ function ItemPage() {
                             size="md"
                             disabled={isPurchased}
                         >
-                            {isPurchased ? "Already Purchased" : "Purchase"}
+                            {isPurchased ? "Item Owned" : "Purchase"}
                         </Button>
                     </div>
 
