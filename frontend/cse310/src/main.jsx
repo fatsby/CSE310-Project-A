@@ -28,6 +28,7 @@ import SetFileName from "./pages/SetFileName.jsx";
 import DataPage from "./pages/DataPage.jsx";
 import ProfileController from "./pages/ProfileController.jsx";
 import EditItemPage from "./pages/EditItemPage.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 
 const checkAuth = () => {
     try {
@@ -115,6 +116,10 @@ const router = createBrowserRouter([
                 path: "/item/:id/edit",
                 element: <EditItemPage />,
             },
+            {
+                path: "/admin/dashboard",
+                element: <AdminDashboard />,
+            }
         ],
     },
 ]);
