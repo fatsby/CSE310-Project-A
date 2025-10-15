@@ -26,7 +26,7 @@ builder.Services
     .AddRoles<IdentityRole>()                   // <-- roles support
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager()
-    .AddApiEndpoints();                         // <-- enables MapIdentityApi<AppUser>()
+    .AddDefaultTokenProviders();
 
 builder.Services
     .AddAuthentication(options =>
@@ -42,6 +42,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton(TimeProvider.System);
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,40 +59,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-var auth = app.MapGroup("/auth"); // all auth endpoints will be prefixed with /auth
 
-auth.MapPost("/reg", async (
-    UserManager<AppUser> userMgr,
-    RoleManager<IdentityRole> roleMgr,
-    CustomRegisterRequest dto) =>
-{
-    // custom user registration logic
-    var user = new AppUser
-    {
-        UserName = dto.Email,
-        Email = dto.Email,
-        Balance = dto.Balance ?? 0m,  // default balance
-
-        EmailConfirmed = false
-    };
-
-    var result = await userMgr.CreateAsync(user, dto.Password);
-    if (!result.Succeeded)
-        return Results.BadRequest(result.Errors);
-
-    if (!await roleMgr.RoleExistsAsync("User"))
-        await roleMgr.CreateAsync(new IdentityRole("User"));
-
-    var roleResult = await userMgr.AddToRoleAsync(user, "User");
-    if (!roleResult.Succeeded)
-        return Results.BadRequest(roleResult.Errors);
-
-    return Results.Ok(new { message = "Registered successfully", userId = user.Id });
-})
-.WithName("CustomRegister")
-.WithOrder(-1); // << Important: higher priority than the built-in /register endpoint
-
-auth.MapIdentityApi<AppUser>(); // login, refresh, logout, mfa, reset password.
 
 // A secure endpoint to get info about the current user
 app.MapGet("/me", (ClaimsPrincipal me) => new {

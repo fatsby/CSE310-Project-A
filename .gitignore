@@ -7,12 +7,25 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Debug symbol files
+*.pdb
 
 .env
 node_modules
 dist
 dist-ssr
 *.local
+
+# Build results
+[Bb]in/
+[Oo]bj/
 
 # Editor directories and files
 .vscode/*
@@ -25,3 +38,6 @@ dist-ssr
 *.sln
 *.sw?
 .vs/
+
+# Generated files
+*.generated.*
