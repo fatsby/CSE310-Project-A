@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs;
+using project2.Files;
 using project2.Infrastructure;
 using project2.Models;
 using System.Security.Claims;
@@ -68,6 +69,12 @@ app.MapGet("/me", (ClaimsPrincipal me) => new {
 }).RequireAuthorization();
 
 app.MapControllers();
+
+// Local files storage
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+app.UseStaticFiles(); // serve wwwroot/uploads
+
 
 await app.Services.SeedIdentityAsync(builder.Configuration);
 
