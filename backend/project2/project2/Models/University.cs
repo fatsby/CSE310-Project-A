@@ -1,9 +1,13 @@
 ﻿namespace project2.Models {
     public class University {
-        public string Name { get; set; }
-        public string Suffix { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+        public string Suffix { get; set; } = null!;
 
-        public University(string name, string suffix) { 
+        public List<Subject> Subjects { get; set; } = new();
+
+        public University() { }
+        public University(string name, string suffix) {
             Name = name;
             Suffix = suffix;
         }

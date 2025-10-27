@@ -1,0 +1,8 @@
+﻿using project2.DTOs;
+
+namespace project2.Services {
+    public interface IDocumentService {
+        Task<DocumentResponse> CreateAsync(int authorId, CreateDocumentRequest req, CancellationToken ct);
+        Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, int userId, CancellationToken ct);
+    }
+}

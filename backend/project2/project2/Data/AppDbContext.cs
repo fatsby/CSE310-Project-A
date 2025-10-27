@@ -7,6 +7,8 @@
 
     public class AppDbContext : IdentityDbContext<AppUser, IdentityRole, string>
     {
+        public DbSet<University> Universities => Set<University>();
+        public DbSet<Subject> Subjects => Set<Subject>();
         public DbSet<Document> Documents => Set<Document>();
         public DbSet<DocumentImage> DocumentImages => Set<DocumentImage>();
         public DbSet<DocumentFile> DocumentFiles => Set<DocumentFile>();
@@ -15,11 +17,30 @@
         }
 
         protected override void OnModelCreating(ModelBuilder b) {
+            base.OnModelCreating(b);
+
+            // Decimal precision
             b.Entity<Document>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(200).IsRequired();
-                e.Property(p => p.Subject).HasMaxLength(50).IsRequired();
-                e.Property(p => p.University).HasMaxLength(150).IsRequired();
+                e.Property(p => p.Price).HasPrecision(18, 2);
+
+                e.HasOne(d => d.University)
+                    .WithMany()
+                    .HasForeignKey(d => d.UniversityId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(d => d.Subject)
+                    .WithMany(s => s.Documents)
+                    .HasForeignKey(d => d.SubjectId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            b.Entity<Subject>(e =>
+            {
+                e.HasOne(s => s.University)
+                    .WithMany(u => u.Subjects)
+                    .HasForeignKey(s => s.UniversityId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             b.Entity<DocumentImage>(e =>
@@ -27,20 +48,31 @@
                 e.HasIndex(x => new { x.DocumentId, x.SortOrder }).IsUnique();
             });
 
-            // Relationships
-            //One-to-Many: Document -> DocumentImages, cascade delete
             b.Entity<Document>()
                 .HasMany(d => d.Images)
                 .WithOne(i => i.Document)
                 .HasForeignKey(i => i.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //One-to-Many: Document -> DocumentFiles, cascade delete
             b.Entity<Document>()
                 .HasMany(d => d.Files)
                 .WithOne(f => f.Document)
                 .HasForeignKey(f => f.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            //Seed data
+            b.Entity<University>().HasData(
+                new University { Id = 1, Name = "Eastern International University", Suffix = "EIU" },
+                new University { Id = 2, Name = "Ho Chi Minh University of Technology", Suffix = "HCMUT" }
+            );
+
+            b.Entity<Subject>().HasData(
+                new Subject { Id = 1, Name = "Operating Systems", Code = "CSE302", UniversityId = 1 },
+                new Subject { Id = 2, Name = "Database Systems", Code = "CSE301", UniversityId = 1 },
+                new Subject { Id = 3, Name = "Data Structures and Algorithms", Code = "CSE201", UniversityId = 2 }
+            );
         }
+
     }
 }

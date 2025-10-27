@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using project2.Data;
 
@@ -11,9 +12,11 @@ using project2.Data;
 namespace project2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027061301_UpdateDocumentEntity")]
+    partial class UpdateDocumentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,29 +362,6 @@ namespace project2.Migrations
                     b.HasIndex("UniversityId");
 
                     b.ToTable("Subjects");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "CSE302",
-                            Name = "Operating Systems",
-                            UniversityId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "CSE301",
-                            Name = "Database Systems",
-                            UniversityId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Code = "CSE201",
-                            Name = "Data Structures and Algorithms",
-                            UniversityId = 2
-                        });
                 });
 
             modelBuilder.Entity("project2.Models.University", b =>
@@ -403,20 +383,6 @@ namespace project2.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Universities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Eastern International University",
-                            Suffix = "EIU"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Ho Chi Minh University of Technology",
-                            Suffix = "HCMUT"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

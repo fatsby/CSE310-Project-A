@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using project2.Data;
 using project2.DTOs;
 using project2.Files;
 using project2.Infrastructure;
 using project2.Models;
+using project2.Services;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,11 +43,45 @@ builder.Services
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    options.SwaggerDoc("v1", new OpenApiInfo {
+        Title = "Gradelevate API",
+        Version = "v1",
+        Description = "Gradelevate / Project-B backend API"
+    });
+
+    //Add Bearer token authentication to Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token here in the format: Bearer {your token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton(TimeProvider.System);
-
+// Local files storage
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 
 var app = builder.Build();
 
@@ -69,10 +105,6 @@ app.MapGet("/me", (ClaimsPrincipal me) => new {
 }).RequireAuthorization();
 
 app.MapControllers();
-
-// Local files storage
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 app.UseStaticFiles(); // serve wwwroot/uploads
 
 

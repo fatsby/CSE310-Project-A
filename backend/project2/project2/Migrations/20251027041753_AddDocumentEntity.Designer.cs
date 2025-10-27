@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using project2.Data;
 
@@ -11,9 +12,11 @@ using project2.Data;
 namespace project2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027041753_AddDocumentEntity")]
+    partial class AddDocumentEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,23 +247,24 @@ namespace project2.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("SubjectId")
-                        .HasColumnType("int");
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("UniversityId")
-                        .HasColumnType("int");
+                    b.Property<string>("University")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SubjectId");
-
-                    b.HasIndex("UniversityId");
 
                     b.ToTable("Documents");
                 });
@@ -335,90 +339,6 @@ namespace project2.Migrations
                     b.ToTable("DocumentImages");
                 });
 
-            modelBuilder.Entity("project2.Models.Subject", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UniversityId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UniversityId");
-
-                    b.ToTable("Subjects");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "CSE302",
-                            Name = "Operating Systems",
-                            UniversityId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "CSE301",
-                            Name = "Database Systems",
-                            UniversityId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Code = "CSE201",
-                            Name = "Data Structures and Algorithms",
-                            UniversityId = 2
-                        });
-                });
-
-            modelBuilder.Entity("project2.Models.University", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Suffix")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Universities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Eastern International University",
-                            Suffix = "EIU"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Ho Chi Minh University of Technology",
-                            Suffix = "HCMUT"
-                        });
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -470,25 +390,6 @@ namespace project2.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("project2.Models.Document", b =>
-                {
-                    b.HasOne("project2.Models.Subject", "Subject")
-                        .WithMany("Documents")
-                        .HasForeignKey("SubjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("project2.Models.University", "University")
-                        .WithMany()
-                        .HasForeignKey("UniversityId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Subject");
-
-                    b.Navigation("University");
-                });
-
             modelBuilder.Entity("project2.Models.DocumentFile", b =>
                 {
                     b.HasOne("project2.Models.Document", "Document")
@@ -511,32 +412,11 @@ namespace project2.Migrations
                     b.Navigation("Document");
                 });
 
-            modelBuilder.Entity("project2.Models.Subject", b =>
-                {
-                    b.HasOne("project2.Models.University", "University")
-                        .WithMany("Subjects")
-                        .HasForeignKey("UniversityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("University");
-                });
-
             modelBuilder.Entity("project2.Models.Document", b =>
                 {
                     b.Navigation("Files");
 
                     b.Navigation("Images");
-                });
-
-            modelBuilder.Entity("project2.Models.Subject", b =>
-                {
-                    b.Navigation("Documents");
-                });
-
-            modelBuilder.Entity("project2.Models.University", b =>
-                {
-                    b.Navigation("Subjects");
                 });
 #pragma warning restore 612, 618
         }

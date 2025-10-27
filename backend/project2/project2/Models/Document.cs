@@ -5,8 +5,14 @@
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal? Price { get; set; }         // null or 0 => free
-        public string University { get; set; } = null!;
-        public string Subject { get; set; } = null!;
+
+        // Relationships
+        public int UniversityId { get; set; }
+        public University University { get; set; } = null!;
+
+        public int SubjectId { get; set; }
+        public Subject Subject { get; set; } = null!;
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public List<DocumentImage> Images { get; set; } = new();
