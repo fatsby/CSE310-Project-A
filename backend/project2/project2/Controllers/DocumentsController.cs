@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs;
 using project2.Services;
+using System.Security.Claims;
 
 namespace project2.Controllers {
     [Route("api/documents")]
@@ -21,8 +22,11 @@ namespace project2.Controllers {
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<DocumentResponse>> Create([FromForm] CreateDocumentRequest req, CancellationToken ct) {
             // get current user id from claims
-            var authorId = int.Parse(User.FindFirst("sub")!.Value); // or your claim
-            var result = await _svc.CreateAsync(authorId, req, ct);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            var result = await _svc.CreateAsync(userId, req, ct);
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 

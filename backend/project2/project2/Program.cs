@@ -83,6 +83,13 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 
+//for debugging purposes only - log sensitive data
+builder.Services.AddDbContext<AppDbContext>(opt => {
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+    opt.EnableSensitiveDataLogging(); // DEV ONLY
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

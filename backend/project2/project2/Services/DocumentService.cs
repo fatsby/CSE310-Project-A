@@ -37,7 +37,9 @@ namespace project2.Services {
             _env = env;
         }
 
-        public async Task<DocumentResponse> CreateAsync(int authorId, CreateDocumentRequest req, CancellationToken ct) {
+        public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
+            using var tx = await _db.Database.BeginTransactionAsync(ct);
+
             //request validations
             if (req.Images is null || req.Images.Count is < 1 or > MaxImageCount)
                 throw new ArgumentException($"You must upload between 1 and {MaxImageCount} images.");
@@ -73,46 +75,69 @@ namespace project2.Services {
             await _db.SaveChangesAsync(ct);
 
             //saving images
+            var toCleanup = new List<string>();
             var sort = 0;
-            foreach (var img in req.Images ?? []) {
-                await using var imgStream = img.OpenReadStream();
-                var storedImg = await _storage.SaveAsync(imgStream, img.FileName, img.ContentType, subfolder: $"documents/{doc.Id}/images", ct);
-                var docImg = new DocumentImage {
-                    Url = storedImg.Url,
-                    StoragePath = storedImg.StoragePath,
-                    SortOrder = sort++,
-                };
-                _db.DocumentImages.Add(docImg);
+            try {
+                // IMAGES — add via nav so EF sets DocumentId
+                foreach (var img in req.Images) {
+                    await using var s = img.OpenReadStream();
+                    var stored = await _storage.SaveAsync(s, img.FileName, img.ContentType,
+                        $"documents/{doc.Id}/images", ct);
+
+                    toCleanup.Add(stored.StoragePath);
+
+                    doc.Images.Add(new DocumentImage {
+                        Url = stored.Url,
+                        StoragePath = stored.StoragePath,
+                        SortOrder = sort++
+                    });
+                }
+
+                // FILES — via nav or explicitly set DocumentId = doc.Id
+                foreach (var file in req.Files ?? []) {
+                    await using var s = file.OpenReadStream();
+                    var stored = await _storage.SaveAsync(s, file.FileName, file.ContentType,
+                        $"documents/{doc.Id}/files", ct);
+
+                    toCleanup.Add(stored.StoragePath);
+
+                    doc.Files.Add(new DocumentFile {
+                        FileName = file.FileName,
+                        ContentType = file.ContentType,
+                        SizeBytes = stored.Size,
+                        Url = stored.Url,
+                        StoragePath = stored.StoragePath
+                    });
+                }
+
+                await _db.SaveChangesAsync(ct);
+                await tx.CommitAsync(ct);
+            } catch {
+                await tx.RollbackAsync(ct);
+                // cleanup files saved to disk if DB failed
+                foreach (var path in toCleanup)
+                    await _storage.DeleteAsync(path, ct);
+                throw;
             }
 
-            //saving files
-            foreach (var file in req.Files ?? []) {
-                await using var s = file.OpenReadStream();
-                var stored = await _storage.SaveAsync(s, file.FileName, file.ContentType,
-                    subfolder: $"documents/{doc.Id}/files", ct);
-
-                doc.Files.Add(new DocumentFile {
-                    FileName = file.FileName,
-                    ContentType = file.ContentType,
-                    SizeBytes = stored.Size,
-                    Url = stored.Url,          // later protect downloads, store only StoragePath and serve via controller
-                    StoragePath = stored.StoragePath
-                });
-            }
-
-            await _db.SaveChangesAsync(ct);
+            var full = await _db.Documents
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .FirstAsync(d => d.Id == doc.Id, ct);
 
             return new DocumentResponse {
-                Id = doc.Id,
-                Name = doc.Name,
-                Description = doc.Description,
-                Price = doc.Price,
-                UniversityId = doc.UniversityId,
-                UniversityName = doc.University.Name,
-                SubjectId = doc.SubjectId,
-                SubjectName = doc.Subject.Name,
-                Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                Files = doc.Files.Select(f => (f.Id, f.FileName, f.SizeBytes))
+                Id = full.Id,
+                Name = full.Name,
+                Description = full.Description,
+                Price = full.Price,
+                UniversityId = full.UniversityId,
+                UniversityName = full.University?.Name ?? string.Empty,
+                SubjectId = full.SubjectId,
+                SubjectName = full.Subject?.Name ?? string.Empty,
+                Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                Files = full.Files.Select(f => (fileId: f.Id, fileName: f.FileName, sizeBytes: f.SizeBytes))
             };
 
         }
