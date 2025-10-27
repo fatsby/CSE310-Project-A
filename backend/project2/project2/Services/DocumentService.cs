@@ -137,7 +137,11 @@ namespace project2.Services {
                 SubjectId = full.SubjectId,
                 SubjectName = full.Subject?.Name ?? string.Empty,
                 Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                Files = full.Files.Select(f => (fileId: f.Id, fileName: f.FileName, sizeBytes: f.SizeBytes))
+                Files = full.Files.Select(f => new DocumentFileDto {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
             };
 
         }

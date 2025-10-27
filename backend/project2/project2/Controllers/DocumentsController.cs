@@ -35,9 +35,11 @@ namespace project2.Controllers {
         [AllowAnonymous]
         public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, [FromServices] AppDbContext db) {
             var doc = await db.Documents
-                .Include(d => d.Images)
-                .Include(d => d.Files)
-                .FirstOrDefaultAsync(d => d.Id == id);
+            .Include(d => d.University)
+            .Include(d => d.Subject)
+            .Include(d => d.Images)
+            .Include(d => d.Files)
+            .FirstOrDefaultAsync(d => d.Id == id);
 
             if (doc is null) return NotFound();
 
@@ -51,8 +53,13 @@ namespace project2.Controllers {
                 SubjectId = doc.SubjectId,
                 SubjectName = doc.Subject.Name,
                 Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                Files = doc.Files.Select(f => (f.Id, f.FileName, f.SizeBytes))
+                Files = doc.Files.Select(f => new DocumentFileDto {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
             };
+
         }
 
         // Protected download (streams the file after authorization)

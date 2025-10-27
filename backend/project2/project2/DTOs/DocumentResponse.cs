@@ -12,7 +12,6 @@
         public string SubjectName { get; set; } = null!;
 
         public IEnumerable<string> Images { get; set; } = Enumerable.Empty<string>();
-        public IEnumerable<(int fileId, string fileName, long sizeBytes)> Files { get; set; } = Enumerable.Empty<(int, string, long)>();
+        public IEnumerable<DocumentFileDto> Files { get; set; } = Enumerable.Empty<DocumentFileDto>();
     }
-
 }
