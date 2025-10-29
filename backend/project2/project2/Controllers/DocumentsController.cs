@@ -76,7 +76,7 @@ namespace project2.Controllers {
                 var (stream, contentType, downloadName) = result.Value;
                 return File(stream, contentType, downloadName, enableRangeProcessing: true);
             } catch (UnauthorizedAccessException ex) {
-                return Forbid(ex.Message); // 403 Forbidden
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message }); // 403 Forbidden
             } catch (Exception ex) {
                 return StatusCode(500, new { message = "An error occurred while processing the file.", details = ex.Message });
             }
