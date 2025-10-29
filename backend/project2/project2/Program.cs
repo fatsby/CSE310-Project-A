@@ -82,6 +82,7 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IBalanceManager, BalanceManager>();
 
 //for debugging purposes only - log sensitive data
 builder.Services.AddDbContext<AppDbContext>(opt => {

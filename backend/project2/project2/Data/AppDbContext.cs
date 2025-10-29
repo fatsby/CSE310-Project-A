@@ -13,6 +13,8 @@
         public DbSet<DocumentImage> DocumentImages => Set<DocumentImage>();
         public DbSet<DocumentFile> DocumentFiles => Set<DocumentFile>();
 
+        public DbSet<UserPurchase> UserPurchases => Set<UserPurchase>();
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         }
 
@@ -59,6 +61,23 @@
                 .WithOne(f => f.Document)
                 .HasForeignKey(f => f.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            //UserPurchase relationships
+            b.Entity<UserPurchase>()
+            .HasKey(p => new { p.UserId, p.DocumentId });
+
+            // Configure relationships
+            b.Entity<UserPurchase>()
+                .HasOne(p => p.User)
+                .WithMany() // Or add 'List<UserPurchase> Purchases' to AppUser
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            b.Entity<UserPurchase>()
+                .HasOne(p => p.Document)
+                .WithMany() // Or add 'List<UserPurchase> Purchases' to Document
+                .HasForeignKey(p => p.DocumentId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             //Seed data

@@ -30,11 +30,13 @@ namespace project2.Services {
         private readonly AppDbContext _db;
         private readonly IFileStorage _storage;
         private readonly IWebHostEnvironment _env;
+        private readonly IBalanceManager _balanceManager;
 
-        public DocumentService(AppDbContext db, IFileStorage storage, IWebHostEnvironment env) {
+        public DocumentService(AppDbContext db, IFileStorage storage, IWebHostEnvironment env, IBalanceManager balanceManager) {
             _db = db;
             _storage = storage;
             _env = env;
+            _balanceManager = balanceManager;
         }
 
         public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
@@ -152,10 +154,20 @@ namespace project2.Services {
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);
             if (file is null) return null;
 
-            // TODO: enforce purchase/ownership check here
-            // bool allowed = userId == file.Document.AuthorId || await _purchases.HasPurchased(userId, docId);
-            // if (!allowed) throw new UnauthorizedAccessException();
+            // Check ownership / purchase
+            bool isAuthor = file.Document.AuthorId == userId;
+            //if not author, check purchase
+            bool hasPurchased = false;
+            if (!isAuthor) {
+                hasPurchased = await _db.UserPurchases
+                    .AnyAsync(p => p.UserId == userId && p.DocumentId == docId, ct);
+            }
 
+            if (!isAuthor || !hasPurchased) {
+                throw new UnauthorizedAccessException("You do not have permission to download this file.");
+            }
+
+            // Open file stream
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.StoragePath);
             if (!System.IO.File.Exists(fullPath)) return null;
 
@@ -164,6 +176,81 @@ namespace project2.Services {
             await _db.SaveChangesAsync(ct);
 
             return (stream, file.ContentType, file.FileName);
+        }
+
+        public async Task<PurchaseResponse> PurchaseDocumentsAsync(PurchaseRequest req, string buyerUserId, CancellationToken ct) {
+            using var tx = await _db.Database.BeginTransactionAsync(ct);
+
+            try {
+                // 1. Get Buyer
+                var buyer = await _db.Users
+                    .FirstOrDefaultAsync(u => u.Id == buyerUserId, ct);
+                if (buyer is null)
+                    throw new KeyNotFoundException("Buyer account not found.");
+
+                // 2. Get Documents
+                var distinctDocIds = req.DocumentIds.Distinct().ToList();
+                var documents = await _db.Documents
+                    .Where(d => distinctDocIds.Contains(d.Id))
+                    .ToListAsync(ct);
+
+                //3. Validate Documents
+                if (documents.Count != distinctDocIds.Count)
+                    throw new KeyNotFoundException("One or more documents not found.");
+
+                //4. Validate items user already owns
+                var existingPurchases = await _db.UserPurchases
+                    .Where(p => p.UserId == buyerUserId && distinctDocIds.Contains(p.DocumentId))
+                    .Select(p => p.DocumentId)
+                    .ToHashSetAsync(ct);
+
+                //5. Price Calculation
+                decimal totalPrice = 0;
+                var newPurchases = new List<UserPurchase>();
+                var authorEarnings = new Dictionary<string, decimal>(); // userId -> earnings
+                foreach (var doc in documents) {
+                    if (doc.Price is null || doc.Price <= 0)
+                        throw new InvalidOperationException($"Document '{doc.Name}' is not for sale.");
+                    if (doc.AuthorId == buyerUserId)
+                        throw new InvalidOperationException($"You cannot buy your own document ('{doc.Name}').");
+                    if (existingPurchases.Contains(doc.Id))
+                        throw new InvalidOperationException($"You have already purchased '{doc.Name}'.");
+
+                    // Add to total
+                    totalPrice += doc.Price.Value;
+
+                    // Calculate 90% earning for the author
+                    var earning = doc.Price.Value * 0.9m;
+                    // handles if one author has multiple docs in the cart
+                    authorEarnings[doc.AuthorId] = authorEarnings.GetValueOrDefault(doc.AuthorId) + earning;
+
+                    // add the purchase record
+                    newPurchases.Add(new UserPurchase {
+                        UserId = buyerUserId,
+                        DocumentId = doc.Id,
+                        PricePaid = doc.Price.Value,
+                        PurchasedAt = DateTime.UtcNow
+                    });
+                }
+
+                await _balanceManager.TransferAsync(buyerUserId, totalPrice, authorEarnings, ct);
+                _db.UserPurchases.AddRange(newPurchases);
+                await _db.SaveChangesAsync(ct);
+
+                await tx.CommitAsync(ct);
+
+                return new PurchaseResponse {
+                    ItemsPurchased = newPurchases.Count,
+                    TotalPricePaid = totalPrice,
+                    NewUserBalance = buyer.Balance,
+                    PurchasedDocumentIds = newPurchases.Select(p => p.DocumentId).ToList()
+                };
+            } catch {
+                await tx.RollbackAsync(ct);
+                throw;
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
