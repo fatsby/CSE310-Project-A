@@ -30,9 +30,9 @@
             var adminEmail = cfg["Seed:AdminEmail"] ?? "admin@example.com";
             var adminPwd = cfg["Seed:AdminPassword"] ?? "Admin@12345";
             var adminBalance = cfg["Seed:AdminBalance"];
+            var admin = await userMgr.FindByEmailAsync(adminEmail);
             if (!string.IsNullOrWhiteSpace(adminEmail))
             {
-                var admin = await userMgr.FindByEmailAsync(adminEmail);
                 if (admin is null)
                 {
                     admin = new AppUser
@@ -66,6 +66,46 @@
                 var create = await userMgr.CreateAsync(userAcc, userPwd);
                 if (create.Succeeded)
                     await userMgr.AddToRoleAsync(userAcc, "User");
+            }
+
+            // Seed documents
+            if (admin != null && !await db.Documents.AnyAsync(d => d.Id == 1)) {
+                var uni = await db.Universities.FindAsync(1);
+                var subject = await db.Subjects.FindAsync(2);
+
+                if (uni != null && subject != null) {
+                    var doc = new Document {
+                        Id = 1, // Manually set ID
+                        AuthorId = admin.Id, // Use the real Admin ID
+                        Name = "Cửu Âm Chân Kinh CSE201",
+                        Description = "Tất tần tật về môn CSE201, Lab Files, Slides, Giải thuật và bí kíp.",
+                        Price = 200000m,
+                        UniversityId = 1, // EIU
+                        SubjectId = 2,    // DSA CSE201
+                        CreatedAt = new DateTime(2025, 1, 15, 10, 30, 0, DateTimeKind.Utc)
+                    };
+                    db.Documents.Add(doc);
+
+                    db.DocumentImages.Add(new DocumentImage {
+                        Id = 1,
+                        DocumentId = 1,
+                        Url = "/uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
+                        StoragePath = "uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
+                        SortOrder = 0
+                    });
+
+                    db.DocumentFiles.Add(new DocumentFile {
+                        Id = 1,
+                        DocumentId = 1,
+                        FileName = "fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
+                        ContentType = "application/pdf",
+                        SizeBytes = 166831, // REAL FILE SIZE IN BYTES!!!!
+                        Url = "/uploads/documents/1/files/fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
+                        StoragePath = "uploads/documents/1/files/fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
+                    });
+
+                    await db.SaveChangesAsync();
+                }
             }
         }
     }
