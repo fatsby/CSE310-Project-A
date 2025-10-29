@@ -3,6 +3,6 @@
 namespace project2.Services {
     public interface IDocumentService {
         Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct);
-        Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, int userId, CancellationToken ct);
+        Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, string userId, CancellationToken ct);
     }
 }

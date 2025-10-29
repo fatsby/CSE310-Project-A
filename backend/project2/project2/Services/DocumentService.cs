@@ -146,7 +146,7 @@ namespace project2.Services {
 
         }
 
-        public async Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, int userId, CancellationToken ct) {
+        public async Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, string userId, CancellationToken ct) {
             var file = await _db.DocumentFiles
                 .Include(f => f.Document)
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);

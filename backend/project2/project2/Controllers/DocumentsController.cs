@@ -66,7 +66,11 @@ namespace project2.Controllers {
         [HttpGet("{id:int}/files/{fileId:int}/download")]
         [Authorize] // Only signed-in; inside service check purchase/ownership
         public async Task<IActionResult> Download(int id, int fileId, CancellationToken ct) {
-            var userId = int.Parse(User.FindFirst("sub")!.Value);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+
             var result = await _svc.OpenFileForDownloadAsync(id, fileId, userId, ct);
             if (result is null) return NotFound();
 
