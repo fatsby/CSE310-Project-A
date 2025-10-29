@@ -15,10 +15,9 @@ namespace project2.Controllers {
 
         public DocumentsController(IDocumentService svc) => _svc = svc;
 
-        // Create with metadata + files via multipart/form-data
         [HttpPost]
         [Authorize] // require login
-        [RequestSizeLimit(150_000_000)] // 150MB per request (adjust)
+        [RequestSizeLimit(150_000_000)] // 150MB per request
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<DocumentResponse>> Create([FromForm] CreateDocumentRequest req, CancellationToken ct) {
             // get current user id from claims
@@ -30,7 +29,7 @@ namespace project2.Controllers {
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        // Basic fetch (metadata + public image URLs, file ids/names)
+        // Basic fetch
         [HttpGet("{id:int}")]
         [AllowAnonymous]
         public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, [FromServices] AppDbContext db) {
@@ -62,20 +61,48 @@ namespace project2.Controllers {
 
         }
 
-        // Protected download (streams the file after authorization)
+        // Protected download
         [HttpGet("{id:int}/files/{fileId:int}/download")]
-        [Authorize] // Only signed-in; inside service check purchase/ownership
+        [Authorize]
         public async Task<IActionResult> Download(int id, int fileId, CancellationToken ct) {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
                 return Unauthorized("User ID not found in token.");
 
+            try {
+                var result = await _svc.OpenFileForDownloadAsync(id, fileId, userId, ct);
+                if (result is null) return NotFound();
 
-            var result = await _svc.OpenFileForDownloadAsync(id, fileId, userId, ct);
-            if (result is null) return NotFound();
+                var (stream, contentType, downloadName) = result.Value;
+                return File(stream, contentType, downloadName, enableRangeProcessing: true);
+            } catch (UnauthorizedAccessException ex) {
+                return Forbid(ex.Message); // 403 Forbidden
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An error occurred while processing the file.", details = ex.Message });
+            }
+        }
 
-            var (stream, contentType, downloadName) = result.Value;
-            return File(stream, contentType, downloadName, enableRangeProcessing: true);
+        [HttpPost("purchase")] //api/documents/purchase
+        [Authorize]
+        public async Task<ActionResult<PurchaseResponse>> PurchaseCart(
+            [FromBody] PurchaseRequest req,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            try {
+                var result = await _svc.PurchaseDocumentsAsync(req, userId, ct);
+                return Ok(result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message }); // 404
+            } catch (InvalidOperationException ex) {
+                //insufficient funds, already owned, buying own.
+                return BadRequest(new { message = ex.Message }); // 400
+            } catch (Exception ex) {
+                // General server error
+                return StatusCode(500, new { message = "An unexpected error occurred during the purchase.", details = ex.Message });
+            }
         }
     }
 }
