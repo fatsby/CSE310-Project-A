@@ -163,7 +163,7 @@ namespace project2.Services {
                     .AnyAsync(p => p.UserId == userId && p.DocumentId == docId, ct);
             }
 
-            if (!isAuthor || !hasPurchased) {
+            if (!isAuthor && !hasPurchased) {
                 throw new UnauthorizedAccessException("You do not have permission to download this file.");
             }
 
