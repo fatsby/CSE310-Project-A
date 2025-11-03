@@ -75,7 +75,6 @@
 
                 if (uni != null && subject != null) {
                     var doc = new Document {
-                        Id = 1, // Manually set ID
                         AuthorId = admin.Id, // Use the real Admin ID
                         Name = "Cửu Âm Chân Kinh CSE201",
                         Description = "Tất tần tật về môn CSE201, Lab Files, Slides, Giải thuật và bí kíp.",
@@ -87,7 +86,6 @@
                     db.Documents.Add(doc);
 
                     db.DocumentImages.Add(new DocumentImage {
-                        Id = 1,
                         DocumentId = 1,
                         Url = "/uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
                         StoragePath = "uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
@@ -95,7 +93,6 @@
                     });
 
                     db.DocumentFiles.Add(new DocumentFile {
-                        Id = 1,
                         DocumentId = 1,
                         FileName = "fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
                         ContentType = "application/pdf",
