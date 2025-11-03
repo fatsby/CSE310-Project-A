@@ -113,8 +113,6 @@ app.MapGet("/me", (ClaimsPrincipal me) => new {
 }).RequireAuthorization();
 
 app.MapControllers();
-app.UseStaticFiles(); // serve wwwroot/uploads
-
 
 await app.Services.SeedIdentityAsync(builder.Configuration);
 
