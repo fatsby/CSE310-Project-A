@@ -14,6 +14,7 @@
         public DbSet<DocumentFile> DocumentFiles => Set<DocumentFile>();
 
         public DbSet<UserPurchase> UserPurchases => Set<UserPurchase>();
+        public DbSet<Coupon> Coupons => Set<Coupon>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         }
@@ -62,6 +63,9 @@
                 .HasForeignKey(f => f.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            b.Entity<Coupon>(e => {
+                e.Property(c => c.DiscountPercentage).HasPrecision(18, 2);
+            });
             //UserPurchase relationships
             b.Entity<UserPurchase>()
             .HasKey(p => new { p.UserId, p.DocumentId });
@@ -78,6 +82,7 @@
                 .WithMany() // Or add 'List<UserPurchase> Purchases' to Document
                 .HasForeignKey(p => p.DocumentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
 
             //Seed data

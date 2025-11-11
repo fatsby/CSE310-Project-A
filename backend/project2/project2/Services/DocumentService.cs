@@ -194,20 +194,22 @@ namespace project2.Services {
                     .Where(d => distinctDocIds.Contains(d.Id))
                     .ToListAsync(ct);
 
-                //3. Validate Documents
+                // 3. Validate Documents
                 if (documents.Count != distinctDocIds.Count)
                     throw new KeyNotFoundException("One or more documents not found.");
 
-                //4. Validate items user already owns
+                // 4. Validate ownership
                 var existingPurchases = await _db.UserPurchases
                     .Where(p => p.UserId == buyerUserId && distinctDocIds.Contains(p.DocumentId))
                     .Select(p => p.DocumentId)
                     .ToHashSetAsync(ct);
 
-                //5. Price Calculation
-                decimal totalPrice = 0;
+                // 5. Price, Earnings Calculation
+                decimal originalTotalPrice = 0;
                 var newPurchases = new List<UserPurchase>();
-                var authorEarnings = new Dictionary<string, decimal>(); // userId -> earnings
+                // store the price share for each author which is 90% of the original price
+                var authorPriceShare = new Dictionary<string, decimal>();
+
                 foreach (var doc in documents) {
                     if (doc.Price is null || doc.Price <= 0)
                         throw new InvalidOperationException($"Document '{doc.Name}' is not for sale.");
@@ -216,32 +218,57 @@ namespace project2.Services {
                     if (existingPurchases.Contains(doc.Id))
                         throw new InvalidOperationException($"You have already purchased '{doc.Name}'.");
 
-                    // Add to total
-                    totalPrice += doc.Price.Value;
+                    originalTotalPrice += doc.Price.Value;
+                    authorPriceShare[doc.AuthorId] =
+                        authorPriceShare.GetValueOrDefault(doc.AuthorId) + (doc.Price.Value*0.9m);
+                }
 
-                    // Calculate 90% earning for the author
-                    var earning = doc.Price.Value * 0.9m;
-                    // handles if one author has multiple docs in the cart
-                    authorEarnings[doc.AuthorId] = authorEarnings.GetValueOrDefault(doc.AuthorId) + earning;
+                // 6. Apply Coupon
+                decimal finalPrice = originalTotalPrice;
+                decimal discountPercentage = 0;
+                decimal discountAmount = 0;
 
-                    // add the purchase record
+                if (!string.IsNullOrWhiteSpace(req.CouponCode)) {
+                    var coupon = await _db.Coupons
+                        .FirstOrDefaultAsync(c => c.Code == req.CouponCode.ToUpperInvariant(), ct);
+
+                    if (coupon == null || !coupon.IsActive || coupon.ExpiryDate < DateTime.UtcNow)
+                        throw new InvalidOperationException("The provided coupon is invalid or has expired.");
+
+                    discountPercentage = coupon.DiscountPercentage;
+                    discountAmount = originalTotalPrice * (discountPercentage / 100);
+                    finalPrice = originalTotalPrice - discountAmount;
+                }
+
+
+                // 8. Create Purchase Records
+                foreach (var doc in documents) {
+                    // PricePaid reflect the DISCOUNTED price for that item
+                    decimal itemDiscount = doc.Price.Value * (discountPercentage / 100);
+                    decimal itemFinalPrice = doc.Price.Value - itemDiscount;
+
                     newPurchases.Add(new UserPurchase {
                         UserId = buyerUserId,
                         DocumentId = doc.Id,
-                        PricePaid = doc.Price.Value,
+                        PricePaid = itemFinalPrice,
                         PurchasedAt = DateTime.UtcNow
                     });
                 }
 
-                await _balanceManager.TransferAsync(buyerUserId, totalPrice, authorEarnings, ct);
+                // 9. Call Balance Manager
+                await _balanceManager.TransferAsync(buyerUserId, finalPrice, authorPriceShare, ct);
+
+                // 10. Save purchase records & commit
                 _db.UserPurchases.AddRange(newPurchases);
                 await _db.SaveChangesAsync(ct);
-
                 await tx.CommitAsync(ct);
 
+                // 11. Return detailed response
                 return new PurchaseResponse {
                     ItemsPurchased = newPurchases.Count,
-                    TotalPricePaid = totalPrice,
+                    OriginalPrice = originalTotalPrice,
+                    DiscountApplied = discountAmount,
+                    TotalPricePaid = finalPrice,
                     NewUserBalance = buyer.Balance,
                     PurchasedDocumentIds = newPurchases.Select(p => p.DocumentId).ToList()
                 };
@@ -249,8 +276,6 @@ namespace project2.Services {
                 await tx.RollbackAsync(ct);
                 throw;
             }
-
-            throw new NotImplementedException();
         }
     }
 }

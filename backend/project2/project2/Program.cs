@@ -83,6 +83,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IBalanceManager, BalanceManager>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 
 //for debugging purposes only - log sensitive data
 builder.Services.AddDbContext<AppDbContext>(opt => {
