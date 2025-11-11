@@ -35,6 +35,60 @@ namespace project2.Controllers
             return Ok(userWithROles);
         }
 
+        // i did token thing by a different method, so i dont understand this
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateUser([FromBody] CreatedUserDto createdUserDto)
+        {
+            // use try because while saving a new user, it could have errors like failed DB Connection, null _userManager (learned from youtube)
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var appUser = new AppUser
+                {
+                    UserName = createdUserDto.Username,
+                    Email = createdUserDto.Email,
+                    PhoneNumber = createdUserDto.PhoneNumber,
+                };
+
+                var createdUser = await _userManager.CreateAsync(appUser, createdUserDto.Password);
+
+                if (createdUser.Succeeded)
+                {
+                    if (!await _roleManager.RoleExistsAsync("Admin"))
+                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, "Admin");
+
+                    if (roleResult.Succeeded)
+                    {
+                        return Ok(new NewUserDto
+                        {
+                            Username = appUser.UserName,
+                            Email = appUser.Email,
+                            PhoneNumber = appUser.PhoneNumber,
+                            Token = "will be understood later"
+                        }
+                        );
+                    }
+                    else
+                    {
+                        return StatusCode(500, roleResult.Errors);
+                    }
+                }
+                else
+                {
+                    return StatusCode(500, createdUser.Errors);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
         [HttpGet("search-by-name")]
         public async Task<IActionResult> GetUsersByName(string nameInput)
         {
@@ -48,9 +102,27 @@ namespace project2.Controllers
             return Ok(users);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById([FromRoute] string id)
+        {
+            if(string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var existingUser = await _userManager.FindByIdAsync(id);
+
+            if (existingUser == null)
+            {
+                return NotFound(id);
+            }
+
+            return Ok(existingUser);
+        }
+
         // EditUse still being reviewed
         // after editting, we cannot log in by the new username & password (using Swagger). BUT IN MY OTHER PROJECT, I CAN
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         public async Task<IActionResult> EditUser([FromRoute] string id, [FromBody] UpdatedUserDto updatedUserDto)
         {
             var existingUser = await _userManager.FindByIdAsync(id);
@@ -88,6 +160,32 @@ namespace project2.Controllers
             }
 
             return Ok(existingUser);
+        }
+
+        // add IsBanned -> run migrations
+        // toggle ban (banned -> unbanned, unbanned -> banned)
+        [HttpPut("ban/{id}")]
+        public async Task<IActionResult> BanUser([FromRoute] string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            //user.IsBanned = !user.IsBanned;
+            //await _context.SaveChangesAsync();
+
+            //var status = user.IsBanned ? "banned" : "unbanned";
+
+            //return Ok(new { message = $"User {user.UserName} has been {status}." });
+            return Ok();
         }
 
 
