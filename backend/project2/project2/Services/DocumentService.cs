@@ -187,35 +187,36 @@ namespace project2.Services {
             using var tx = await _db.Database.BeginTransactionAsync(ct);
 
             try {
-                // 1. Get Buyer
+                // get buyer user from db
                 var buyer = await _db.Users
                     .FirstOrDefaultAsync(u => u.Id == buyerUserId, ct);
                 if (buyer is null)
                     throw new KeyNotFoundException("Buyer account not found.");
 
-                // 2. Get Documents
+                // get all docs
                 var distinctDocIds = req.DocumentIds.Distinct().ToList();
                 var documents = await _db.Documents
                     .Where(d => distinctDocIds.Contains(d.Id))
                     .ToListAsync(ct);
 
-                // 3. Validate Documents
+                // validate all documents found
                 if (documents.Count != distinctDocIds.Count)
                     throw new KeyNotFoundException("One or more documents not found.");
 
-                // 4. Validate ownership
+                // validate ownership
                 var existingPurchases = await _db.UserPurchases
                     .Where(p => p.UserId == buyerUserId && distinctDocIds.Contains(p.DocumentId))
                     .Select(p => p.DocumentId)
                     .ToHashSetAsync(ct);
 
-                // 5. Price, Earnings Calculation
+                // price calculations
                 decimal originalTotalPrice = 0;
                 var newPurchases = new List<UserPurchase>();
                 // store the price share for each author which is 90% of the original price
                 var authorPriceShare = new Dictionary<string, decimal>();
 
                 foreach (var doc in documents) {
+                    //SELF-NOTE: add IsActive boolean for Document and replace this
                     if (doc.Price is null || doc.Price <= 0)
                         throw new InvalidOperationException($"Document '{doc.Name}' is not for sale.");
                     if (doc.AuthorId == buyerUserId)
@@ -228,7 +229,7 @@ namespace project2.Services {
                         authorPriceShare.GetValueOrDefault(doc.AuthorId) + (doc.Price.Value*0.9m);
                 }
 
-                // 6. Apply Coupon
+                // apply Coupon
                 decimal finalPrice = originalTotalPrice;
                 decimal discountPercentage = 0;
                 decimal discountAmount = 0;
@@ -246,7 +247,7 @@ namespace project2.Services {
                 }
 
 
-                // 8. Create Purchase Records
+                // create Purchase Records
                 foreach (var doc in documents) {
                     // PricePaid reflect the DISCOUNTED price for that item
                     decimal itemDiscount = doc.Price.Value * (discountPercentage / 100);
@@ -260,15 +261,15 @@ namespace project2.Services {
                     });
                 }
 
-                // 9. Call Balance Manager
+                // call Balance Manager
                 await _balanceManager.TransferAsync(buyerUserId, finalPrice, authorPriceShare, ct);
 
-                // 10. Save purchase records & commit
+                // save purchase records & update db
                 _db.UserPurchases.AddRange(newPurchases);
                 await _db.SaveChangesAsync(ct);
                 await tx.CommitAsync(ct);
 
-                // 11. Return detailed response
+                // response
                 return new PurchaseResponse {
                     ItemsPurchased = newPurchases.Count,
                     OriginalPrice = originalTotalPrice,
@@ -281,6 +282,70 @@ namespace project2.Services {
                 await tx.RollbackAsync(ct);
                 throw;
             }
+        }
+
+        public async Task<DocumentResponse?> UpdateAsync(int documentId, string userId, UpdateDocumentDto dto, CancellationToken ct) {
+            // find the document
+            var doc = await _db.Documents
+                .FirstOrDefaultAsync(d => d.Id == documentId, ct);
+
+            if (doc is null) {
+                return null; // 404 not found
+            }
+
+            // check if user is author
+            if (doc.AuthorId != userId) {
+                throw new UnauthorizedAccessException("You are not the owner of this document.");
+            }
+
+            // apply updates
+            bool hasChanges = false;
+            if (dto.Name is not null) {
+                doc.Name = dto.Name.Trim();
+                hasChanges = true;
+            }
+
+            if (dto.Description is not null) {
+                doc.Description = dto.Description.Trim();
+                hasChanges = true;
+            }
+
+            // treat 0 as free
+            if (dto.Price.HasValue) {
+                doc.Price = dto.Price.Value;
+                hasChanges = true;
+            }
+
+            // save if changed
+            if (hasChanges) {
+                await _db.SaveChangesAsync(ct);
+            }
+
+            // return the updated document data
+            var full = await _db.Documents
+                .AsNoTracking()
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .FirstAsync(d => d.Id == doc.Id, ct);
+
+            return new DocumentResponse {
+                Id = full.Id,
+                Name = full.Name,
+                Description = full.Description,
+                Price = full.Price,
+                UniversityId = full.UniversityId,
+                UniversityName = full.University.Name,
+                SubjectId = full.SubjectId,
+                SubjectName = full.Subject.Name,
+                Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                Files = full.Files.Select(f => new DocumentFileDto {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
+            };
         }
     }
 }
