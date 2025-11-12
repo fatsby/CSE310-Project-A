@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using project2.DTOs;
+using project2.DTOs.AuthDto;
 using project2.Models;
 
 [ApiController]

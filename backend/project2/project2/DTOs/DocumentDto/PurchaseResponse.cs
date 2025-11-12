@@ -1,4 +1,4 @@
-﻿namespace project2.DTOs {
+﻿namespace project2.DTOs.DocumentDto {
     public class PurchaseResponse {
         public int ItemsPurchased { get; set; }
         public decimal OriginalPrice { get; set; }

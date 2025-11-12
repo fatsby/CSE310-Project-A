@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace project2.DTOs {
+namespace project2.DTOs.DocumentDto {
     public class PurchaseRequest {
         [Required]
         [MinLength(1)]

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace project2.DTOs {
+namespace project2.DTOs.CouponDto {
     public class CouponDto {
         public string Code { get; set; } = null!;
         public decimal DiscountPercentage { get; set; }

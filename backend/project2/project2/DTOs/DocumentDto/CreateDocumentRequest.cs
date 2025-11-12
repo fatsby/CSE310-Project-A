@@ -1,4 +1,4 @@
-﻿namespace project2.DTOs {
+﻿namespace project2.DTOs.DocumentDto {
     public class CreateDocumentRequest {
         // metadata
         public string Name { get; set; } = null!;

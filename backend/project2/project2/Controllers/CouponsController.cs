@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using project2.DTOs;
+using project2.DTOs.CouponDto;
 using project2.Services;
 
 namespace project2.Controllers {

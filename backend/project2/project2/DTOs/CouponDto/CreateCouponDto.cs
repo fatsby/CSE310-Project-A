@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace project2.DTOs {
+namespace project2.DTOs.CouponDto {
     public class CreateCouponDto {
         [Required]
         [StringLength(50, MinimumLength = 3)]

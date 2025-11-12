@@ -1,4 +1,4 @@
-﻿using project2.DTOs;
+﻿using project2.DTOs.CouponDto;
 
 namespace project2.Services {
     public interface ICouponService {

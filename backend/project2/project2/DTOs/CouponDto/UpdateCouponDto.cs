@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace project2.DTOs {
+namespace project2.DTOs.CouponDto {
     public class UpdateCouponDto {
         [Range(1, 100)]
         public decimal? DiscountPercentage { get; set; }

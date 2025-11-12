@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project2.Data;
-using project2.DTOs;
+using project2.DTOs.DocumentDto;
 using project2.Services;
 using System.Security.Claims;
 

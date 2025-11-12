@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using project2.Data;
-using project2.DTOs;
+using project2.DTOs.CouponDto;
 using project2.Models;
 
 namespace project2.Services {
