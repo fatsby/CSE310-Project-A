@@ -6,7 +6,6 @@
         public string FileName { get; set; } = null!;
         public string ContentType { get; set; } = "application/octet-stream";
         public long SizeBytes { get; set; }
-        public string Url { get; set; } = null!;          // or use tokenized route
         public string StoragePath { get; set; } = null!;
         public long DownloadCount { get; set; }
     }

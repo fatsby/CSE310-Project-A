@@ -67,42 +67,6 @@
                 if (create.Succeeded)
                     await userMgr.AddToRoleAsync(userAcc, "User");
             }
-
-            // Seed documents
-            if (admin != null && !await db.Documents.AnyAsync(d => d.Id == 1)) {
-                var uni = await db.Universities.FindAsync(1);
-                var subject = await db.Subjects.FindAsync(2);
-
-                if (uni != null && subject != null) {
-                    var doc = new Document {
-                        AuthorId = admin.Id, // real admin ID
-                        Name = "Cửu Âm Chân Kinh CSE201",
-                        Description = "Tất tần tật về môn CSE201, Lab Files, Slides, Giải thuật và bí kíp.",
-                        Price = 200000m,
-                        UniversityId = 1, // EIU
-                        SubjectId = 2,    // DSA CSE201
-                        CreatedAt = new DateTime(2025, 1, 15, 10, 30, 0, DateTimeKind.Utc)
-                    };
-
-                    doc.Images.Add(new DocumentImage {
-                        Url = "/uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
-                        StoragePath = "uploads/documents/1/images/fa54248d192b4c0eb1b2539f11ec6bfd.jpg",
-                        SortOrder = 0
-                    });
-
-                    doc.Files.Add(new DocumentFile {
-                        FileName = "fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
-                        ContentType = "application/pdf",
-                        SizeBytes = 166831,
-                        Url = "/uploads/documents/1/files/fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
-                        StoragePath = "uploads/documents/1/files/fbdd87ab3b4740b2a520dd5ed6e9259e.pdf",
-                    });
-
-                    db.Documents.Add(doc);
-
-                    await db.SaveChangesAsync();
-                }
-            }
         }
     }
 }

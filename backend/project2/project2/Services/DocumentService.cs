@@ -77,37 +77,40 @@ namespace project2.Services {
             await _db.SaveChangesAsync(ct);
 
             //saving images
-            var toCleanup = new List<string>();
+            var toCleanup = new List<(string path, bool isPublic)>();
             var sort = 0;
             try {
-                // IMAGES — add via nav so EF sets DocumentId
+                // IMAGES (PUBLIC)
                 foreach (var img in req.Images) {
                     await using var s = img.OpenReadStream();
                     var stored = await _storage.SaveAsync(s, img.FileName, img.ContentType,
-                        $"documents/{doc.Id}/images", ct);
+                        $"documents/{doc.Id}/images",
+                        isPublic: true,
+                        ct);
 
-                    toCleanup.Add(stored.StoragePath);
+                    toCleanup.Add((stored.StoragePath, true));
 
                     doc.Images.Add(new DocumentImage {
-                        Url = stored.Url,
+                        Url = stored.Url!,
                         StoragePath = stored.StoragePath,
                         SortOrder = sort++
                     });
                 }
 
-                // FILES — via nav or explicitly set DocumentId = doc.Id
+                // FILES (PRIVATE)
                 foreach (var file in req.Files ?? []) {
                     await using var s = file.OpenReadStream();
                     var stored = await _storage.SaveAsync(s, file.FileName, file.ContentType,
-                        $"documents/{doc.Id}/files", ct);
+                        $"documents/{doc.Id}/files",
+                        isPublic: false,
+                        ct);
 
-                    toCleanup.Add(stored.StoragePath);
+                    toCleanup.Add((stored.StoragePath, false));
 
                     doc.Files.Add(new DocumentFile {
                         FileName = file.FileName,
                         ContentType = file.ContentType,
                         SizeBytes = stored.Size,
-                        Url = stored.Url,
                         StoragePath = stored.StoragePath
                     });
                 }
@@ -117,8 +120,8 @@ namespace project2.Services {
             } catch {
                 await tx.RollbackAsync(ct);
                 // cleanup files saved to disk if DB failed
-                foreach (var path in toCleanup)
-                    await _storage.DeleteAsync(path, ct);
+                foreach (var (path, isPublic) in toCleanup)
+                    await _storage.DeleteAsync(path, isPublic, ct);
                 throw;
             }
 
@@ -154,7 +157,7 @@ namespace project2.Services {
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);
             if (file is null) return null;
 
-            // Check ownership / purchase
+            // check ownership / purchase
             bool isAuthor = file.Document.AuthorId == userId;
             //if not author, check purchase
             bool hasPurchased = false;
@@ -168,7 +171,9 @@ namespace project2.Services {
             }
 
             // Open file stream
-            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", file.StoragePath);
+            var privateRootPath = Path.Combine(_env.ContentRootPath, "_PrivateStorage");
+            var fullPath = Path.Combine(privateRootPath, file.StoragePath);
+
             if (!System.IO.File.Exists(fullPath)) return null;
 
             var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);

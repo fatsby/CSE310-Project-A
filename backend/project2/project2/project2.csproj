@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="_PrivateStorage\" />
     <Folder Include="wwwroot\uploads\documents\" />
   </ItemGroup>
 
