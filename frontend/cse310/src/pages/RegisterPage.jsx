@@ -1,24 +1,23 @@
 import apple from "../assets/apple-logo.png";
 import google from "../assets/google-logo.png";
-import { AtSign } from "lucide-react";
+import { AtSign, Check } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
     TextInput,
     PasswordInput,
-    Input,
     Button,
     Checkbox,
+    Notification,
 } from "@mantine/core";
-import {
-    useForm,
-    isNotEmpty,
-    isEmail,
-    isInRange,
-    hasLength,
-    matches,
-} from "@mantine/form";
+import { useForm, isEmail, hasLength } from "@mantine/form";
 
 function RegisterPage({ onSwitchToLogin }) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const API_URL = import.meta.env.VITE_API_BASE_URL;
+
     const form = useForm({
         mode: "uncontrolled",
         initialValues: {
@@ -35,19 +34,88 @@ function RegisterPage({ onSwitchToLogin }) {
                 { min: 6 },
                 "Username must be > 6 characters long"
             ),
-            termsOfService: (value) => (value ? null : true),
+            termsOfService: (value) =>
+                value ? null : "You must agree to the terms",
             password: hasLength(
                 { min: 6 },
                 "Password must be > 6 characters long"
             ),
             confirmPass: (value, values) =>
-                value !== values.password ? "Passwords did not match" : null,
+                value !== values.password ? "Password did not match" : null,
         },
     });
+
+    const handleRegister = async (values) => {
+        setError(null);
+        setSuccess(null);
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(`${API_URL}/auth/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    UserName: values.username,
+                    Email: values.email,
+                    Password: values.password,
+                }),
+            });
+
+            if (response.ok) {
+                // API return Results.Empty
+                console.log("Register Success");
+                form.reset();
+                setSuccess(
+                    "Registration successful! Switching to login tab..."
+                );
+                setTimeout(() => {
+                    onSwitchToLogin();
+                }, 2500);
+            } else {
+                // API return BadRequest(create.Errors)
+                const errorData = await response.json();
+                const errorMessages = errorData
+                    .map((err) => err.description)
+                    .join("\n");
+                setError(
+                    errorMessages || "Registration failed. Please try again."
+                );
+            }
+        } catch (err) {
+            console.error("Network error:", err);
+            setError("A network error occurred. Please try again.");
+            setIsLoading(false);
+        }
+    };
     return (
         <>
             <div className="flex flex-col w-[400px] mx-auto px-[20px]">
-                {/* <h2 className="text-center text-[30px] font-bold">Sign up</h2> */}
+                {/* Display success message */}
+                {success && (
+                    <Notification
+                        icon={<Check size={20} />}
+                        color="green" // <-- Thông báo màu xanh
+                        title="Registration Success"
+                        onClose={() => setSuccess(null)}
+                        className="mb-4"
+                    >
+                        {success}
+                    </Notification>
+                )}
+                {/* Display Error */}
+                {error && (
+                    <Notification
+                        color="red"
+                        title="Registration Error"
+                        onClose={() => setError(null)}
+                        className="mb-4"
+                    >
+                        <div style={{ whiteSpace: "pre-wrap" }}>{error}</div>
+                    </Notification>
+                )}
+
                 <p className="text-center">with</p>
                 {/* Sign up via google/apple */}
                 <div className="grid grid-cols-2 gap-4 p-[10px] ">
@@ -65,7 +133,11 @@ function RegisterPage({ onSwitchToLogin }) {
                         className="flex justify-center cursor-pointer  pt-[5px] pb-[5px] bg-black rounded-full shadow-[0px_0px_30px_10px_rgba(0,_0,_0,_0.1)]"
                         to={""}
                     >
-                        <img className="w-[30px] h-[30px]" src={apple} alt="" />
+                        <img
+                            className="w-[30px] h-[30px]"
+                            src={apple}
+                            alt=""
+                        />
                     </Link>
                 </div>
                 <div className="flex items-center w-full">
@@ -75,17 +147,14 @@ function RegisterPage({ onSwitchToLogin }) {
                 </div>
                 {/* Register form */}
                 <div className="">
-                    <form
-                        onSubmit={form.onSubmit((values) =>
-                            console.log(values)
-                        )}
-                    >
+                    <form onSubmit={form.onSubmit(handleRegister)}>
                         <TextInput
                             className="my-3"
                             size="md"
                             radius="xl"
                             withAsterisk
                             placeholder="Username"
+                            disabled={isLoading}
                             key={form.key("username")}
                             {...form.getInputProps("username")}
                         />
@@ -96,6 +165,7 @@ function RegisterPage({ onSwitchToLogin }) {
                             withAsterisk
                             placeholder="Your email"
                             rightSection={<AtSign size={20} />}
+                            disabled={isLoading}
                             key={form.key("email")}
                             {...form.getInputProps("email")}
                         />
@@ -114,12 +184,14 @@ function RegisterPage({ onSwitchToLogin }) {
                             radius="xl"
                             withAsterisk
                             placeholder="Confirm Password"
+                            disabled={isLoading}
                             key={form.key("confirmPass")}
                             {...form.getInputProps("confirmPass")}
                         />
                         <Checkbox
                             label="Agree terms and conditions"
                             size="xs"
+                            disabled={isLoading}
                             key={form.key("termsOfService")}
                             {...form.getInputProps("termsOfService", {
                                 type: "checkbox",
@@ -131,8 +203,10 @@ function RegisterPage({ onSwitchToLogin }) {
                             className="my-3"
                             size="md"
                             radius="xl"
+                            loading={isLoading}
+                            disabled={isLoading}
                         >
-                            Sign up
+                            {isLoading ? "Signing up..." : "Sign up"}{" "}
                         </Button>
                     </form>
                     <p className="text-center">
