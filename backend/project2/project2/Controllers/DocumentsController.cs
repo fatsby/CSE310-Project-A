@@ -12,8 +12,12 @@ namespace project2.Controllers {
     [ApiController]
     public class DocumentsController : ControllerBase {
         private readonly IDocumentService _svc;
+        private readonly AppDbContext _db;
 
-        public DocumentsController(IDocumentService svc) => _svc = svc;
+        public DocumentsController(IDocumentService svc, AppDbContext db) {
+            _svc = svc;
+            _db = db;
+        }
 
         [HttpPost]
         [Authorize] // require login
@@ -29,8 +33,58 @@ namespace project2.Controllers {
             return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
         }
 
-        // Basic fetch
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(
+            [FromQuery] int? subjectId,
+            [FromQuery] string? authorId, // AuthorId is string bcuz UserId is GUID.ToString()
+            [FromQuery] int? universityId)
+        {
+            var query = _db.Documents
+                .AsNoTracking()
+                .Where(d => !d.isDeleted && d.isActive); // only show active and not deleted documents
 
+            if (subjectId.HasValue) {
+                query = query.Where(d => d.SubjectId == subjectId.Value);
+            }
+            if (universityId.HasValue) {
+                query = query.Where(d => d.UniversityId == universityId.Value);
+            }
+            if (!string.IsNullOrEmpty(authorId)) {
+                query = query.Where(d => d.AuthorId == authorId);
+            }
+
+            var docs = await query
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .ToListAsync();
+
+            // map the results to a DTO
+            var response = docs.Select(doc => new DocumentResponse {
+                Id = doc.Id,
+                Name = doc.Name,
+                Description = doc.Description,
+                Price = doc.Price,
+                UniversityId = doc.UniversityId,
+                UniversityName = doc.University.Name,
+                SubjectId = doc.SubjectId,
+                SubjectName = doc.Subject.Name,
+                isActive = doc.isActive,
+                isDeleted = doc.isDeleted,
+                Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                Files = doc.Files.Select(f => new DocumentFileDto {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
+            });
+
+            return Ok(response);
+        }
+
+        // Basic fetch
         [HttpGet("{id:int}")]
         [AllowAnonymous]
         public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, CancellationToken ct) {
