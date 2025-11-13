@@ -30,37 +30,13 @@ namespace project2.Controllers {
         }
 
         // Basic fetch
+
         [HttpGet("{id:int}")]
         [AllowAnonymous]
-        public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, [FromServices] AppDbContext db) {
-            var doc = await db.Documents
-            .Include(d => d.University)
-            .Include(d => d.Subject)
-            .Include(d => d.Images)
-            .Include(d => d.Files)
-            .FirstOrDefaultAsync(d => d.Id == id);
+        public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, CancellationToken ct) {
+            var result = await _svc.GetByIdAsync(id, ct);
 
-            if (doc is null) return NotFound();
-
-            return new DocumentResponse {
-                Id = doc.Id,
-                Name = doc.Name,
-                Description = doc.Description,
-                Price = doc.Price,
-                UniversityId = doc.UniversityId,
-                UniversityName = doc.University.Name,
-                SubjectId = doc.SubjectId,
-                SubjectName = doc.Subject.Name,
-                isActive = doc.isActive,
-                isDeleted = doc.isDeleted,
-                Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                Files = doc.Files.Select(f => new DocumentFileDto {
-                    Id = f.Id,
-                    FileName = f.FileName,
-                    SizeBytes = f.SizeBytes
-                })
-            };
-
+            return (result is null) ? NotFound() : Ok(result);
         }
 
         // Protected download

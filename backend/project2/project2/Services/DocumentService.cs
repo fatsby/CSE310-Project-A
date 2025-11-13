@@ -38,6 +38,17 @@ namespace project2.Services {
             _env = env;
             _balanceManager = balanceManager;
         }
+        public async Task<DocumentResponse> GetByIdAsync(int documentId, CancellationToken ct) {
+            var doc = await _db.Documents
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Id == documentId, ct);
+
+            if (doc is null) {
+                throw new KeyNotFoundException("Document not found.");
+            }
+
+            return await GetDocumentResponseByIdAsync(documentId, ct);
+        }
 
         public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
             using var tx = await _db.Database.BeginTransactionAsync(ct);
