@@ -109,21 +109,22 @@ namespace project2.Controllers {
 
         [HttpPatch("{id:int}")]
         [Authorize]
-        public async Task<ActionResult<DocumentResponse>> Update(
-            [FromRoute] int id,
-            [FromBody] UpdateDocumentDto dto,
-            CancellationToken ct) {
+        public async Task<ActionResult<DocumentResponse>> Update([FromRoute] int id, [FromBody] UpdateDocumentDto dto, CancellationToken ct) {
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) {
                 return Unauthorized("User ID not found in token.");
             }
 
+            string? userIdToPass = User.IsInRole("Admin") ? null : userId;
+
             try {
-                var result = await _svc.UpdateAsync(id, userId, dto, ct);
-                if (result is null) {
-                    return NotFound(new { message = "Document not found." });
-                }
+
+                var result = await _svc.UpdateAsync(id, userIdToPass, dto, ct);
+
                 return Ok(result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
             } catch (UnauthorizedAccessException ex) {
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             } catch (Exception ex) {
@@ -141,9 +142,14 @@ namespace project2.Controllers {
             if (userId == null) {
                 return Unauthorized("User ID not found in token.");
             }
+
+            string? userIdToPass = User.IsInRole("Admin") ? null : userId;
+
             try {
-                var result = await _svc.ActiveSwitchAsync(id, userId, isActive, ct);
+                var result = await _svc.ActiveSwitchAsync(id, userIdToPass, isActive, ct);
                 return Ok(result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
             } catch (UnauthorizedAccessException ex) {
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             } catch (Exception ex) {
@@ -160,6 +166,8 @@ namespace project2.Controllers {
             try {
                 var result = await _svc.DeleteAsync(id, isDeleted, ct);
                 return Ok(result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
             } catch (UnauthorizedAccessException ex) {
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
             } catch (Exception ex) {

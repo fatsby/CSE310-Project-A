@@ -129,7 +129,7 @@ namespace project2.Services {
 
         }
 
-        public async Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, string userId, CancellationToken ct) {
+        public async Task<(Stream stream, string contentType, string downloadName)?> OpenFileForDownloadAsync(int docId, int fileId, string? userId, CancellationToken ct) {
             var file = await _db.DocumentFiles
                 .Include(f => f.Document)
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);
@@ -142,16 +142,19 @@ namespace project2.Services {
             }
 
             // check ownership / purchase
-            bool isAuthor = file.Document.AuthorId == userId;
-            //if not author, check purchase
-            bool hasPurchased = false;
-            if (!isAuthor) {
-                hasPurchased = await _db.UserPurchases
-                    .AnyAsync(p => p.UserId == userId && p.DocumentId == docId, ct);
-            }
+            // only check ownership if a userId was provided (user is not admin)
+            if (userId is not null) {
+                bool isAuthor = file.Document.AuthorId == userId;
+                bool hasPurchased = false;
 
-            if (!isAuthor && !hasPurchased) {
-                throw new UnauthorizedAccessException("You do not have permission to download this file.");
+                if (!isAuthor) {
+                    hasPurchased = await _db.UserPurchases
+                        .AnyAsync(p => p.UserId == userId && p.DocumentId == docId, ct);
+                }
+
+                if (!isAuthor && !hasPurchased) {
+                    throw new UnauthorizedAccessException("You do not have permission to download this file.");
+                }
             }
 
             // Open file stream
@@ -269,15 +272,15 @@ namespace project2.Services {
             }
         }
 
-        public async Task<DocumentResponse> ActiveSwitchAsync(int documentId, string userId, bool isActive, CancellationToken ct) {
+        public async Task<DocumentResponse> ActiveSwitchAsync(int documentId, string? userId, bool isActive, CancellationToken ct) {
             // find the document
             var doc = await _db.Documents
                 .FirstOrDefaultAsync(d => d.Id == documentId, ct);
             if (doc is null) {
                 throw new KeyNotFoundException("Document not found.");
             }
-            // check if user is author
-            if (doc.AuthorId != userId) {
+            // check if user is author && not admin
+            if (userId is not null && doc.AuthorId != userId) {
                 throw new UnauthorizedAccessException("You are not the owner of this document.");
             }
             // update active status
@@ -292,7 +295,7 @@ namespace project2.Services {
             var doc = await _db.Documents
                 .FirstOrDefaultAsync(d => d.Id == documentId, ct);
             if (doc is null) {
-                throw new KeyNotFoundException("Doc not found.");
+                throw new KeyNotFoundException("Document not found.");
             }
 
             
@@ -302,7 +305,7 @@ namespace project2.Services {
             return await GetDocumentResponseByIdAsync(documentId, ct);
         }
 
-        public async Task<DocumentResponse> UpdateAsync(int documentId, string userId, UpdateDocumentDto dto, CancellationToken ct) {
+        public async Task<DocumentResponse> UpdateAsync(int documentId, string? userId, UpdateDocumentDto dto, CancellationToken ct) {
             // find the document
             var doc = await _db.Documents
                 .FirstOrDefaultAsync(d => d.Id == documentId, ct);
@@ -311,8 +314,8 @@ namespace project2.Services {
                 throw new KeyNotFoundException("Doc not found.");
             }
 
-            // check if user is author
-            if (doc.AuthorId != userId) {
+            // check if user is author && not admin
+            if (userId is not null && doc.AuthorId != userId) {
                 throw new UnauthorizedAccessException("You are not the owner of this document.");
             }
 
