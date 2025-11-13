@@ -51,6 +51,8 @@ namespace project2.Controllers {
                 UniversityName = doc.University.Name,
                 SubjectId = doc.SubjectId,
                 SubjectName = doc.Subject.Name,
+                isActive = doc.isActive,
+                isDeleted = doc.isDeleted,
                 Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
                 Files = doc.Files.Select(f => new DocumentFileDto {
                     Id = f.Id,
@@ -102,6 +104,66 @@ namespace project2.Controllers {
             } catch (Exception ex) {
                 // General server error
                 return StatusCode(500, new { message = "An unexpected error occurred during the purchase.", details = ex.Message });
+            }
+        }
+
+        [HttpPatch("{id:int}")]
+        [Authorize]
+        public async Task<ActionResult<DocumentResponse>> Update(
+            [FromRoute] int id,
+            [FromBody] UpdateDocumentDto dto,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) {
+                return Unauthorized("User ID not found in token.");
+            }
+
+            try {
+                var result = await _svc.UpdateAsync(id, userId, dto, ct);
+                if (result is null) {
+                    return NotFound(new { message = "Document not found." });
+                }
+                return Ok(result);
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpPatch("{id:int}/active")]
+        [Authorize]
+        public async Task<ActionResult<DocumentResponse>> SetActiveStatus(
+            [FromRoute] int id,
+            [FromQuery] bool isActive,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) {
+                return Unauthorized("User ID not found in token.");
+            }
+            try {
+                var result = await _svc.ActiveSwitchAsync(id, userId, isActive, ct);
+                return Ok(result);
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        [Authorize(Roles="Admin")]
+        public async Task<ActionResult<DocumentResponse>> DeleteDocument(
+            [FromRoute] int id,
+            [FromQuery] bool isDeleted,
+            CancellationToken ct) {
+            try {
+                var result = await _svc.DeleteAsync(id, isDeleted, ct);
+                return Ok(result);
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
     }

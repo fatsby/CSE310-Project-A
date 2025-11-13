@@ -10,6 +10,8 @@
         public string UniversityName { get; set; } = null!;
         public int SubjectId { get; set; }
         public string SubjectName { get; set; } = null!;
+        public bool isActive { get; set; }
+        public bool isDeleted { get; set; }
 
         public IEnumerable<string> Images { get; set; } = Enumerable.Empty<string>();
         public IEnumerable<DocumentFileDto> Files { get; set; } = Enumerable.Empty<DocumentFileDto>();
