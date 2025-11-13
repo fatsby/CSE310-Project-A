@@ -125,29 +125,7 @@ namespace project2.Services {
                 throw;
             }
 
-            var full = await _db.Documents
-                .Include(d => d.University)
-                .Include(d => d.Subject)
-                .Include(d => d.Images)
-                .Include(d => d.Files)
-                .FirstAsync(d => d.Id == doc.Id, ct);
-
-            return new DocumentResponse {
-                Id = full.Id,
-                Name = full.Name,
-                Description = full.Description,
-                Price = full.Price,
-                UniversityId = full.UniversityId,
-                UniversityName = full.University?.Name ?? string.Empty,
-                SubjectId = full.SubjectId,
-                SubjectName = full.Subject?.Name ?? string.Empty,
-                Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
-                Files = full.Files.Select(f => new DocumentFileDto {
-                    Id = f.Id,
-                    FileName = f.FileName,
-                    SizeBytes = f.SizeBytes
-                })
-            };
+            return await GetDocumentResponseByIdAsync(doc.Id, ct);
 
         }
 
@@ -156,6 +134,12 @@ namespace project2.Services {
                 .Include(f => f.Document)
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);
             if (file is null) return null;
+
+            //check if Document is deleted
+            bool isDeleted = file.Document.isDeleted;
+            if (isDeleted) {
+                throw new UnauthorizedAccessException("The requested document was deleted by an Administrator.");
+            }
 
             // check ownership / purchase
             bool isAuthor = file.Document.AuthorId == userId;
@@ -216,17 +200,18 @@ namespace project2.Services {
                 var authorPriceShare = new Dictionary<string, decimal>();
 
                 foreach (var doc in documents) {
-                    //SELF-NOTE: add IsActive boolean for Document and replace this
-                    if (doc.Price is null || doc.Price <= 0)
+                    if (doc.isDeleted)
+                        throw new InvalidOperationException($"Document '{doc.Name}' was deleted by an Administrator.");
+                    if (!doc.isActive)
                         throw new InvalidOperationException($"Document '{doc.Name}' is not for sale.");
                     if (doc.AuthorId == buyerUserId)
                         throw new InvalidOperationException($"You cannot buy your own document ('{doc.Name}').");
                     if (existingPurchases.Contains(doc.Id))
                         throw new InvalidOperationException($"You have already purchased '{doc.Name}'.");
 
-                    originalTotalPrice += doc.Price.Value;
+                    originalTotalPrice += doc.Price;
                     authorPriceShare[doc.AuthorId] =
-                        authorPriceShare.GetValueOrDefault(doc.AuthorId) + (doc.Price.Value*0.9m);
+                        authorPriceShare.GetValueOrDefault(doc.AuthorId) + (doc.Price*0.9m);
                 }
 
                 // apply Coupon
@@ -250,8 +235,8 @@ namespace project2.Services {
                 // create Purchase Records
                 foreach (var doc in documents) {
                     // PricePaid reflect the DISCOUNTED price for that item
-                    decimal itemDiscount = doc.Price.Value * (discountPercentage / 100);
-                    decimal itemFinalPrice = doc.Price.Value - itemDiscount;
+                    decimal itemDiscount = doc.Price * (discountPercentage / 100);
+                    decimal itemFinalPrice = doc.Price - itemDiscount;
 
                     newPurchases.Add(new UserPurchase {
                         UserId = buyerUserId,
@@ -284,13 +269,46 @@ namespace project2.Services {
             }
         }
 
-        public async Task<DocumentResponse?> UpdateAsync(int documentId, string userId, UpdateDocumentDto dto, CancellationToken ct) {
+        public async Task<DocumentResponse> ActiveSwitchAsync(int documentId, string userId, bool isActive, CancellationToken ct) {
+            // find the document
+            var doc = await _db.Documents
+                .FirstOrDefaultAsync(d => d.Id == documentId, ct);
+            if (doc is null) {
+                throw new KeyNotFoundException("Document not found.");
+            }
+            // check if user is author
+            if (doc.AuthorId != userId) {
+                throw new UnauthorizedAccessException("You are not the owner of this document.");
+            }
+            // update active status
+            doc.isActive = isActive;
+            await _db.SaveChangesAsync(ct);
+            // return the updated document data
+            return await GetDocumentResponseByIdAsync(documentId, ct);
+        }
+
+        public async Task<DocumentResponse> DeleteAsync(int documentId, bool isDeleted, CancellationToken ct) {
+            // find the document
+            var doc = await _db.Documents
+                .FirstOrDefaultAsync(d => d.Id == documentId, ct);
+            if (doc is null) {
+                throw new KeyNotFoundException("Doc not found.");
+            }
+
+            
+            doc.isDeleted = isDeleted;
+            await _db.SaveChangesAsync(ct);
+            // return the updated document data
+            return await GetDocumentResponseByIdAsync(documentId, ct);
+        }
+
+        public async Task<DocumentResponse> UpdateAsync(int documentId, string userId, UpdateDocumentDto dto, CancellationToken ct) {
             // find the document
             var doc = await _db.Documents
                 .FirstOrDefaultAsync(d => d.Id == documentId, ct);
 
             if (doc is null) {
-                return null; // 404 not found
+                throw new KeyNotFoundException("Doc not found.");
             }
 
             // check if user is author
@@ -322,13 +340,17 @@ namespace project2.Services {
             }
 
             // return the updated document data
+            return await GetDocumentResponseByIdAsync(documentId, ct);
+        }
+
+        private async Task<DocumentResponse> GetDocumentResponseByIdAsync(int documentId, CancellationToken ct) {
             var full = await _db.Documents
                 .AsNoTracking()
                 .Include(d => d.University)
                 .Include(d => d.Subject)
                 .Include(d => d.Images)
                 .Include(d => d.Files)
-                .FirstAsync(d => d.Id == doc.Id, ct);
+                .FirstAsync(d => d.Id == documentId, ct);
 
             return new DocumentResponse {
                 Id = full.Id,
@@ -339,6 +361,8 @@ namespace project2.Services {
                 UniversityName = full.University.Name,
                 SubjectId = full.SubjectId,
                 SubjectName = full.Subject.Name,
+                isActive = full.isActive,
+                isDeleted = full.isDeleted,
                 Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
                 Files = full.Files.Select(f => new DocumentFileDto {
                     Id = f.Id,

@@ -9,7 +9,7 @@ namespace project2.DTOs.DocumentDto {
         public string? Description { get; set; }
 
         // price 0 = free
-        [Range(0, 1000, ErrorMessage = "Price must be between 0 and 1000")]
+        [Range(0, int.MaxValue, ErrorMessage = "Price must be larger than 0")]
         public decimal? Price { get; set; }
     }
 }
