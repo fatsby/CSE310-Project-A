@@ -204,5 +204,34 @@ namespace project2.Controllers {
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+
+        //return string list of document images URL only
+        [HttpGet("{id:int}/images")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDocumentImages([FromRoute] int id, CancellationToken ct) {
+            var ImageUrlList = await _db.DocumentImages
+                .AsNoTracking()
+                .Where(img => img.DocumentId == id)
+                .OrderBy(img => img.SortOrder)
+                .Select(img => img.Url)
+                .ToListAsync(ct);
+            return Ok(ImageUrlList);
+        }
+
+        //return full list of document file entities
+        [HttpGet("{id:int}/files")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDocumentFiles([FromRoute] int id, CancellationToken ct) {
+            var FileList = await _db.DocumentFiles
+                .AsNoTracking()
+                .Where(f => f.DocumentId == id)
+                .Select(f => new DocumentFileDto {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
+                .ToListAsync(ct);
+            return Ok(FileList);
+        }
     }
 }
