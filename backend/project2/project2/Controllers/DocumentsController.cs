@@ -19,7 +19,7 @@ namespace project2.Controllers {
             _db = db;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         [Authorize] // require login
         [RequestSizeLimit(150_000_000)] // 150MB per request
         [Consumes("multipart/form-data")]
@@ -137,7 +137,7 @@ namespace project2.Controllers {
             }
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:int}/edit")]
         [Authorize]
         public async Task<ActionResult<DocumentResponse>> Update([FromRoute] int id, [FromBody] UpdateDocumentDto dto, CancellationToken ct) {
 
@@ -187,7 +187,7 @@ namespace project2.Controllers {
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:int}/delete")]
         [Authorize(Roles="Admin")]
         public async Task<ActionResult<DocumentResponse>> DeleteDocument(
             [FromRoute] int id,
