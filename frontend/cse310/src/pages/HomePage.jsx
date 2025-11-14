@@ -12,28 +12,17 @@ import ItemsRow from "../components/home_components/ItemsRow.jsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// DATA IMPORTS
-import {
-    getCurrentUser,
-    getItemsByUniversity,
-    getSortedItemsByPurchase,
-    getSortedItemsByRating,
-    getUniversityNames,
-    getCoursesByUniversity,
-} from "../data/SampleData.js";
-
 function HomePage() {
-    const [userData, setUserData] = useState(null);
-    const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
-    const [bestSellerItems, setBestSellerItems] = useState(null);
-    const [highestRatingItems, setHighestRatingItems] = useState(null);
+    // const [userData, setUserData] = useState(null);
+    // const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
+    // const [bestSellerItems, setBestSellerItems] = useState(null);
+    // const [highestRatingItems, setHighestRatingItems] = useState(null);
     const [universityList, setUniversityList] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
 
     // SELECTORS STATES
-    const [selectedUniversity, setSelectedUniversity] = useState(null);
+    const [selectedUniversity, setSelectedUniversity] = useState("");
     const [availableCourses, setAvailableCourses] = useState([]);
-    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedCourse, setSelectedCourse] = useState("");
 
     // SEARCH & VALIDATIONS STATES
     const [searchQuery, setSearchQuery] = useState("");
@@ -43,10 +32,60 @@ function HomePage() {
     // HANDLER FUNCTION FOR ON UNIVERSITY SELECT
     const handleUniversityChange = (universityName) => {
         setSelectedUniversity(universityName);
-        const courses = getCoursesByUniversity(universityName);
-        setAvailableCourses(courses);
         setSelectedCourse(null); // Reset course selection
     };
+
+    const universityOptions =
+        universityList?.map((u) => ({
+            value: u.id.toString(),
+            label: u.name,
+        })) || [];
+
+    const courseOptions =
+        availableCourses?.map((s) => ({
+            value: s.id.toString(),
+            label: s.name,
+        })) || [];
+
+    // Fetch all Universities
+    const API_URL = import.meta.env.VITE_API_BASE_URL;
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUniversities = async () => {
+            try {
+                setIsLoading(true);
+                const URL = `${API_URL}/api/university`;
+                const res = await fetch(URL);
+                const json = await res.json();
+                setUniversityList(json);
+            } catch (err) {
+                console.log("Error", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUniversities();
+    }, []);
+
+    // Fetch all Subjects from Selected University
+    useEffect(() => {
+        if (!selectedUniversity) return;
+        const fetchSubjects = async () => {
+            try {
+                setIsLoading(true);
+                const URL = `${API_URL}/api/university/${selectedUniversity}/subject`;
+                const res = await fetch(URL);
+                const json = await res.json();
+                setAvailableCourses(json);
+            } catch (err) {
+                console.log("Error", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchSubjects();
+    }, [selectedUniversity]);
 
     // FORM SUBMISSION HANDLER
     const handleSearch = (event) => {
@@ -59,41 +98,51 @@ function HomePage() {
             return;
         }
 
-        // build search params
-        const params = new URLSearchParams();
-        params.append("university", selectedUniversity);
-        params.append("course", selectedCourse);
-        if (searchQuery) {
-            params.append("q", searchQuery);
-        }
+        const param = new URLSearchParams();
 
-        navigate(`/search?${params.toString()}`);
+        if (selectedCourse) param.append("subjectId", selectedCourse);
+        if (selectedUniversity)
+            param.append("universityId", selectedUniversity);
+        if (searchQuery) param.append("title", searchQuery);
+
+        // Get name of University and Course
+        const universityObj = universityList.find(
+            (u) => u.id.toString() === selectedUniversity
+        );
+        const subjectObj = availableCourses.find(
+            (s) => s.id.toString() === selectedCourse
+        );
+
+        param.append("universityName", universityObj.name);
+        param.append("subjectName", subjectObj.name);
+
+        navigate(`/search?${param.toString()}`);
     };
 
-    useEffect(() => {
-        setUserData(getCurrentUser());
-        setBestSellerItems(getSortedItemsByPurchase());
-        setHighestRatingItems(getSortedItemsByRating());
-        setUniversityList(getUniversityNames());
-    }, []);
+    // useEffect(() => {
+    //     setUserData(getCurrentUser());
+    //     setBestSellerItems(getSortedItemsByPurchase());
+    //     setHighestRatingItems(getSortedItemsByRating());
+    //     setUniversityList(getUniversityNames());
+    // }, []);
 
-    useEffect(() => {
-        if (userData) {
-            const tempData = getItemsByUniversity(userData.university);
-            setItemsFromUserUni(tempData);
-        }
-    }, [userData]);
+    // useEffect(() => {
+    //     if (userData) {
+    //         const tempData = getItemsByUniversity(userData.university);
+    //         setItemsFromUserUni(tempData);
+    //     }
+    // }, [userData]);
 
-    useEffect(() => {
-        if (
-            userData &&
-            itemsFromUserUni &&
-            bestSellerItems &&
-            highestRatingItems
-        ) {
-            setIsLoading(false);
-        }
-    }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems]);
+    // useEffect(() => {
+    //     if (
+    //         userData &&
+    //         itemsFromUserUni &&
+    //         bestSellerItems &&
+    //         highestRatingItems
+    //     ) {
+    //         setIsLoading(false);
+    //     }
+    // }, [userData, itemsFromUserUni, bestSellerItems, highestRatingItems]);
 
     if (isLoading) {
         return (
@@ -117,7 +166,7 @@ function HomePage() {
                         <div className="w-1/2">
                             <Select
                                 checkIconPosition="right"
-                                data={universityList}
+                                data={universityOptions}
                                 pb={15}
                                 placeholder="Select University"
                                 radius="lg"
@@ -130,7 +179,7 @@ function HomePage() {
                         <div className="w-1/2">
                             <Select
                                 checkIconPosition="right"
-                                data={availableCourses}
+                                data={courseOptions}
                                 pb={15}
                                 placeholder="Select Course"
                                 radius="lg"
@@ -185,25 +234,29 @@ function HomePage() {
                     </Alert>
                 )}
             </div>
-
             {/* ADVERTISEMENT */}
             <div className="mt-10">
-                <Image src={AD_BackToSchool} radius="md" />
+                <Image
+                    src={AD_BackToSchool}
+                    radius="md"
+                />
             </div>
-
             {/* MAIN CONTENT */}
-            <div className="pt-5">
-                {/* ITEMS FROM USER UNI */}
-                <ItemsRow
+            {/* <div className="pt-5"> */}
+            {/* ITEMS FROM USER UNI */}
+            {/* <ItemsRow
                     title={userData.university}
                     itemsArray={itemsFromUserUni}
-                />
-                <ItemsRow title="Best Selling" itemsArray={bestSellerItems} />
-                <ItemsRow
+                /> */}
+            {/* <ItemsRow
+                    title="Best Selling"
+                    itemsArray={bestSellerItems}
+                /> */}
+            {/* <ItemsRow
                     title="Highest Rating"
                     itemsArray={highestRatingItems}
-                />
-            </div>
+                /> */}
+            {/* </div> */}
         </div>
     );
 }
