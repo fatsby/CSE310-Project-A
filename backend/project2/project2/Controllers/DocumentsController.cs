@@ -29,8 +29,16 @@ namespace project2.Controllers {
             if (userId == null)
                 return Unauthorized("User ID not found in token.");
 
-            var result = await _svc.CreateAsync(userId, req, ct);
-            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+            try {
+                var result = await _svc.CreateAsync(userId, req, ct);
+                return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
+            } catch (ArgumentException ex) {
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
         }
 
         [HttpGet]

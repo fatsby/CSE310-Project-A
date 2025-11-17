@@ -53,6 +53,20 @@ namespace project2.Services {
         public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
             using var tx = await _db.Database.BeginTransactionAsync(ct);
 
+            //subject university validation
+            var subjectExists = await _db.Subjects.AnyAsync(s => s.Id == req.SubjectId, ct);
+            if (!subjectExists)
+                throw new KeyNotFoundException("Subject not found.");
+
+            var universityExists = await _db.Universities.AnyAsync(u => u.Id == req.UniversityId, ct);
+            if (!universityExists)
+                throw new KeyNotFoundException("University not found.");
+
+            //make sure subject belongs to university
+            var subject = await _db.Subjects.FirstAsync(s => s.Id == req.SubjectId, ct);
+            if (subject.UniversityId != req.UniversityId)
+                throw new ArgumentException("The selected subject does not belong to the selected university.");
+
             //request validations
             if (req.Images is null || req.Images.Count is < 1 or > MaxImageCount)
                 throw new ArgumentException($"You must upload between 1 and {MaxImageCount} images.");
