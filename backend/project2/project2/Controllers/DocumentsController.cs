@@ -46,7 +46,8 @@ namespace project2.Controllers {
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(
             [FromQuery] int? subjectId,
             [FromQuery] string? authorId, // AuthorId is string bcuz UserId is GUID.ToString()
-            [FromQuery] int? universityId)
+            [FromQuery] int? universityId,
+            [FromQuery] string? courseTitle)
         {
             var query = _db.Documents
                 .AsNoTracking()
@@ -60,6 +61,10 @@ namespace project2.Controllers {
             }
             if (!string.IsNullOrEmpty(authorId)) {
                 query = query.Where(d => d.AuthorId == authorId);
+            }
+
+            if (!string.IsNullOrEmpty(courseTitle)) {
+                query = query.Where(d => d.Name.Contains(courseTitle));
             }
 
             var docs = await query
