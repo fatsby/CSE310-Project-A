@@ -1,0 +1,52 @@
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using project2.Data;
+using project2.DTOs.SubjectDto;
+using project2.DTOs.UniversityDto;
+
+namespace project2.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class UniversityController : ControllerBase
+    {
+        private readonly AppDbContext _db;
+
+        public UniversityController(AppDbContext db)
+        {
+            _db = db;
+        }
+
+        //Get all University name and id
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UniversityReadDto>>> GetAllUniversities()
+        {
+            var universities = await _db.Universities.Select(u => new UniversityReadDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+            }).ToListAsync();
+
+            return Ok(universities);
+        }
+
+        //Get all Subjects by University id
+
+        [HttpGet("{id}/subject")]
+        public async Task<ActionResult> GetSubjectsByUniversityId(int id)
+        {
+            var subjects = await _db.Subjects
+                .Where(s => s.UniversityId == id)
+                .Select(s => new SubjectReadDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    UniversityId = s.UniversityId
+                })
+                .ToListAsync();
+            return Ok(subjects);
+        }
+    }
+}
