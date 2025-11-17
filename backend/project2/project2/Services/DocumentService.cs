@@ -38,17 +38,6 @@ namespace project2.Services {
             _env = env;
             _balanceManager = balanceManager;
         }
-        public async Task<DocumentResponse> GetByIdAsync(int documentId, CancellationToken ct) {
-            var doc = await _db.Documents
-                .AsNoTracking()
-                .FirstOrDefaultAsync(d => d.Id == documentId, ct);
-
-            if (doc is null) {
-                throw new KeyNotFoundException("Document not found.");
-            }
-
-            return await GetDocumentResponseByIdAsync(documentId, ct);
-        }
 
         public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
             using var tx = await _db.Database.BeginTransactionAsync(ct);
@@ -240,6 +229,9 @@ namespace project2.Services {
                     originalTotalPrice += doc.Price;
                     authorPriceShare[doc.AuthorId] =
                         authorPriceShare.GetValueOrDefault(doc.AuthorId) + (doc.Price*0.9m);
+
+                    //update purchase count
+                    doc.purchaseCount++;
                 }
 
                 // apply Coupon
@@ -310,6 +302,8 @@ namespace project2.Services {
             }
             // update active status
             doc.isActive = isActive;
+            doc.UpdatedAt = DateTime.UtcNow;
+
             await _db.SaveChangesAsync(ct);
             // return the updated document data
             return await GetDocumentResponseByIdAsync(documentId, ct);
@@ -325,6 +319,8 @@ namespace project2.Services {
 
             
             doc.isDeleted = isDeleted;
+            doc.UpdatedAt = DateTime.UtcNow;
+
             await _db.SaveChangesAsync(ct);
             // return the updated document data
             return await GetDocumentResponseByIdAsync(documentId, ct);
@@ -362,6 +358,8 @@ namespace project2.Services {
                 hasChanges = true;
             }
 
+            doc.UpdatedAt = DateTime.UtcNow;
+
             // save if changed
             if (hasChanges) {
                 await _db.SaveChangesAsync(ct);
@@ -371,17 +369,22 @@ namespace project2.Services {
             return await GetDocumentResponseByIdAsync(documentId, ct);
         }
 
-        private async Task<DocumentResponse> GetDocumentResponseByIdAsync(int documentId, CancellationToken ct) {
+        public async Task<DocumentResponse> GetDocumentResponseByIdAsync(int documentId, CancellationToken ct) {
             var full = await _db.Documents
                 .AsNoTracking()
                 .Include(d => d.University)
                 .Include(d => d.Subject)
                 .Include(d => d.Images)
                 .Include(d => d.Files)
+                .Include(d => d.Author)
                 .FirstAsync(d => d.Id == documentId, ct);
+
+            if (full is null)
+                throw new KeyNotFoundException("Document not found.");
 
             return new DocumentResponse {
                 Id = full.Id,
+                AuthorName = full.Author.UserName!,
                 Name = full.Name,
                 Description = full.Description,
                 Price = full.Price,
@@ -389,6 +392,8 @@ namespace project2.Services {
                 UniversityName = full.University.Name,
                 SubjectId = full.SubjectId,
                 SubjectName = full.Subject.Name,
+                PurchaseCount = full.purchaseCount,
+                UpdatedAt = full.UpdatedAt,
                 isActive = full.isActive,
                 isDeleted = full.isDeleted,
                 Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),

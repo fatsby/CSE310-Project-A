@@ -101,7 +101,7 @@ namespace project2.Controllers {
         [HttpGet("{id:int}")]
         [AllowAnonymous]
         public async Task<ActionResult<DocumentResponse>> Get([FromRoute] int id, CancellationToken ct) {
-            var result = await _svc.GetByIdAsync(id, ct);
+            var result = await _svc.GetDocumentResponseByIdAsync(id, ct);
 
             return (result is null) ? NotFound() : Ok(result);
         }

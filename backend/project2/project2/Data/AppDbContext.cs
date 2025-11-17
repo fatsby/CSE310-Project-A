@@ -15,6 +15,7 @@
 
         public DbSet<UserPurchase> UserPurchases => Set<UserPurchase>();
         public DbSet<Coupon> Coupons => Set<Coupon>();
+        public DbSet<Review> Reviews => Set<Review>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         }
@@ -22,19 +23,25 @@
         protected override void OnModelCreating(ModelBuilder b) {
             base.OnModelCreating(b);
 
-            // Decimal precision
+            // configuration for Document entity
             b.Entity<Document>(e =>
             {
                 e.Property(p => p.Price).HasPrecision(18, 2);
+                e.Property(p => p.AverageRating).HasPrecision(3, 2);
 
                 e.HasOne(d => d.University)
-                    .WithMany()
+                    .WithMany() //one university has many documents
                     .HasForeignKey(d => d.UniversityId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 e.HasOne(d => d.Subject)
-                    .WithMany(s => s.Documents)
+                    .WithMany(s => s.Documents) //one subject has many documents
                     .HasForeignKey(d => d.SubjectId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(d => d.Author)
+                    .WithMany(u => u.CreatedDocuments) //one appUser has many documents
+                    .HasForeignKey(d => d.AuthorId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
@@ -83,7 +90,26 @@
                 .HasForeignKey(p => p.DocumentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // CONFIGURATIONS FOR REVIEW ENTITY
+            //composite primary key
+            b.Entity<Review>()
+                .HasKey(r => new { r.UserId, r.DocumentId });
 
+            //user -> review relationship
+            //one user can write many reviews
+            b.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            //document -> review relationship
+            //one document can have many reviews
+            b.Entity<Review>()
+                .HasOne(r => r.Document)
+                .WithMany(d => d.Reviews)
+                .HasForeignKey(r => r.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //Seed data
             b.Entity<University>().HasData(

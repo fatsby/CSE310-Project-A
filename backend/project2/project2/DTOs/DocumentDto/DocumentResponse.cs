@@ -1,6 +1,7 @@
 ﻿namespace project2.DTOs.DocumentDto {
     public class DocumentResponse {
         public int Id { get; set; }
+        public string AuthorName { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal? Price { get; set; }
@@ -10,6 +11,8 @@
         public string UniversityName { get; set; } = null!;
         public int SubjectId { get; set; }
         public string SubjectName { get; set; } = null!;
+        public int PurchaseCount { get; set; }
+        public DateTime UpdatedAt { get; set; }
         public bool isActive { get; set; }
         public bool isDeleted { get; set; }
 

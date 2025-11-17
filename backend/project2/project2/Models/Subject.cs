@@ -1,6 +1,6 @@
 ﻿namespace project2.Models {
     public class Subject {
-        public int Id { get; set; } // ✅ Primary Key
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
 

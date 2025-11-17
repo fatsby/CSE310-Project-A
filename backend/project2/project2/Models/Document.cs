@@ -8,6 +8,7 @@ namespace project2.Models {
 
         [Required]
         public string AuthorId { get; set; } = null!;        // link to AppUser
+        public AppUser Author { get; set; } = null!;
 
         [Required]
         [StringLength(250)]
@@ -20,6 +21,9 @@ namespace project2.Models {
         [Precision(18, 2)]
         public decimal Price { get; set; } // 0 => free
 
+        public int purchaseCount { get; set; } = 0;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
         // relationships
         public int UniversityId { get; set; }
         public University University { get; set; } = null!;
@@ -31,7 +35,14 @@ namespace project2.Models {
         public bool isActive { get; set; } = true;
         public bool isDeleted { get; set; } = false;
 
+        //total reviews count and average rating
+        public int ReviewCount { get; set; } = 0;
+        [Precision(3, 2)] // stores a value like X.XX (4.25)
+        public decimal AverageRating { get; set; } = 0;
+
+        //nav properties
         public List<DocumentImage> Images { get; set; } = new();
         public List<DocumentFile> Files { get; set; } = new();
+        public List<Review> Reviews { get; set; } = new();
     }
 }
