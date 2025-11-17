@@ -394,6 +394,8 @@ namespace project2.Services {
                 SubjectName = full.Subject.Name,
                 PurchaseCount = full.purchaseCount,
                 UpdatedAt = full.UpdatedAt,
+                ReviewCount = full.ReviewCount,
+                AverageRating = full.AverageRating,
                 isActive = full.isActive,
                 isDeleted = full.isDeleted,
                 Images = full.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),

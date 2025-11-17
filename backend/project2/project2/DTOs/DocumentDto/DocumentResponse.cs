@@ -13,6 +13,8 @@
         public string SubjectName { get; set; } = null!;
         public int PurchaseCount { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public int ReviewCount { get; set; }
+        public decimal AverageRating { get; set; }
         public bool isActive { get; set; }
         public bool isDeleted { get; set; }
 
