@@ -3,7 +3,8 @@
 namespace project2.Services {
     public interface IReviewService {
         Task RecalculateDocumentRatingAsync(int documentId);
-        Task<ReviewDto> GetReviewAsync(string userId, int documentId);
+        Task<ReviewDto> GetReviewAsync(string? userId, int? documentId);
         Task<ReviewDto> CreateAsync(string userId, CreateReviewDto dto, CancellationToken ct);
+        Task<ReviewDto> UpdateAsync(string userId, int documentId, UpdateReviewDto dto, CancellationToken ct);
     }
 }

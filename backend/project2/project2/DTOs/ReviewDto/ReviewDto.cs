@@ -3,6 +3,7 @@
         public string UserId { get; set; } = null!;
         public string? UserName { get; set; }
         public int DocumentId { get; set; }
+        public string? DocumentName { get; set; }
         public int Rating { get; set; }
         public string? Comment { get; set; }
         public DateTime ReviewDate { get; set; }

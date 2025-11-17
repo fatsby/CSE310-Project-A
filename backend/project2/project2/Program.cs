@@ -95,10 +95,13 @@ builder.Services.AddDataProtection();
 builder.Services.AddSingleton(TimeProvider.System);
 // Local files storage
 builder.Services.AddHttpContextAccessor();
+
+// services
 builder.Services.AddScoped<IFileStorage, LocalFileStorage>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IBalanceManager, BalanceManager>();
 builder.Services.AddScoped<ICouponService, CouponService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 //for debugging purposes only - log sensitive data
 builder.Services.AddDbContext<AppDbContext>(opt => {

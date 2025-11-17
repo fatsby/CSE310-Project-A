@@ -12,15 +12,25 @@ namespace project2.Services {
             _db = db;
         }
 
-        public async Task<ReviewDto> GetReviewAsync(string userId, int documentId) {
-            var review = await _db.Reviews
+        public async Task<ReviewDto> GetReviewAsync(string? userId, int? documentId) {
+            var query = _db.Reviews
+                .AsNoTracking()
                 .Include(r => r.User)
-                .FirstOrDefaultAsync(r => r.UserId == userId && r.DocumentId == documentId);
+                .Include(d => d.Document)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(userId))
+                query = query.Where(r => r.UserId == userId);
+
+            if (documentId.HasValue)
+                query = query.Where(r => r.DocumentId == documentId.Value);
+
+            var review = await query.FirstOrDefaultAsync();
 
             if (review == null)
                 throw new KeyNotFoundException("Review not found.");
 
-            return ToDto(review, review.User.UserName);
+            return ToDto(review, review.User.UserName, review.Document.Name);
         }
 
         public async Task<ReviewDto> CreateAsync(string userId, CreateReviewDto dto, CancellationToken ct) {
@@ -72,14 +82,44 @@ namespace project2.Services {
 
             _db.Reviews.Add(review);
 
+            await _db.SaveChangesAsync(ct); //save the review first to calculate avg rating later
+
             // update the document avg rating
             await UpdateDocumentRatingAsync(document);
+
+            //save all changes made to document
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+
+            // return dto
+            return ToDto(review, user.UserName, document.Name);
+        }
+
+        public async Task<ReviewDto> UpdateAsync(string userId, int documentId, UpdateReviewDto dto, CancellationToken ct) {
+            using var tx = await _db.Database.BeginTransactionAsync(ct);
+
+            // find review using composite key
+            var review = await _db.Reviews
+                .Include(r => r.Document)
+                .Include(r => r.User)
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.DocumentId == documentId, ct);
+
+            if (review == null)
+                throw new KeyNotFoundException("Review not found.");
+
+            review.Rating = dto.Rating;
+            review.Comment = dto.Comment ?? "";
+            review.ReviewDate = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct); //save the review first to calculate avg rating later
+
+            await UpdateDocumentRatingAsync(review.Document);
 
             await _db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
 
             // return dto
-            return ToDto(review, user.UserName);
+            return ToDto(review, review.User.UserName, review.Document.Name);
         }
 
         //public method
@@ -110,11 +150,12 @@ namespace project2.Services {
             }
         }
 
-        private static ReviewDto ToDto(Review review, string? userName) {
+        private static ReviewDto ToDto(Review review, string? userName, string? documentName) {
             return new ReviewDto {
                 UserId = review.UserId,
                 UserName = userName,
                 DocumentId = review.DocumentId,
+                DocumentName = documentName,
                 Rating = review.Rating,
                 Comment = review.Comment,
                 ReviewDate = review.ReviewDate
