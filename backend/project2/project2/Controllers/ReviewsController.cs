@@ -68,5 +68,23 @@ namespace project2.Controllers {
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+
+        [HttpDelete("delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteReview([FromQuery] int documentId, CancellationToken ct) {
+            try {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                    return Unauthorized("User ID not found in token.");
+                await _reviewService.DeleteAsync(userId, documentId, ct);
+                return NoContent();
+            } catch (KeyNotFoundException ex) {
+                return NotFound(ex.Message);
+            } catch (UnauthorizedAccessException ex) {
+                return Forbid(ex.Message);
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
     }
 }

@@ -122,6 +122,21 @@ namespace project2.Services {
             return ToDto(review, review.User.UserName, review.Document.Name);
         }
 
+        public async Task DeleteAsync(string userId, int documentId, CancellationToken ct) {
+            using var tx = await _db.Database.BeginTransactionAsync(ct);
+            // find review using composite key
+            var review = await _db.Reviews
+                .Include(r => r.Document)
+                .FirstOrDefaultAsync(r => r.UserId == userId && r.DocumentId == documentId, ct);
+            if (review == null)
+                throw new KeyNotFoundException("Review not found.");
+            _db.Reviews.Remove(review);
+            await _db.SaveChangesAsync(ct); //save the deletion first to calculate avg rating later
+            await UpdateDocumentRatingAsync(review.Document);
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        }
+
         //public method
         public async Task RecalculateDocumentRatingAsync(int documentId) {
             var document = await _db.Documents.FindAsync(documentId);
