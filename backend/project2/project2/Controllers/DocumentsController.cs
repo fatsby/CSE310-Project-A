@@ -257,7 +257,7 @@ namespace project2.Controllers {
             CancellationToken ct) {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
-                return Unauthorized("User ID not found in token.");
+                return Unauthorized("User ID not found");
 
             if (file == null)
                 return BadRequest("No file uploaded.");
@@ -286,10 +286,12 @@ namespace project2.Controllers {
             CancellationToken ct) {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null)
-                return Unauthorized("User ID not found in token.");
+                return Unauthorized("User ID not found");
+
+            string? userIdToPass = User.IsInRole("Admin") ? null : userId;
 
             try {
-                await _svc.DeleteFileAsync(id, fileId, userId, ct);
+                await _svc.DeleteFileAsync(id, fileId, userIdToPass, ct);
                 return NoContent(); // 204 Success
             } catch (KeyNotFoundException ex) {
                 return NotFound(new { message = ex.Message });
@@ -340,8 +342,10 @@ namespace project2.Controllers {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized("User ID not found.");
 
+            string? userIdToPass = User.IsInRole("Admin") ? null : userId;
+
             try {
-                await _svc.DeleteImageAsync(id, imageId, userId, ct);
+                await _svc.DeleteImageAsync(id, imageId, userIdToPass, ct);
                 return NoContent();
             } catch (KeyNotFoundException ex) {
                 return NotFound(new { message = ex.Message });

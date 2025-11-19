@@ -416,7 +416,7 @@ namespace project2.Services {
             };
         }
 
-        public async Task DeleteFileAsync(int documentId, int fileId, string userId, CancellationToken ct) {
+        public async Task DeleteFileAsync(int documentId, int fileId, string? userId, CancellationToken ct) {
             // find file entity and parent document
             var file = await _db.DocumentFiles
                 .Include(f => f.Document)
@@ -425,8 +425,8 @@ namespace project2.Services {
             if (file is null)
                 throw new KeyNotFoundException("File not found.");
 
-            // author check
-            if (file.Document.AuthorId != userId)
+            // author check, userId not null = not admin
+            if (userId is not null && file.Document.AuthorId != userId)
                 throw new UnauthorizedAccessException("You do not have permission to delete this file.");
 
             // safety check: prevent deleting the last file of a document
@@ -500,7 +500,7 @@ namespace project2.Services {
             return docImage.Url;
         }
 
-        public async Task DeleteImageAsync(int documentId, int imageId, string userId, CancellationToken ct) {
+        public async Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct) {
             // get image with parent document
             var img = await _db.DocumentImages
                 .Include(i => i.Document)
@@ -510,7 +510,7 @@ namespace project2.Services {
                 throw new KeyNotFoundException("Image not found.");
 
             // auth check
-            if (img.Document.AuthorId != userId)
+            if (userId is not null && img.Document.AuthorId != userId)
                 throw new UnauthorizedAccessException("You do not have permission to delete this image.");
 
             // safety check: document must have at least 1 image

@@ -11,9 +11,9 @@ namespace project2.Services {
         Task<DocumentResponse> DeleteAsync(int documentId, bool isDeleted, CancellationToken ct);
 
         Task<DocumentFileDto> AddFileAsync(int documentId, string userId, IFormFile file, CancellationToken ct);
-        Task DeleteFileAsync(int documentId, int fileId, string userId, CancellationToken ct);
+        Task DeleteFileAsync(int documentId, int fileId, string? userId, CancellationToken ct);
 
         Task<string> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct);
-        Task DeleteImageAsync(int documentId, int imageId, string userId, CancellationToken ct);
+        Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct);
     }
 }
