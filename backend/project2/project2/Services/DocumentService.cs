@@ -369,6 +369,165 @@ namespace project2.Services {
             return await GetDocumentResponseByIdAsync(documentId, ct);
         }
 
+        public async Task<DocumentFileDto> AddFileAsync(int documentId, string userId, IFormFile file, CancellationToken ct) {
+            // get doc
+            var doc = await _db.Documents.FirstOrDefaultAsync(d => d.Id == documentId, ct);
+            if (doc == null)
+                throw new KeyNotFoundException("Document not found.");
+
+            // must be owner
+            if (doc.AuthorId != userId)
+                throw new UnauthorizedAccessException("You are not the owner of this document.");
+
+            // validate file
+            if (file.Length <= 0 || file.Length > MaxFileSize)
+                throw new ArgumentException("File is too large (max 100MB).");
+            if (!AllowedFileTypes.Contains(file.ContentType))
+                throw new ArgumentException($"File type not allowed: {file.ContentType}");
+
+            // save file
+            await using var s = file.OpenReadStream();
+            var stored = await _storage.SaveAsync(s, file.FileName, file.ContentType,
+                $"documents/{doc.Id}/files",
+                isPublic: false,
+                ct);
+
+            // create entity
+            var docFile = new DocumentFile {
+                DocumentId = doc.Id,
+                FileName = file.FileName,
+                ContentType = file.ContentType,
+                SizeBytes = stored.Size,
+                StoragePath = stored.StoragePath
+            };
+
+            _db.DocumentFiles.Add(docFile);
+
+            // update document timestamp
+            doc.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct);
+
+            // return dto
+            return new DocumentFileDto {
+                Id = docFile.Id,
+                FileName = docFile.FileName,
+                SizeBytes = docFile.SizeBytes
+            };
+        }
+
+        public async Task DeleteFileAsync(int documentId, int fileId, string userId, CancellationToken ct) {
+            // find file entity and parent document
+            var file = await _db.DocumentFiles
+                .Include(f => f.Document)
+                .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == documentId, ct);
+
+            if (file is null)
+                throw new KeyNotFoundException("File not found.");
+
+            // author check
+            if (file.Document.AuthorId != userId)
+                throw new UnauthorizedAccessException("You do not have permission to delete this file.");
+
+            // safety check: prevent deleting the last file of a document
+            var fileCount = await _db.DocumentFiles.CountAsync(f => f.DocumentId == documentId, ct);
+            if (fileCount <= 1)
+                throw new InvalidOperationException("You cannot delete the only file in the document. Add another file first or delete the entire document.");
+
+            // delete from physical storage
+            // Pass isPublic: false because DocumentFiles are private
+            await _storage.DeleteAsync(file.StoragePath, isPublic: false, ct);
+
+            // remove from DB
+            _db.DocumentFiles.Remove(file);
+
+            // update document timestamp
+            file.Document.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct);
+        }
+
+        public async Task<string> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct) {
+            // get doc
+            var doc = await _db.Documents.FirstOrDefaultAsync(d => d.Id == documentId, ct);
+            if (doc == null)
+                throw new KeyNotFoundException("Document not found.");
+
+            // auth check
+            if (doc.AuthorId != userId)
+                throw new UnauthorizedAccessException("You are not the owner of this document.");
+
+            // validate image
+            if (image.Length <= 0 || image.Length > MaxImageSize)
+                throw new ArgumentException("Image too large (max 5MB).");
+            if (!ImageTypes.Contains(image.ContentType))
+                throw new ArgumentException("Invalid image type. Use JPG/PNG/WebP.");
+
+            // max image count check
+            var currentImageCount = await _db.DocumentImages.CountAsync(i => i.DocumentId == documentId, ct);
+            if (currentImageCount >= MaxImageCount)
+                throw new InvalidOperationException($"Cannot upload more than {MaxImageCount} images.");
+
+            // determine next sort order
+            // get the max sort order currently in DB for this doc 
+            // if no images, default to -1 so next is 0.
+            var maxSortOrder = await _db.DocumentImages
+                .Where(i => i.DocumentId == documentId)
+                .MaxAsync(i => (int?)i.SortOrder, ct) ?? -1;
+
+            var nextSortOrder = maxSortOrder + 1;
+
+            // save to Public Storage
+            await using var s = image.OpenReadStream();
+            var stored = await _storage.SaveAsync(s, image.FileName, image.ContentType,
+                $"documents/{doc.Id}/images",
+                isPublic: true,
+                ct);
+
+            // save to Db
+            var docImage = new DocumentImage {
+                DocumentId = doc.Id,
+                Url = stored.Url!,
+                StoragePath = stored.StoragePath,
+                SortOrder = nextSortOrder
+            };
+
+            _db.DocumentImages.Add(docImage);
+            doc.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct);
+
+            return docImage.Url;
+        }
+
+        public async Task DeleteImageAsync(int documentId, int imageId, string userId, CancellationToken ct) {
+            // get image with parent document
+            var img = await _db.DocumentImages
+                .Include(i => i.Document)
+                .FirstOrDefaultAsync(i => i.Id == imageId && i.DocumentId == documentId, ct);
+
+            if (img is null)
+                throw new KeyNotFoundException("Image not found.");
+
+            // auth check
+            if (img.Document.AuthorId != userId)
+                throw new UnauthorizedAccessException("You do not have permission to delete this image.");
+
+            // safety check: document must have at least 1 image
+            var imageCount = await _db.DocumentImages.CountAsync(i => i.DocumentId == documentId, ct);
+            if (imageCount <= 1)
+                throw new InvalidOperationException("You cannot delete the only image. Upload another one first.");
+
+            // delete from Storage
+            await _storage.DeleteAsync(img.StoragePath, isPublic: true, ct);
+
+            // remove from DB
+            _db.DocumentImages.Remove(img);
+            img.Document.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct);
+        }
+
         public async Task<DocumentResponse> GetDocumentResponseByIdAsync(int documentId, CancellationToken ct) {
             var full = await _db.Documents
                 .AsNoTracking()

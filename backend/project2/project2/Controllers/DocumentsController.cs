@@ -21,7 +21,7 @@ namespace project2.Controllers {
 
         [HttpPost("create")]
         [Authorize] // require login
-        [RequestSizeLimit(150_000_000)] // 150MB per request
+        [RequestSizeLimit(105_000_000)] // 105mb per request
         [Consumes("multipart/form-data")]
         public async Task<ActionResult<DocumentResponse>> Create([FromForm] CreateDocumentRequest req, CancellationToken ct) {
             // get current user id from claims
@@ -245,6 +245,113 @@ namespace project2.Controllers {
                 })
                 .ToListAsync(ct);
             return Ok(FileList);
+        }
+
+        [HttpPost("{id:int}/files/add")]
+        [Authorize]
+        [RequestSizeLimit(105_000_000)] // 105mb per request
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<DocumentFileDto>> UploadFile(
+            [FromRoute] int id,
+            IFormFile file,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            if (file == null)
+                return BadRequest("No file uploaded.");
+
+            try {
+                var result = await _svc.AddFileAsync(id, userId, file, ct);
+                return Ok(result);
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
+            } catch (UnauthorizedAccessException ex) {
+                // 403 if user is not the author
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (ArgumentException ex) {
+                // 400 if file is too big or wrong type
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}/files/{fileId:int}/delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteFile(
+            [FromRoute] int id,
+            [FromRoute] int fileId,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            try {
+                await _svc.DeleteFileAsync(id, fileId, userId, ct);
+                return NoContent(); // 204 Success
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (InvalidOperationException ex) {
+                // cannot delete the last file
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpPost("{id:int}/images/add")]
+        [Authorize]
+        [RequestSizeLimit(10_000_000)] // 10MB limit
+        [Consumes("multipart/form-data")]
+        public async Task<ActionResult<string>> UploadImage(
+            [FromRoute] int id,
+            IFormFile file,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized("User ID not found.");
+            if (file == null) return BadRequest("No image uploaded.");
+
+            try {
+                var url = await _svc.AddImageAsync(id, userId, file, ct);
+                return Ok(new { url });
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (InvalidOperationException ex) {
+                return BadRequest(new { message = ex.Message }); // e.g. max image count reached
+            } catch (ArgumentException ex) {
+                return BadRequest(new { message = ex.Message });
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id:int}/images/{imageId:int}/delete")]
+        [Authorize]
+        public async Task<IActionResult> DeleteImage(
+            [FromRoute] int id,
+            [FromRoute] int imageId,
+            CancellationToken ct) {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized("User ID not found.");
+
+            try {
+                await _svc.DeleteImageAsync(id, imageId, userId, ct);
+                return NoContent();
+            } catch (KeyNotFoundException ex) {
+                return NotFound(new { message = ex.Message });
+            } catch (UnauthorizedAccessException ex) {
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = ex.Message });
+            } catch (InvalidOperationException ex) {
+                return BadRequest(new { message = ex.Message }); // e.g. trying to delete last image
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
         }
     }
 }
