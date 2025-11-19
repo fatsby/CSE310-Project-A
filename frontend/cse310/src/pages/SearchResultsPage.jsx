@@ -25,7 +25,7 @@ function SearchResultsPage() {
 
     const universityId = searchParams.get("universityId");
     const subjectId = searchParams.get("subjectId");
-    const title = searchParams.get("title");
+    const title = searchParams.get("courseTitle");
     const course = searchParams.get("subjectName");
     const university = searchParams.get("universityName");
 
@@ -49,7 +49,7 @@ function SearchResultsPage() {
 
             if (universityId) params.append("universityId", universityId);
             if (subjectId) params.append("subjectId", subjectId);
-            if (title) params.append("title", title);
+            if (title) params.append("courseTitle", title);
 
             const res = await fetch(
                 `${API_URL}/api/documents?${params.toString()}`

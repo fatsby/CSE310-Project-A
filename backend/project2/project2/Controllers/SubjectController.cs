@@ -15,7 +15,5 @@ namespace project2.Controllers
         {
             _db = db;
         }
-
-       
     }
 }

@@ -11,6 +11,7 @@ import AD_BackToSchool from "../assets/HomePage/hr-ad.jpg";
 import ItemsRow from "../components/home_components/ItemsRow.jsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getToken } from "../../utils/auth";
 
 function HomePage() {
     // const [userData, setUserData] = useState(null);
@@ -75,7 +76,24 @@ function HomePage() {
             try {
                 setIsLoading(true);
                 const URL = `${API_URL}/api/university/${selectedUniversity}/subject`;
-                const res = await fetch(URL);
+                const token = getToken();
+                const headers = {
+                    "Content-Type": "application/json",
+                };
+
+                if (token) {
+                    headers["Authorization"] = `Bearer ${token}`;
+                }
+
+                const res = await fetch(URL, {
+                    method: "GET",
+                    headers: headers,
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+
                 const json = await res.json();
                 setAvailableCourses(json);
             } catch (err) {
@@ -103,7 +121,7 @@ function HomePage() {
         if (selectedCourse) param.append("subjectId", selectedCourse);
         if (selectedUniversity)
             param.append("universityId", selectedUniversity);
-        if (searchQuery) param.append("title", searchQuery);
+        if (searchQuery) param.append("courseTitle", searchQuery);
 
         // Get name of University and Course
         const universityObj = universityList.find(

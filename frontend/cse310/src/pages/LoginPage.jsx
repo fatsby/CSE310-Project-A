@@ -10,6 +10,7 @@ import {
     Notification,
 } from "@mantine/core";
 import { useForm, isEmail } from "@mantine/form";
+import { saveToken } from "../../utils/auth";
 
 function LoginPage({ onSwitchToRegister }) {
     const navigate = useNavigate();
@@ -58,10 +59,11 @@ function LoginPage({ onSwitchToRegister }) {
 
             if (response.ok) {
                 // API trả về Results.Empty, trình duyệt tự lưu cookie
+                const data = await response.json();
+                saveToken(data, values.remember);
                 console.log("Login Success");
-                navigate("/"); // Chuyển hướng đến trang chủ
+                navigate("/", { replace: true });
             } else {
-                // API trả về Unauthorized
                 setLoginError("Invalid email or password. Please try again.");
             }
         } catch (error) {

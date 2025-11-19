@@ -1,6 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
+import "@mantine/notifications/styles.css";
 import App from "./App.jsx";
 import {
     createBrowserRouter,
@@ -30,19 +33,7 @@ import ProfileController from "./pages/ProfileController.jsx";
 import EditItemPage from "./pages/EditItemPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 
-const checkAuth = () => {
-    try {
-        const userStorage = localStorage.getItem("user-storage");
-        if (!userStorage) {
-            return false;
-        }
-        const { state } = JSON.parse(userStorage);
-        return !!state.userData;
-    } catch (error) {
-        console.error("Error validating authentication status:", error);
-        return false;
-    }
-};
+import { checkAuth } from "../utils/auth.js";
 
 const RootElement = () => {
     const { isAuthenticated } = useLoaderData();
@@ -63,7 +54,8 @@ const router = createBrowserRouter([
         path: "/",
 
         loader: () => {
-            return { isAuthenticated: checkAuth() };
+            const isAuth = checkAuth();
+            return { isAuthenticated: isAuth };
         },
         element: <RootElement />,
     },
@@ -109,8 +101,8 @@ const router = createBrowserRouter([
                 element: <SetFileName />,
             },
             {
-              path: "/profile/:id",
-              element: <ProfileController />,
+                path: "/profile/:id",
+                element: <ProfileController />,
             },
             {
                 path: "/item/:id/edit",
@@ -119,7 +111,7 @@ const router = createBrowserRouter([
             {
                 path: "/admin/dashboard",
                 element: <AdminDashboard />,
-            }
+            },
         ],
     },
 ]);
