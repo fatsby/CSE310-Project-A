@@ -33,28 +33,44 @@ namespace project2.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound("User not found.");
 
+            var roles = _userManager.GetRolesAsync(user);
+
             var userDTO = new {
+                user.Id,
                 user.UserName,
                 user.Balance,
                 user.Email,
                 user.IsActive,
+                IsAdmin = roles.Result.Contains("Admin"),
                 user.AvatarUrl
             };
 
             return Ok(userDTO);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUser()
-        {
-            // join tables Users + UserRoles + Roles => take user, roleName
-            var userWithROles = await (from u in _context.Users
-                                       join ur in _context.UserRoles on u.Id equals ur.UserId
-                                       join r in _context.Roles on ur.RoleId equals r.Id
-                                       select new { User = u, RoleName = r.Name }
-                                       ).ToListAsync();
+        [HttpGet("users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers() {
+            var users = await _userManager.Users.ToListAsync();
 
-            return Ok(userWithROles);
+            var userDTOs = new List<object>();
+
+            // loop through each user to populate the DTO
+            foreach (var user in users) {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                userDTOs.Add(new {
+                    user.Id,
+                    user.UserName,
+                    user.Balance,
+                    user.Email,
+                    user.IsActive,
+                    user.AvatarUrl,
+                    IsAdmin = roles.Contains("Admin")
+                });
+            }
+
+            return Ok(userDTOs);
         }
 
         // i did token thing by a different method, so i dont understand this

@@ -17,8 +17,9 @@ export const getToken = () => {
 
 export const checkAuth = () => {
     const accessToken = getToken();
+    const userInStorage = getUser();
 
-    if (!accessToken) return false;
+    if (!accessToken || !userInStorage) return false;
 
     const expiryLocal = localStorage.getItem("tokenExpiry");
     const expirySession = sessionStorage.getItem("tokenExpiry");
@@ -42,4 +43,22 @@ export const removeToken = () => {
 
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("tokenExpiry");
+};
+
+//TRI ADDED THIS
+export const saveUser = (user, remember) => {
+    const storage = remember ? localStorage : sessionStorage;
+    storage.setItem("currentUser", JSON.stringify(user));
+};
+
+export const getUser = () => {
+    const userStr = localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser");
+    return userStr ? JSON.parse(userStr) : null;
+};
+
+export const isUserAdmin = () => {
+    const user = getUser();
+    if (!user) return false;
+    // matches the C# DTO
+    return user.isAdmin === true; 
 };

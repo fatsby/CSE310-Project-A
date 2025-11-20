@@ -10,7 +10,7 @@ import {
     Notification,
 } from "@mantine/core";
 import { useForm, isEmail } from "@mantine/form";
-import { saveToken } from "../../utils/auth";
+import { saveToken, saveUser } from "../../utils/auth";
 
 function LoginPage({ onSwitchToRegister }) {
     const navigate = useNavigate();
@@ -40,35 +40,56 @@ function LoginPage({ onSwitchToRegister }) {
         },
     });
 
+    //Tri edited to add user fetch and save
     const handleLogin = async (values) => {
         setLoginError(null);
         setIsLoading(true);
 
         try {
-            const response = await fetch(`${API_URL}/auth/login`, {
+            // login request
+            const loginResponse = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                // Gửi Email và Password, khớp với LoginDTO trong C#
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     Email: values.email,
                     Password: values.password,
                 }),
             });
 
-            if (response.ok) {
-                // API trả về Results.Empty, trình duyệt tự lưu cookie
-                const data = await response.json();
-                saveToken(data, values.remember);
-                console.log("Login Success");
+            if (!loginResponse.ok) {
+                setLoginError("Invalid email or password.");
+                setIsLoading(false);
+                return;
+            }
+
+            const tokenData = await loginResponse.json();
+
+            // save token IMMEDIATELY to use with /me fetch
+            saveToken(tokenData, values.remember);
+
+            // fetch user details
+            const meResponse = await fetch(`${API_URL}/api/users/me`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${tokenData.accessToken}`
+                }
+            });
+
+            if (meResponse.ok) {
+                const userData = await meResponse.json();
+
+                // save user data using our new helper
+                saveUser(userData, values.remember);
+
+                console.log("Login & User Fetch Success", userData);
                 navigate("/", { replace: true });
             } else {
-                setLoginError("Invalid email or password. Please try again.");
+                setLoginError("Could not fetch user details.");
             }
+
         } catch (error) {
             console.error("Network error:", error);
-            setLoginError("A network error occurred. Please try again.");
+            setLoginError("A network error occurred.");
         } finally {
             setIsLoading(false);
         }
