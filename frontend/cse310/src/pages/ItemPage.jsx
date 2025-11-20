@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getToken } from "../../utils/auth";
+import { getToken, checkPurchased } from "../../utils/auth";
 // import './css/ItemPageCSS.module.css';
 
 // Mantine Components
 import { Carousel } from "@mantine/carousel";
-import { Button } from "@mantine/core";
 import {
     Breadcrumbs,
     Anchor,
@@ -13,24 +12,24 @@ import {
     Rating,
     Text,
     Loader,
+    Modal,
+    Button,
+    Group,
+    Stack,
+    Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 
 // --- Components ---
 import ItemCard from "../components/ItemCard";
 import ReviewCard from "../components/ReviewCard";
 
 // --- Sample Data ---
-import {
-    getItemById,
-    getUserById,
-    getReviewsByItemId,
-    getOtherItems,
-    getCurrentUser,
-} from "../data/SampleData";
+import { getUserById, getCurrentUser } from "../data/SampleData";
 
 // --- Icons ---
-import { Star, Heart, CheckIcon, XIcon } from "lucide-react";
+import { Star, Heart, CheckIcon, XIcon, AlertCircle } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
@@ -38,16 +37,49 @@ function ItemPage() {
     const { id } = useParams();
     const [course, setCourse] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+
     const [authorData, setAuthorData] = useState(null);
     const [reviewsData, setReviewsData] = useState([]);
     const [otherItems, setOtherItems] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
-    const [isPurchased, setIsPurchased] = useState(false);
 
     const [reviewRating, setReviewRating] = useState(5);
     const [comment, setComment] = useState("");
+    const [opened, { open, close }] = useDisclosure(false);
+
+    const [isPurchased, setIsPurchased] = useState(false);
+
+    const [errorTitle, setErrorTitle] = useState("Error");
+    const [errorContent, setErrorContent] = useState("");
 
     const API_URL = import.meta.env.VITE_API_BASE_URL;
+
+    const fetchCourse = async () => {
+        try {
+            setIsLoading(true);
+            const res = await fetch(`${API_URL}/api/documents/${id}`);
+
+            if (!res.ok) {
+                throw new Error(`Could not fetch data. Status: ${res.status}`);
+            }
+
+            const json = await res.json();
+            setCourse(json);
+        } catch (err) {
+            console.error("Error fetching course:", err);
+            setIsLoading(false);
+            notifications.update({
+                id: "load-item-data",
+                color: "red",
+                title: "Error Loading Item",
+                message: "We could not find the item you were looking for.",
+                icon: <XIcon size="1rem" />,
+                autoClose: 5000,
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     useEffect(() => {
         notifications.show({
@@ -59,42 +91,20 @@ function ItemPage() {
             withCloseButton: false,
         });
 
-        const fetchCourse = async () => {
-            try {
-                setIsLoading(true);
-                const res = await fetch(`${API_URL}/api/documents/${id}`);
-
-                if (!res.ok) {
-                    throw new Error(
-                        `Could not fetch data. Status: ${res.status}`
-                    );
-                }
-
-                const json = await res.json();
-                setCourse(json);
-            } catch (err) {
-                console.error("Error fetching course:", err);
-                setIsLoading(false);
-                notifications.update({
-                    id: "load-item-data",
-                    color: "red",
-                    title: "Error Loading Item",
-                    message: "We could not find the item you were looking for.",
-                    icon: <XIcon size="1rem" />,
-                    autoClose: 5000,
-                });
-            } finally {
-                setIsLoading(false);
-                console.log(`${API_URL}/api/documents/${id}}`);
-                console.log(course);
-            }
-        };
-
         fetchCourse();
 
+        const verifyPurchase = async () => {
+            const purchased = await checkPurchased(getToken, id);
+            setIsPurchased(purchased);
+            console.log("Is Purchased:", purchased);
+        };
+
+        verifyPurchase();
+
+        console.log(isPurchased);
         const user = getCurrentUser();
         setCurrentUser(user);
-    }, [id, API_URL]);
+    }, [id]);
 
     useEffect(() => {
         if (course) {
@@ -187,6 +197,12 @@ function ItemPage() {
         5: { label: "Excellent", color: "green" },
     };
 
+    const showError = (title, content) => {
+        setErrorTitle(title);
+        setErrorContent(content);
+        open();
+    };
+
     // Get current rating in review
     const currentRatingInfo = ratingConfig[reviewRating] || {
         label: "",
@@ -209,8 +225,26 @@ function ItemPage() {
                     comment: comment,
                 }),
             });
+            if (!response.ok) {
+                showError("Review Failed", response.text());
+
+                open();
+                return;
+            }
+
+            notifications.show({
+                title: "Success",
+                message: "Review posted successfully!",
+                color: "green",
+            });
+
+            setComment("");
+            setReviewRating(5);
+            fetchCourse();
         } catch (error) {
             console.error(error);
+            setErrorContent("Network connection error.");
+            open();
         } finally {
             setIsLoading(false);
         }
@@ -218,6 +252,56 @@ function ItemPage() {
 
     return (
         <div className="container mx-auto px-4 pb-4 pt-[125px]">
+            <Modal
+                opened={opened}
+                onClose={close}
+                withCloseButton={false} //Disable default close button
+                centered
+                radius="lg"
+                padding="xl"
+            >
+                <Stack
+                    align="center"
+                    spacing="md"
+                >
+                    {/* Icon Lỗi màu đỏ */}
+                    <div className="bg-red-100 p-4 rounded-full">
+                        <AlertCircle
+                            size={48}
+                            className="text-red-600"
+                        />
+                    </div>
+
+                    {/* Tiêu đề và nội dung */}
+                    <div className="text-center">
+                        <Title
+                            order={3}
+                            className="mb-2 text-slate-800"
+                        >
+                            {errorTitle}
+                        </Title>
+                        <Text
+                            c="dimmed"
+                            size="sm"
+                        >
+                            {errorContent}
+                        </Text>
+                    </div>
+
+                    {/* Nút đóng */}
+                    <Button
+                        fullWidth
+                        color="red"
+                        variant="light"
+                        onClick={close}
+                        radius="md"
+                        size="md"
+                        className="mt-4"
+                    >
+                        Close
+                    </Button>
+                </Stack>
+            </Modal>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* LEFT COLUMN */}
                 <div className="lg:col-span-8">
@@ -291,48 +375,57 @@ function ItemPage() {
 
                     {/* REVIEWS SECTION */}
                     <div className="reviews mt-16">
-                        <h1 className="text-2xl font-bold text-zinc-700 mb-4">
-                            Write your review
-                        </h1>
-                        <div className="mb-4">
-                            <div className="flex items-center mb-2">
-                                <Rating
-                                    defaultValue={5}
-                                    value={reviewRating}
-                                    onChange={setReviewRating}
-                                    color="rgba(250, 186, 90, 1)"
-                                    className="mb-2 ml-2"
-                                />
-                                <Text
-                                    span
-                                    c={currentRatingInfo.color}
-                                    fw={700}
-                                    ml="md"
-                                    style={{ transition: "all 0.2s ease" }}
-                                >
-                                    {currentRatingInfo.label}
-                                </Text>
-                            </div>
-                            <Textarea
-                                size="md"
-                                radius="lg"
-                                value={comment}
-                                placeholder="What do you think about this course?"
-                                onChange={(event) =>
-                                    setComment(event.currentTarget.value)
-                                }
-                            />
-                            <div className="flex mt-2 justify-end">
-                                <Button
-                                    variant="filled"
-                                    color="indigo"
-                                    radius="lg"
-                                    onClick={handlePostReview}
-                                >
-                                    Post
-                                </Button>
-                            </div>
-                        </div>
+                        {/* Only show review input section if already purchased the document */}
+                        {isPurchased && (
+                            <>
+                                <h1 className="text-2xl font-bold text-zinc-700 mb-4">
+                                    Write your review
+                                </h1>
+                                <div className="mb-4">
+                                    <div className="flex items-center mb-2">
+                                        <Rating
+                                            defaultValue={5}
+                                            value={reviewRating}
+                                            onChange={setReviewRating}
+                                            color="rgba(250, 186, 90, 1)"
+                                            className="mb-2 ml-2"
+                                        />
+                                        <Text
+                                            span
+                                            c={currentRatingInfo.color}
+                                            fw={700}
+                                            ml="md"
+                                            style={{
+                                                transition: "all 0.2s ease",
+                                            }}
+                                        >
+                                            {currentRatingInfo.label}
+                                        </Text>
+                                    </div>
+                                    <Textarea
+                                        size="md"
+                                        radius="lg"
+                                        value={comment}
+                                        placeholder="What do you think about this course?"
+                                        onChange={(event) =>
+                                            setComment(
+                                                event.currentTarget.value
+                                            )
+                                        }
+                                    />
+                                    <div className="flex mt-2 justify-end">
+                                        <Button
+                                            variant="filled"
+                                            color="indigo"
+                                            radius="lg"
+                                            onClick={handlePostReview}
+                                        >
+                                            Post
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                         <h1 className="text-2xl font-bold text-zinc-700 mb-4">
                             Reviews ({reviewsData.length})
                         </h1>
