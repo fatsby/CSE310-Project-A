@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Modal, ScrollArea, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Upload from "../pages/Upload";
-import useUserStore from "../stores/userStore";
-import { getCurrentUser } from "../data/SampleData"; // Import for simulated fetch
-import { removeToken } from "../../utils/auth";
+// Import auth utilities
+import { removeToken, getUser } from "../../utils/auth";
 // Lucide Logo Imports
 import { User, LogOut, Wallet, Archive, ShoppingCart } from "lucide-react";
 
@@ -17,35 +16,14 @@ export default function UserHeader() {
     // Modal state
     const [opened, { open, close }] = useDisclosure(false);
 
-    // // ZUSTAND SELECTORS
-    const userData = useUserStore((state) => state.userData);
-    const profilePicture = useUserStore((state) => state.getProfilePicture());
-    const loadUser = useUserStore((state) => state.loadUser);
+    // Initialize state directly from localStorage
+    // If the user is not logged in, this will be null
+    const [user, setUser] = useState(getUser());
 
-    // SENSITIVE user data that must be fetched
-    const [sensitiveUserData, setSensitiveUserData] = useState(null);
-
-    // Effect 1: load basic user data
-    useEffect(() => {
-        if (!userData) {
-            loadUser();
-        }
-    }, [userData, loadUser]);
-
-    // Effect 2: load sensitive user data
-    useEffect(() => {
-        if (userData) {
-            // Checks if non-sensitive data exists
-            // On backend implementation, replace this with secure API call:
-            // const data = await fetch('/api/user/details');
-            // For now, we simulate it by getting the full user object again.
-            const fullUserData = getCurrentUser();
-            setSensitiveUserData(fullUserData);
-        } else {
-            // If userData is null (user logged out), clear sensitive data too
-            setSensitiveUserData(null);
-        }
-    }, [userData]); // This effect runs when the user logs in or out
+    const handleLogout = () => {
+        removeToken();
+        setUser(null); // Clear local state immediately
+    };
 
     const CustomScrollArea = (props) => (
         <ScrollArea.Autosize
@@ -75,11 +53,21 @@ export default function UserHeader() {
                                 Upload
                             </span>
                         </div>
+                        {user?.isAdmin && (
+                            <Link
+                                to="/admin/dashboard"
+                                className="hover:text-[#68a8fd] hover:bg-[#ecf2fb] cursor-pointer h-[42px] flex items-center px-4 rounded-[4px]"
+                            >
+                                <span className="text-base font-medium">
+                                    Admin Dashboard
+                                </span>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Right: User section */}
                     <div className="flex items-center gap-4">
-                        {/* Balance - reads from sensitiveUserData */}
+                        {/* Balance */}
                         <div className="flex flex-row gap-10">
                             <Link
                                 to="/cart"
@@ -88,20 +76,18 @@ export default function UserHeader() {
                                 <ShoppingCart size={17} />
                             </Link>
                             <div
-                                className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 hover:text-[#68a8fd] hover:bg-[#ecf2fb] px-4 rounded-[4px] ${
-                                    sensitiveUserData &&
-                                    sensitiveUserData.balance > 0
+                                className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 hover:text-[#68a8fd] hover:bg-[#ecf2fb] px-4 rounded-[4px] ${user && user.balance > 0
                                         ? "opacity-100"
                                         : "opacity-0"
-                                }`}
+                                    }`}
                             >
                                 <Wallet size={16} />
                                 <span>
-                                    {sensitiveUserData &&
+                                    {user &&
                                         new Intl.NumberFormat("vi-VN", {
                                             style: "currency",
                                             currency: "VND",
-                                        }).format(sensitiveUserData.balance)}
+                                        }).format(user.balance)}
                                 </span>
                             </div>
                         </div>
@@ -117,15 +103,10 @@ export default function UserHeader() {
                         >
                             <Menu.Target>
                                 <div className="w-[43px] h-[43px] bg-black rounded-full overflow-hidden">
-                                    <div
-                                        className={`w-full h-full transition-all duration-300 ${
-                                            userData
-                                                ? "opacity-100"
-                                                : "opacity-70"
-                                        }`}
-                                    >
+                                    <div className="w-full h-full transition-all duration-300 opacity-100">
                                         <img
-                                            src={profilePicture || avatarIMG}
+                                            // Use avatarUrl from backend, or fallback to dog image
+                                            src={user?.avatarUrl || avatarIMG}
                                             alt="user-avatar"
                                             className="w-full h-full object-cover cursor-pointer"
                                         />
@@ -134,18 +115,16 @@ export default function UserHeader() {
                             </Menu.Target>
 
                             <Menu.Dropdown>
-                                {/* Menu Label - Reads name from sensitiveUserData */}
+                                {/* Menu Label - Reads userName */}
                                 <Menu.Label>
-                                    {sensitiveUserData
-                                        ? sensitiveUserData.name
-                                        : "Loading..."}
+                                    {user ? user.userName : "Guest"}
                                 </Menu.Label>
 
-                                {/* Profile Link - Reads ID from sensitiveUserData */}
+                                {/* Profile Link - Reads ID */}
                                 <Menu.Item
                                     component={Link}
-                                    to={`/profile/${sensitiveUserData?.id}`}
-                                    disabled={!sensitiveUserData}
+                                    to={`/profile/${user?.id}`}
+                                    disabled={!user}
                                     leftSection={<User size={16} />}
                                 >
                                     Your profile
@@ -161,10 +140,7 @@ export default function UserHeader() {
                                 <Menu.Item
                                     color="red"
                                     leftSection={<LogOut size={16} />}
-                                    onClick={() => {
-                                        removeToken();
-                                        setSensitiveUserData(null); // Also clear local sensitive state
-                                    }}
+                                    onClick={handleLogout}
                                     component={Link}
                                     to="/"
                                 >
