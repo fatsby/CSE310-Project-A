@@ -176,5 +176,17 @@ namespace project2.Services {
                 ReviewDate = review.ReviewDate
             };
         }
+
+        public async Task<double> GetAverageRatingsAsync(CancellationToken ct) {
+            var reviewsList = await _db.Reviews.ToListAsync();
+
+            if (reviewsList.Count == 0) {
+                return 0; // no review exists
+            }
+
+            var totalAverageRating = reviewsList.Average(r => r.Rating);
+
+            return totalAverageRating;
+        }
     }
 }

@@ -41,6 +41,16 @@ namespace project2.Controllers {
             }
         }
 
+        [HttpGet("count")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetDocumentsCount(CancellationToken ct) {
+            var count = await _db.Documents
+                .AsNoTracking()
+                .Where(d => !d.isDeleted && d.isActive)
+                .CountAsync(ct);
+            return Ok(new { count });
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(

@@ -86,5 +86,16 @@ namespace project2.Controllers {
                 return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
             }
         }
+
+        [HttpGet("averageRating")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAverageRatings(CancellationToken ct) {
+            try {
+                var averages = await _reviewService.GetAverageRatingsAsync(ct);
+                return Ok(averages);
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
     }
 }

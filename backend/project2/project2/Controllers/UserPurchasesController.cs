@@ -47,5 +47,15 @@ namespace project2.Controllers {
             }
             return Ok(purchase);
         }
+
+        [HttpGet("totalSales")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetTotalSales() {
+            var purchasesList = await _db.UserPurchases.ToListAsync();
+            
+            var totalSales = purchasesList.Sum(p => p.PricePaid);
+
+            return Ok(totalSales);
+        }
     }
 }
