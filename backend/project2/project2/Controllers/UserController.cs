@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs.UserDto;
 using project2.Models;
+using System.Security.Claims;
 
 namespace project2.Controllers
 {
-    [Route("api/admin/users")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -20,6 +22,26 @@ namespace project2.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser() {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized("User ID not found.");
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound("User not found.");
+
+            var userDTO = new {
+                user.UserName,
+                user.Balance,
+                user.Email,
+                user.IsActive,
+                user.AvatarUrl
+            };
+
+            return Ok(userDTO);
         }
 
         [HttpGet]

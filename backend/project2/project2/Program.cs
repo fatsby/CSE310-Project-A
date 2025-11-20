@@ -127,13 +127,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-
-// A secure endpoint to get info about the current user
-app.MapGet("/me", (ClaimsPrincipal me) => new {
-    name = me.Identity?.Name,
-    claims = me.Claims.Select(c => new { c.Type, c.Value })
-}).RequireAuthorization();
-
 app.MapControllers();
 
 await app.Services.SeedIdentityAsync(builder.Configuration);

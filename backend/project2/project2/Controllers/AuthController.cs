@@ -26,7 +26,9 @@ public class AuthController : ControllerBase
         {
             UserName = dto.UserName,
             Email = dto.Email,
-            Balance = 0m //default balance
+            Balance = 0m, //default balance
+            IsActive = true, //default active
+            AvatarUrl = ""
         };
 
         var create = await _users.CreateAsync(user, dto.Password);
@@ -51,6 +53,13 @@ public class AuthController : ControllerBase
         // find user by email only
         var user = await _users.FindByEmailAsync(dto.Email);
         if (user is null) return Results.Unauthorized();
+
+        if (!user.IsActive) {
+            return Results.Problem(
+                detail: "Your account has been banned.",
+                statusCode: StatusCodes.Status403Forbidden
+            );
+        }
 
         var check = await _signIn.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: true);
         if (!check.Succeeded) return Results.Unauthorized();
