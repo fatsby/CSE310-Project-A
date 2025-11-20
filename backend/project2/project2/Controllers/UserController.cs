@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs.UserDto;
 using project2.Models;
+using System.Data;
 using System.Security.Claims;
 
 namespace project2.Controllers
@@ -33,7 +34,7 @@ namespace project2.Controllers
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) return NotFound("User not found.");
 
-            var roles = _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             var userDTO = new {
                 user.Id,
@@ -41,7 +42,7 @@ namespace project2.Controllers
                 user.Balance,
                 user.Email,
                 user.IsActive,
-                IsAdmin = roles.Result.Contains("Admin"),
+                IsAdmin = roles.Contains("Admin"),
                 user.AvatarUrl
             };
 
@@ -141,21 +142,30 @@ namespace project2.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            if(string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
+            var user = await _userManager.FindByIdAsync(id);
 
-            var existingUser = await _userManager.FindByIdAsync(id);
-
-            if (existingUser == null)
+            if (user == null)
             {
                 return NotFound(id);
             }
 
-            return Ok(existingUser);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var userDTO = new
+            {
+                user.Id,
+                user.UserName,
+                user.Balance,
+                user.Email,
+                user.IsActive,
+                IsAdmin = roles.Contains("Admin"),
+                user.AvatarUrl
+            };
+
+            return Ok(userDTO);
         }
 
         // EditUse still being reviewed

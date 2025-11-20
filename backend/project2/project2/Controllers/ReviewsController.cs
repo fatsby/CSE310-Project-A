@@ -19,7 +19,7 @@ namespace project2.Controllers {
         [AllowAnonymous]
         public async Task<IActionResult> GetReview([FromQuery] int? documentId, [FromQuery] string? userId, CancellationToken ct) {
             try {
-                var review = await _reviewService.GetReviewAsync(userId ?? "", documentId ?? null);
+                var review = await _reviewService.GetReviewsAsync(userId ?? "", documentId ?? null);
                 return Ok(review);
             } catch (KeyNotFoundException ex) {
                 return NotFound(ex.Message);

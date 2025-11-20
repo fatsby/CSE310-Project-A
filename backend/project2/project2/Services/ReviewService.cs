@@ -12,12 +12,9 @@ namespace project2.Services {
             _db = db;
         }
 
-        public async Task<ReviewDto> GetReviewAsync(string? userId, int? documentId) {
-            var query = _db.Reviews
-                .AsNoTracking()
-                .Include(r => r.User)
-                .Include(d => d.Document)
-                .AsQueryable();
+        public async Task<List<ReviewDto>> GetReviewsAsync(string? userId, int? documentId)
+        {
+            var query = _db.Reviews.AsNoTracking();
 
             if (!string.IsNullOrEmpty(userId))
                 query = query.Where(r => r.UserId == userId);
@@ -25,12 +22,25 @@ namespace project2.Services {
             if (documentId.HasValue)
                 query = query.Where(r => r.DocumentId == documentId.Value);
 
-            var review = await query.FirstOrDefaultAsync();
+            if (string.IsNullOrEmpty(userId) && !documentId.HasValue)
+            {
+                return new List<ReviewDto>();
+            }
 
-            if (review == null)
-                throw new KeyNotFoundException("Review not found.");
+            var dtos = await query
+                .Select(r => new ReviewDto
+                {
+                    UserId = r.UserId,
+                    UserName = r.User.UserName,
+                    DocumentId = r.DocumentId,
+                    DocumentName = r.Document.Name,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    ReviewDate = r.ReviewDate
+                })
+                .ToListAsync();
 
-            return ToDto(review, review.User.UserName, review.Document.Name);
+            return dtos;
         }
 
         public async Task<ReviewDto> CreateAsync(string userId, CreateReviewDto dto, CancellationToken ct) {
