@@ -184,30 +184,25 @@ namespace project2.Controllers
             return Ok(existingUser);
         }
 
-        // add IsBanned -> run migrations
-        // toggle ban (banned -> unbanned, unbanned -> banned)
-        [HttpPut("ban/{id}")]
-        public async Task<IActionResult> BanUser([FromRoute] string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return NotFound();
-            }
+        // i updated ban logic - tri
+        [HttpPost("ban/{email}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IResult> BanUser(string email) {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null) return Results.NotFound();
 
-            var user = await _userManager.FindByIdAsync(id);
+            user.IsActive = false;
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+            // update the Security Stamp
+            // invalidate the refresh token
+            // they will not be able to get a new access token once the current one expires.
+            await _userManager.UpdateSecurityStampAsync(user);
 
-            //user.IsBanned = !user.IsBanned;
-            //await _context.SaveChangesAsync();
+            var result = await _userManager.UpdateAsync(user);
 
-            //var status = user.IsBanned ? "banned" : "unbanned";
+            if (!result.Succeeded) return Results.BadRequest(result.Errors);
 
-            //return Ok(new { message = $"User {user.UserName} has been {status}." });
-            return Ok();
+            return Results.Ok(new { message = "User banned and refresh token invalidated." });
         }
 
 
