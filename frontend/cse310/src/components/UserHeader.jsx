@@ -1,36 +1,33 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Modal, ScrollArea, Menu } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import Upload from "../pages/Upload";
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Modal, ScrollArea, Menu } from '@mantine/core'
+import { useDisclosure } from '@mantine/hooks'
+import Upload from '../pages/Upload'
 // Import auth utilities
-import { removeToken, getUser } from "../../utils/auth";
+import { removeToken, getUser } from '../../utils/auth'
 // Lucide Logo Imports
-import { User, LogOut, Wallet, Archive, ShoppingCart } from "lucide-react";
+import { User, LogOut, Wallet, Archive, ShoppingCart } from 'lucide-react'
 
 // Images
-import LogoIMG from "../assets/LogoBanner_Trans.png";
-import avatarIMG from "../assets/dog.jpg";
+import LogoIMG from '../assets/LogoBanner_Trans.png'
+import avatarIMG from '../assets/dog.jpg'
 
 export default function UserHeader() {
     // Modal state
-    const [opened, { open, close }] = useDisclosure(false);
+    const [opened, { open, close }] = useDisclosure(false)
 
     // Initialize state directly from localStorage
     // If the user is not logged in, this will be null
-    const [user, setUser] = useState(getUser());
+    const [user, setUser] = useState(getUser())
 
     const handleLogout = () => {
-        removeToken();
-        setUser(null); // Clear local state immediately
-    };
+        removeToken()
+        setUser(null) // Clear local state immediately
+    }
 
     const CustomScrollArea = (props) => (
-        <ScrollArea.Autosize
-            type="never"
-            {...props}
-        />
-    );
+        <ScrollArea.Autosize type="never" {...props} />
+    )
 
     return (
         <header>
@@ -75,18 +72,13 @@ export default function UserHeader() {
                             >
                                 <ShoppingCart size={17} />
                             </Link>
-                            <div
-                                className={`flex items-center gap-2 text-sm font-medium transition-opacity duration-300 hover:text-[#68a8fd] hover:bg-[#ecf2fb] px-4 rounded-[4px] ${user && user.balance > 0
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    }`}
-                            >
+                            <div className="flex items-center gap-2 text-sm font-medium transition-opacity duration-300 hover:text-[#68a8fd] hover:bg-[#ecf2fb] px-4 rounded-[4px]">
                                 <Wallet size={16} />
                                 <span>
                                     {user &&
-                                        new Intl.NumberFormat("vi-VN", {
-                                            style: "currency",
-                                            currency: "VND",
+                                        new Intl.NumberFormat('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
                                         }).format(user.balance)}
                                 </span>
                             </div>
@@ -97,7 +89,7 @@ export default function UserHeader() {
                             shadow="md"
                             width={200}
                             transitionProps={{
-                                transition: "fade-down",
+                                transition: 'fade-down',
                                 duration: 150,
                             }}
                         >
@@ -117,7 +109,7 @@ export default function UserHeader() {
                             <Menu.Dropdown>
                                 {/* Menu Label - Reads userName */}
                                 <Menu.Label>
-                                    {user ? user.userName : "Guest"}
+                                    {user ? user.userName : 'Guest'}
                                 </Menu.Label>
 
                                 {/* Profile Link - Reads ID */}
@@ -166,23 +158,23 @@ export default function UserHeader() {
                 }}
                 styles={{
                     content: {
-                        backgroundColor: "#f9f9f9",
+                        backgroundColor: '#f9f9f9',
                     },
                     title: {
-                        fontSize: "24px",
-                        fontWeight: "500",
-                        color: "#333",
+                        fontSize: '24px',
+                        fontWeight: '500',
+                        color: '#333',
                     },
-                    close: { color: "#333", marginRight: "30px" },
+                    close: { color: '#333', marginRight: '30px' },
                     header: {
-                        height: "100px",
-                        borderBottom: "1px solid #CECFD2",
-                        paddingLeft: "50px",
+                        height: '100px',
+                        borderBottom: '1px solid #CECFD2',
+                        paddingLeft: '50px',
                     },
                 }}
             >
                 <Upload onCloseUpload={close} />
             </Modal>
         </header>
-    );
+    )
 }

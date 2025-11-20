@@ -1,10 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Star } from 'lucide-react'
 
 function ItemCard({ itemData }) {
     if (!itemData) {
-        return null;
+        return null
     }
 
     return (
@@ -40,27 +40,23 @@ function ItemCard({ itemData }) {
             <div className="flex items-center justify-between mt-2">
                 <p className="text-gray-700 font-regular">
                     {itemData.price === 0
-                        ? "FREE"
-                        : new Intl.NumberFormat("vi-VN", {
-                              style: "currency",
-                              currency: "VND",
+                        ? 'FREE'
+                        : new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
                           }).format(itemData.price)}
                 </p>
                 <div className="flex items-center gap-x-1">
                     <p className="font-regular text-gray-700">
-                        {itemData.avgRating === 0
-                            ? "No Reviews"
-                            : `${itemData.avgRating}`}
+                        {itemData.averageRating === 0
+                            ? 'No Reviews'
+                            : `${itemData.averageRating}`}
                     </p>
-                    <Star
-                        fill="#FFCC00"
-                        color="#FFCC00"
-                        size={20}
-                    />
+                    <Star fill="#FFCC00" color="#FFCC00" size={20} />
                 </div>
             </div>
         </Link>
-    );
+    )
 }
 
-export default ItemCard;
+export default ItemCard
