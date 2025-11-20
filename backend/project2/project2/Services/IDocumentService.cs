@@ -15,5 +15,7 @@ namespace project2.Services {
 
         Task<string> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct);
         Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct);
+        Task<List<DocumentResponse>> GetTopRatedDocumentsAsync(CancellationToken ct);
+        Task<List<DocumentResponse>> GetBestSellingDocumentsAsync(CancellationToken ct);
     }
 }

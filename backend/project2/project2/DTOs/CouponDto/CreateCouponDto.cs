@@ -10,6 +10,6 @@ namespace project2.DTOs.CouponDto {
         public decimal DiscountPercentage { get; set; }
 
         [Required]
-        public DateTime? ExpiryDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
     }
 }

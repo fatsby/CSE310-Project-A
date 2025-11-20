@@ -20,7 +20,7 @@ namespace project2.Services {
             var coupon = new Coupon {
                 Code = code,
                 DiscountPercentage = dto.DiscountPercentage,
-                ExpiryDate = dto.ExpiryDate.Value,
+                ExpiryDate = dto.ExpiryDate,
                 IsActive = true
             };
 

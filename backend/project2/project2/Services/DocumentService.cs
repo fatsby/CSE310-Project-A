@@ -39,6 +39,36 @@ namespace project2.Services {
             _balanceManager = balanceManager;
         }
 
+        //helper method
+        private static DocumentResponse MapToResponse(Document doc)
+        {
+            return new DocumentResponse
+            {
+                Id = doc.Id,
+                AuthorName = doc.Author.UserName!,
+                Name = doc.Name,
+                Description = doc.Description,
+                Price = doc.Price,
+                UniversityId = doc.UniversityId,
+                UniversityName = doc.University.Name,
+                SubjectId = doc.SubjectId,
+                SubjectName = doc.Subject.Name,
+                PurchaseCount = doc.purchaseCount,
+                UpdatedAt = doc.UpdatedAt,
+                ReviewCount = doc.ReviewCount,
+                AverageRating = doc.AverageRating,
+                isActive = doc.isActive,
+                isDeleted = doc.isDeleted,
+                Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                Files = doc.Files.Select(f => new DocumentFileDto
+                {
+                    Id = f.Id,
+                    FileName = f.FileName,
+                    SizeBytes = f.SizeBytes
+                })
+            };
+        }
+
         public async Task<DocumentResponse> CreateAsync(string authorId, CreateDocumentRequest req, CancellationToken ct) {
             using var tx = await _db.Database.BeginTransactionAsync(ct);
 
@@ -564,6 +594,37 @@ namespace project2.Services {
                     SizeBytes = f.SizeBytes
                 })
             };
+        }
+
+        public async Task<List<DocumentResponse>> GetTopRatedDocumentsAsync(CancellationToken ct)
+        {
+            var docs = await _db.Documents
+                .AsNoTracking()
+                .Where(d => !d.isDeleted && d.isActive)
+                .OrderByDescending(d => d.AverageRating) // sort by average rating
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .Include(d => d.Author)
+                .ToListAsync(ct);
+
+            return docs.Select(MapToResponse).ToList();
+        }
+        public async Task<List<DocumentResponse>> GetBestSellingDocumentsAsync(CancellationToken ct)
+        {
+            var docs = await _db.Documents
+                .AsNoTracking()
+                .Where(d => !d.isDeleted && d.isActive)
+                .OrderByDescending(d => d.purchaseCount) // sort by purchase count
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .Include(d => d.Author)
+                .ToListAsync(ct);
+
+            return docs.Select(MapToResponse).ToList();
         }
     }
 }

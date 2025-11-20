@@ -51,6 +51,36 @@ namespace project2.Controllers {
             return Ok(new { count });
         }
 
+        [HttpGet("top-rated")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetTopRated(CancellationToken ct)
+        {
+            try
+            {
+                var result = await _svc.GetTopRatedDocumentsAsync(ct);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred fetching top rated documents.", details = ex.Message });
+            }
+        }
+
+        [HttpGet("best-sellers")]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetBestSellers(CancellationToken ct)
+        {
+            try
+            {
+                var result = await _svc.GetBestSellingDocumentsAsync(ct);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred fetching best selling documents.", details = ex.Message });
+            }
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(
