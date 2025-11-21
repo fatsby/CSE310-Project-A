@@ -1,91 +1,91 @@
-import { TextInput, Select, Button } from "@mantine/core";
-import { ArrowDownAZ, ArrowUpAZ, Search } from "lucide-react";
-import { getUserPurchased } from "../data/SampleData.js";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { TextInput, Select, Button } from '@mantine/core'
+import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react'
+import { getUserPurchased } from '../data/SampleData.js'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function PurchasedPage() {
-    const [allItems, setAllItems] = useState([]);
-    const [filteredItems, setFilteredItems] = useState([]);
+    const [allItems, setAllItems] = useState([])
+    const [filteredItems, setFilteredItems] = useState([])
 
-    const [selectedUni, setSelectedUni] = useState(null);
-    const [selectedSubject, setSelectedSubject] = useState(null);
-    const [isAsc, setIsAsc] = useState(true);
-    const [searchValue, setSearchValue] = useState("");
-    const [universityList, setUniversityList] = useState([]);
-    const [courseList, setCourseList] = useState([]);
+    const [selectedUni, setSelectedUni] = useState(null)
+    const [selectedSubject, setSelectedSubject] = useState(null)
+    const [isAsc, setIsAsc] = useState(true)
+    const [searchValue, setSearchValue] = useState('')
+    const [universityList, setUniversityList] = useState([])
+    const [courseList, setCourseList] = useState([])
 
-    console.log(courseList);
-    console.log(universityList);
+    console.log(courseList)
+    console.log(universityList)
 
     useEffect(() => {
-        const data = getUserPurchased();
-        setAllItems(data);
-        setFilteredItems(data);
+        const data = getUserPurchased()
+        setAllItems(data)
+        setFilteredItems(data)
 
-        setUniversityList([...new Set(data.map((item) => item.university))]);
-        setCourseList([...new Set(data.map((item) => item.subject))]);
-    }, []);
+        setUniversityList([...new Set(data.map((item) => item.university))])
+        setCourseList([...new Set(data.map((item) => item.subject))])
+    }, [])
 
     // Filter
     const filterItems = (uni, subject, searchValue) => {
-        var result = allItems;
+        var result = allItems
         if (uni) {
-            result = result.filter((item) => item.university === uni);
+            result = result.filter((item) => item.university === uni)
         }
 
         if (subject) {
-            result = result.filter((item) => item.subject === subject);
+            result = result.filter((item) => item.subject === subject)
         }
 
         if (searchValue) {
             result = result.filter((item) =>
                 item.name.toLowerCase().includes(searchValue.toLowerCase())
-            );
+            )
         }
-        setFilteredItems(result);
-    };
+        setFilteredItems(result)
+    }
 
     // Filter by University
     const handleUniChange = (value) => {
-        setSelectedUni(value);
-        setSelectedSubject(null);
+        setSelectedUni(value)
+        setSelectedSubject(null)
         setCourseList([
             ...new Set(
                 allItems
                     .filter((item) => item.university == value)
                     .map((item) => item.subject)
             ),
-        ]);
-        filterItems(value, selectedSubject, searchValue);
-    };
+        ])
+        filterItems(value, selectedSubject, searchValue)
+    }
 
     // Filter by Subject
     const handleSubjectChange = (value) => {
-        setSelectedSubject(value);
-        filterItems(selectedUni, value, searchValue);
-    };
+        setSelectedSubject(value)
+        filterItems(selectedUni, value, searchValue)
+    }
 
     // Sort by Alphabet
     const sortAlphabet = () => {
-        const sortAZ = [...filteredItems];
+        const sortAZ = [...filteredItems]
 
         if (isAsc) {
-            sortAZ.sort((a, b) => a.name.localeCompare(b.name));
+            sortAZ.sort((a, b) => a.name.localeCompare(b.name))
         } else {
-            sortAZ.sort((a, b) => b.name.localeCompare(a.name));
+            sortAZ.sort((a, b) => b.name.localeCompare(a.name))
         }
 
-        setFilteredItems(sortAZ);
-        setIsAsc((prev) => !prev);
-    };
+        setFilteredItems(sortAZ)
+        setIsAsc((prev) => !prev)
+    }
 
     // Search
     const handleSearchInput = (e) => {
-        const value = e.target.value;
-        setSearchValue(value);
-        filterItems(selectedUni, selectedSubject, value);
-    };
+        const value = e.target.value
+        setSearchValue(value)
+        filterItems(selectedUni, selectedSubject, value)
+    }
 
     return (
         <>
@@ -161,10 +161,10 @@ function PurchasedPage() {
                                             <h2 className="font-medium text-[18px] ">
                                                 {item.name}
                                             </h2>
-                                            <p className="bg-[#6C8BA4] text-[white] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                            <p className="font-semibold text-blue-800 bg-blue-100 px-2 py-1 rounded-full text-sm w-fit mb-2">
                                                 {item.subject}
                                             </p>
-                                            <p className="bg-[#A68E7C] text-[white] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                            <p className="font-semibold text-rose-800 bg-rose-100 px-2 py-1 rounded-full text-sm w-fit">
                                                 {item.university}
                                             </p>
                                         </div>
@@ -176,7 +176,7 @@ function PurchasedPage() {
                 </div>
             </div>
         </>
-    );
+    )
 }
 
-export default PurchasedPage;
+export default PurchasedPage

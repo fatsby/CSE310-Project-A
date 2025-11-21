@@ -1,57 +1,57 @@
-import { Checkbox, Input, Button } from "@mantine/core";
-import { getItemsList } from "../data/SampleData.js";
-import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { modals } from "@mantine/modals";
+import { Checkbox, Input, Button } from '@mantine/core'
+import { getItemsList } from '../data/SampleData.js'
+import { Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { modals } from '@mantine/modals'
 
 function CartPage() {
-    const [discount, setDiscount] = useState(0);
+    const [discount, setDiscount] = useState(0)
 
     const [checkedItems, setCheckedItems] = useState(
         getItemsList().map((item) => {
             return {
                 ...item,
                 selected: false,
-            };
+            }
         })
-    );
+    )
 
     // Caluculate bill
-    const selectedItems = checkedItems.filter((item) => item.selected);
+    const selectedItems = checkedItems.filter((item) => item.selected)
 
     const subtotal = selectedItems.reduce(
-        (sum, item) => sum + Number(item.price.replace(/,/g, "")),
+        (sum, item) => sum + Number(item.price.replace(/,/g, '')),
         0
-    );
+    )
 
-    const total = subtotal - discount;
+    const total = subtotal - discount
 
     // Check all check boxes
-    const isAllChecked = checkedItems.every((item) => item.selected === true);
+    const isAllChecked = checkedItems.every((item) => item.selected === true)
 
     const handleCheckAll = (e) => {
-        const checked = e.target.checked;
+        const checked = e.target.checked
         setCheckedItems(
             checkedItems.map((item) => {
                 return {
                     ...item,
                     selected: checked,
-                };
+                }
             })
-        );
-    };
+        )
+    }
 
     const handleItemCheck = (index) => {
-        const update = [...checkedItems];
-        update[index].selected = !update[index].selected;
-        setCheckedItems(update);
-    };
+        const update = [...checkedItems]
+        update[index].selected = !update[index].selected
+        setCheckedItems(update)
+    }
 
     // Delete 1 item
     const handleDeleteItem = (id) =>
         modals.openConfirmModal({
-            title: "Confirm deletion",
+            title: 'Confirm deletion',
             centered: true,
             children: (
                 <p>
@@ -59,17 +59,17 @@ function CartPage() {
                     undone.
                 </p>
             ),
-            labels: { confirm: "Delete", cancel: "Cancel" },
-            confirmProps: { color: "red" },
+            labels: { confirm: 'Delete', cancel: 'Cancel' },
+            confirmProps: { color: 'red' },
             onConfirm: () => {
-                setCheckedItems(checkedItems.filter((item) => item.id !== id));
+                setCheckedItems(checkedItems.filter((item) => item.id !== id))
             },
-        });
+        })
 
     // Delete selected items
     const handleDeleteSelected = () => {
         modals.openConfirmModal({
-            title: "Confirm deletion",
+            title: 'Confirm deletion',
             centered: true,
             children: (
                 <p>
@@ -77,13 +77,13 @@ function CartPage() {
                     undone.
                 </p>
             ),
-            labels: { confirm: "Delete", cancel: "Cancel" },
-            confirmProps: { color: "red" },
+            labels: { confirm: 'Delete', cancel: 'Cancel' },
+            confirmProps: { color: 'red' },
             onConfirm: () => {
-                setCheckedItems(checkedItems.filter((item) => !item.selected));
+                setCheckedItems(checkedItems.filter((item) => !item.selected))
             },
-        });
-    };
+        })
+    }
 
     return (
         <>
@@ -161,10 +161,10 @@ function CartPage() {
                                                     <h2 className="font-medium text-[20px] ">
                                                         {item.name}
                                                     </h2>
-                                                    <p className="bg-[#6C8BA4] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                                    <p className="font-semibold text-blue-800 bg-blue-100 px-2 py-1 rounded-full text-sm w-fit mb-2">
                                                         {item.subject}
                                                     </p>
-                                                    <p className="bg-[#A68E7C] text-[#FAFAFA] font-semibold block w-fit rounded-lg my-[5px] p-1.5">
+                                                    <p className="font-semibold text-rose-800 bg-rose-100 px-2 py-1 rounded-full text-sm w-fit">
                                                         {item.university}
                                                     </p>
                                                 </div>
@@ -175,7 +175,7 @@ function CartPage() {
                                         <p className="font-bold text-blue-600 text-[22px] content-center">
                                             {Number(
                                                 item.price
-                                            ).toLocaleString()}{" "}
+                                            ).toLocaleString()}{' '}
                                             VND
                                         </p>
                                     </div>
@@ -211,7 +211,7 @@ function CartPage() {
                                 <div className="grid grid-cols-10">
                                     <div className="col-span-5">Discount</div>
                                     <div className="col-span-5 text-right">
-                                        - {Number(discount).toLocaleString()}{" "}
+                                        - {Number(discount).toLocaleString()}{' '}
                                         VND
                                     </div>
                                 </div>
@@ -252,6 +252,6 @@ function CartPage() {
                 </div>
             </div>
         </>
-    );
+    )
 }
-export default CartPage;
+export default CartPage
