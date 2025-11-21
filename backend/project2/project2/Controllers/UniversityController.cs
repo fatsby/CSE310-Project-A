@@ -53,6 +53,12 @@ namespace project2.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> CreateUniversity([FromBody] CreateUniversityDTO dto)
         {
+            var uniExists = await _db.Universities.AnyAsync(u => u.Suffix == dto.Suffix);
+            if (uniExists)
+            {
+                return NotFound(new { message = "University already exists" });
+            }
+
             var university = new University(dto.Name, dto.Suffix);
             _db.Universities.Add(university);
             await _db.SaveChangesAsync();

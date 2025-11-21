@@ -10,10 +10,10 @@
         public List<Document> Documents { get; set; } = new();
 
         public Subject() { }
-        public Subject(string name, string code, University university) {
+        public Subject(string name, string code, int universityId) {
             Name = name;
             Code = code;
-            University = university;
+            UniversityId = universityId;
         }
     }
 }
