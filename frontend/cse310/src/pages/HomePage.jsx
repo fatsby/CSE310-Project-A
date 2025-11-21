@@ -16,8 +16,8 @@ import { getToken } from "../../utils/auth";
 function HomePage() {
     // const [userData, setUserData] = useState(null);
     // const [itemsFromUserUni, setItemsFromUserUni] = useState(null);
-    // const [bestSellerItems, setBestSellerItems] = useState(null);
-    // const [highestRatingItems, setHighestRatingItems] = useState(null);
+    const [bestSellerItems, setBestSellerItems] = useState(null);
+    const [highestRatingItems, setHighestRatingItems] = useState(null);
     const [universityList, setUniversityList] = useState(null);
 
     // SELECTORS STATES
@@ -51,6 +51,40 @@ function HomePage() {
     // Fetch all Universities
     const API_URL = import.meta.env.VITE_API_BASE_URL;
     const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchBestSellers = async () => {
+            try{
+                setIsLoading(true);
+                const URL = `${API_URL}/api/documents/best-sellers`;
+                const res = await fetch(URL);
+                const json = await res.json();
+                setBestSellerItems(json);
+            } catch (err) {
+                console.log("Error", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchBestSellers();
+    }, []);
+    
+    useEffect(() => {
+        const fetchTopRated = async () => {
+            try{
+                setIsLoading(true);
+                const URL = `${API_URL}/api/documents/top-rated`;
+                const res = await fetch(URL);
+                const json = await res.json();
+                setHighestRatingItems(json);
+            } catch (err) {
+                console.log("Error", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchTopRated();
+    }, []);
 
     useEffect(() => {
         const fetchUniversities = async () => {
@@ -260,21 +294,21 @@ function HomePage() {
                 />
             </div>
             {/* MAIN CONTENT */}
-            {/* <div className="pt-5"> */}
+            <div className="pt-5">
             {/* ITEMS FROM USER UNI */}
             {/* <ItemsRow
                     title={userData.university}
                     itemsArray={itemsFromUserUni}
                 /> */}
-            {/* <ItemsRow
+            <ItemsRow
                     title="Best Selling"
                     itemsArray={bestSellerItems}
-                /> */}
-            {/* <ItemsRow
+                />
+            <ItemsRow
                     title="Highest Rating"
                     itemsArray={highestRatingItems}
-                /> */}
-            {/* </div> */}
+                />
+            </div>
         </div>
     );
 }
