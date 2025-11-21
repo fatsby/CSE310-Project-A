@@ -48,7 +48,7 @@ namespace project2.Controllers {
                 .AsNoTracking()
                 .Where(d => !d.isDeleted && d.isActive)
                 .CountAsync(ct);
-            return Ok(new { count });
+            return Ok(count);
         }
 
         [HttpGet("top-rated")]

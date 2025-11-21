@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project2.Data;
+using project2.DTOs.UserPurchaseDto;
 using System.Security.Claims;
 
 namespace project2.Controllers {
@@ -56,6 +57,33 @@ namespace project2.Controllers {
             var totalSales = purchasesList.Sum(p => p.PricePaid);
 
             return Ok(totalSales);
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<UserPurchaseDto>>> GetAllPurchases(CancellationToken ct)
+        {
+
+            var purchases = await _db.UserPurchases
+                .AsNoTracking()
+                .OrderByDescending(p => p.PurchasedAt)
+                .Select(p => new UserPurchaseDto
+                {
+                    UserId = p.UserId,
+                    UserName = p.User.UserName ?? "Unknown",
+                    DocumentId = p.DocumentId,
+                    DocumentName = p.Document.Name,
+                    PricePaid = p.PricePaid,
+                    PurchasedAt = p.PurchasedAt
+                })
+                .ToListAsync(ct);
+
+            if (purchases.Count == 0)
+            {
+                return Ok(new List<UserPurchaseDto>());
+            }
+
+            return Ok(purchases);
         }
     }
 }

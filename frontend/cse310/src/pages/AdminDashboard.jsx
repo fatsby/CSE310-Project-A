@@ -6,7 +6,6 @@ import {
   Tabs,
   Text,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import {
   Users,
   FileText,
@@ -16,118 +15,157 @@ import {
   CreditCard,
   Search as SearchIcon,
 } from "lucide-react";
-import {
-  getUsers,
-  getItemsList,
-} from "../data/SampleData";
 
-// Panels
 import AnalyticsPanel from "../components/admin/AnalyticsPanel";
 import UsersPanel from "../components/admin/UsersPanel";
 import ItemsPanel from "../components/admin/ItemsPanel";
 import ReviewsPanel from "../components/admin/ReviewsPanel";
 import TransactionsPanel from "../components/admin/TransactionsPanel";
 
+import { getToken } from '../../utils/auth'
 
 const useAdminData = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([]); //documents
+  const [reviews, setReviews] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [avgPlatformRating, setAvgPlatformRating] = useState("0.00");
   const [bestSellers, setBestSellers] = useState([]);
-  const API_URL = import.meta.env.VITE_API_BASE_URL
+  
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-    // TODO[API]: Replace with real endpoints
     fetchAnalytics();
-    setLoading(false);
   }, []);
 
   const fetchAnalytics = async () => {
-    setIsLoading(true);
+    setLoading(true);
+    const token = getToken();
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+
     try {
-      //fetch user list
-      const fetchUserLists = await fetch(`${API_URL}/api/users/users`, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
+      const [
+        usersRes, 
+        salesRes, 
+        ratingRes, 
+        bestSellersRes, 
+        countRes,
+        reviewsRes,
+        transactionsRes
+      ] = await Promise.all([
+        fetch(`${API_URL}/api/users/users`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/purchases/totalSales`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/reviews/averageRating`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/documents/best-sellers`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/documents/count`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/reviews`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/purchases/all`, { method: "GET", headers })
+      ]);
 
-      if (!fetchUserLists.ok) {
-        throw new Error(`Failed to fetch analytics. Status: ${response.status}`);
+      // users data
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData);
+        setTotalUsers(usersData.length);
       }
 
-      const usersList = await fetchUserLists.json();
-      setUsers(usersList);
-      setTotalUsers(usersList.length);
-
-      const fetchTotalSales = await fetch(`${API_URL}/api/purchases/totalSales`, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getToken()}`,
-        },
-      });
-
-      if (!fetchTotalSales.ok) {
-        throw new Error(`Failed to fetch analytics. Status: ${response.status}`);
+      // total sales
+      if (salesRes.ok) {
+        const salesData = await salesRes.json();
+        const salesValue = salesData;
+        setTotalSales(Number(salesValue) || 0);
       }
-      const salesData = await fetchTotalSales.json();
-      setTotalSales(salesData.totalSales || 0);
 
+      // average platform rating
+      if (ratingRes.ok) {
+        const ratingData = await ratingRes.json();
+        const ratingValue = ratingData;
+        setAvgPlatformRating(Number(ratingValue).toFixed(2));
+      }
+
+      // best sellers
+      if (bestSellersRes.ok) {
+        const bestSellersData = await bestSellersRes.json();
+        setBestSellers(bestSellersData.slice(0, 5)); // topp 5
+        setItems(bestSellersData); // use full list for ItemsPanel
+      }
+
+      // document count
+      if (countRes.ok) {
+        const countData = await countRes.json();
+        const countValue = countData;
+        setTotalItems(countValue || 0);
+      }
+
+      // reviews data
+      if (reviewsRes.ok) {
+        const reviewsData = await reviewsRes.json();
+        setReviews(Array.isArray(reviewsData) ? reviewsData : []);
+      }
+
+      // transactions data
+      if (transactionsRes.ok) {
+        const transactionsData = await transactionsRes.json();
+        setTransactions(Array.isArray(transactionsData) ? transactionsData : []);
+      }
     } catch (error) {
-      console.error("Failed to fetch analytics:", error);
+      console.error("Failed to fetch admin analytics:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }
+  };
 
-  // Derived stats
-  // const analytics = useMemo(() => {
-  //   const totalUsers = users.length;
-  //   const totalItems = items.length;
-  //   const totalSales = items.reduce((sum, it) => sum + (parseInt(it.price, 10) || 0) * (it.purchaseCount || 0), 0);
-  //   const avgPlatformRating = items.length
-  //     ? (items.reduce((s, it) => s + (it.avgRating || 0), 0) / items.length).toFixed(2)
-  //     : "0.00";
-  //   const bestSellers = [...items]
-  //     .sort((a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0))
-  //     .slice(0, 5);
-  //   return { totalUsers, totalItems, totalSales, avgPlatformRating, bestSellers };
-  // }, [users, items]);
+  // analytics object for anlytics panel
+  const analytics = {
+    totalUsers,
+    totalItems,
+    totalSales,
+    avgPlatformRating,
+    bestSellers
+  };
 
-  // Mock mutations (visual only)
+  // --- Actions (Placeholders for now) ---
   const updateUser = (id, payload) => {
-    // TODO[API]: PUT /users/{id}
+    // Optimistic update
     setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, ...payload } : u)));
+    // TODO: Call API to update user
   };
+
   const deleteUser = (id) => {
-    // TODO[API]: DELETE /users/{id}
+    // Optimistic delete
     setUsers((prev) => prev.filter((u) => u.id !== id));
+    // TODO: Call API DELETE /users/{id}
   };
+
   const upsertItem = (item) => {
-    // TODO[API]: POST/PUT /items
+    // Optimistic upsert
     setItems((prev) => {
       const exists = prev.some((it) => it.id === item.id);
       if (exists) return prev.map((it) => (it.id === item.id ? { ...it, ...item } : it));
       return [item, ...prev];
     });
-  };
-  const deleteItem = (id) => {
-    // TODO[API]: DELETE /items/{id}
-    setItems((prev) => prev.filter((it) => it.id !== id));
+    // TODO: Call API POST/PUT /documents
   };
 
-  return { loading, users, items, analytics, updateUser, deleteUser, upsertItem, deleteItem };
+  const deleteItem = (id) => {
+    // Optimistic delete
+    setItems((prev) => prev.filter((it) => it.id !== id));
+    // TODO: Call API DELETE /documents/{id}
+  };
+
+  return { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem };
 };
 
 export default function AdminDashboard() {
-  const { loading, users, items, analytics, updateUser, deleteUser, upsertItem, deleteItem } = useAdminData();
+  const { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem } = useAdminData();
   const [activeTab, setActiveTab] = useState("analytics");
 
   return (
@@ -166,10 +204,10 @@ export default function AdminDashboard() {
             <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onDelete={deleteItem} />
           </Tabs.Panel>
           <Tabs.Panel value="reviews">
-            <ReviewsPanel loading={loading} items={items} />
+            <ReviewsPanel loading={loading} reviews={reviews} />
           </Tabs.Panel>
           <Tabs.Panel value="transactions">
-            <TransactionsPanel loading={loading} />
+            <TransactionsPanel loading={loading} transactions={transactions} />
           </Tabs.Panel>
         </Tabs>
       </div>

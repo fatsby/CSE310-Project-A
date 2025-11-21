@@ -2,66 +2,156 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ActionIcon,
   Badge,
-  Button,
   Loader,
-  Modal,
-  NumberInput,
   Select,
   Table,
   Text,
   TextInput,
-  Textarea,
   Tooltip,
-  Group,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { Edit3, Trash2, Plus, Star, Search } from "lucide-react";
-import { getUniversityNames, getCoursesByUniversity } from "../../data/SampleData";
+import { Edit3, Trash2, Star, Search } from "lucide-react";
 
-export default function ItemsPanel({ loading, items, onUpsert, onDelete }) {
+// Helper to get token for API calls
+import { getToken } from "../../../utils/auth";
+
+export default function ItemsPanel({ loading, items, onDelete }) {
+  const API_URL = import.meta.env.VITE_API_BASE_URL;
+
+  // --- Filter States ---
   const [query, setQuery] = useState("");
-  const [university, setUniversity] = useState(null);
-  const [course, setCourse] = useState(null);
-  const [availableCourses, setAvailableCourses] = useState([]);
+  const [selectedUniversityId, setSelectedUniversityId] = useState(null); // stores ID as string
+  const [selectedSubjectId, setSelectedSubjectId] = useState(null);       // stores ID as string
 
-  const [editItem, setEditItem] = useState(null);
-  const [opened, { open, close }] = useDisclosure(false);
+  // --- Data States for Selectors ---
+  const [universityList, setUniversityList] = useState([]);
+  const [availableSubjects, setAvailableSubjects] = useState([]);
+  const [isFetchingOptions, setIsFetchingOptions] = useState(false);
 
-  const universities = useMemo(() => getUniversityNames(), []);
 
+
+  // fetch Universities on Mount
   useEffect(() => {
-    if (university) {
-      setAvailableCourses(getCoursesByUniversity(university));
-    } else setAvailableCourses([]);
-  }, [university]);
+    const fetchUniversities = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/university`);
+        if (res.ok) {
+          const data = await res.json();
+          setUniversityList(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch universities", err);
+      }
+    };
+    fetchUniversities();
+  }, []);
 
+  // fetch Subjects when University Changes
+  useEffect(() => {
+    if (!selectedUniversityId) {
+      setAvailableSubjects([]);
+      return;
+    }
+
+    const fetchSubjects = async () => {
+      setIsFetchingOptions(true);
+      try {
+        const token = getToken();
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(`${API_URL}/api/university/${selectedUniversityId}/subject`, {
+            method: 'GET',
+            headers: headers
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableSubjects(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch subjects", err);
+      } finally {
+        setIsFetchingOptions(false);
+      }
+    };
+
+    fetchSubjects();
+  }, [selectedUniversityId]);
+
+  // filter Logic
   const filtered = useMemo(() => {
+    if (!items) return [];
     let list = items;
-    if (query) list = list.filter((it) => it.name.toLowerCase().includes(query.toLowerCase()));
-    if (university) list = list.filter((it) => it.university === university);
-    if (course) list = list.filter((it) => it.subject === course);
-    return list;
-  }, [items, query, university, course]);
 
-  const startCreate = () => {
-    setEditItem({ id: Date.now(), name: "", price: "0", university: null, subject: null, description: "", images: [] });
-    open();
+    // filter by Name
+    if (query) {
+        list = list.filter((it) => it.name.toLowerCase().includes(query.toLowerCase()));
+    }
+
+    // filter by University ID
+    if (selectedUniversityId) {
+        list = list.filter((it) => it.universityId.toString() === selectedUniversityId);
+    }
+
+    // filter by Subject ID
+    if (selectedSubjectId) {
+        list = list.filter((it) => it.subjectId.toString() === selectedSubjectId);
+    }
+
+    return list;
+  }, [items, query, selectedUniversityId, selectedSubjectId]);
+
+  // handlers
+  const handleUniversityChange = (val) => {
+    setSelectedUniversityId(val);
+    setSelectedSubjectId(null); // reset subject when university changes
   };
-  const startEdit = (it) => { setEditItem({ ...it }); open(); };
-  const saveItem = () => { if (!editItem) return; onUpsert(editItem); close(); };
+
+  const universityOptions = universityList.map(u => ({ value: u.id.toString(), label: u.name }));
+  const subjectOptions = availableSubjects.map(s => ({ value: s.id.toString(), label: s.name }));
+
 
   if (loading) return <Loader />;
 
   return (
     <div className="space-y-4">
+      {/* Filters Bar */}
       <div className="flex flex-col md:flex-row gap-2 md:gap-3 items-start md:items-center">
-        <TextInput className="w-full md:w-80" placeholder="Search items by name" leftSection={<Search size={16} />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} radius="lg"/>
-        <Select className="w-full md:w-64" placeholder="Filter by University" data={universities} value={university} onChange={setUniversity} radius="lg" searchable />
-        <Select className="w-full md:w-64" placeholder="Filter by Course" data={availableCourses} value={course} onChange={setCourse} disabled={!university} radius="lg" searchable />
+        <TextInput 
+            className="w-full md:w-80" 
+            placeholder="Search items by name" 
+            leftSection={<Search size={16} />} 
+            value={query} 
+            onChange={(e) => setQuery(e.currentTarget.value)} 
+            radius="lg"
+        />
+        
+        <Select 
+            className="w-full md:w-64" 
+            placeholder="Filter by University" 
+            data={universityOptions} 
+            value={selectedUniversityId} 
+            onChange={handleUniversityChange} 
+            searchable
+            radius="lg" 
+        />
+        
+        <Select 
+            className="w-full md:w-64" 
+            placeholder={isFetchingOptions ? "Loading..." : "Filter by Subject"} 
+            data={subjectOptions} 
+            value={selectedSubjectId} 
+            onChange={setSelectedSubjectId} 
+            disabled={!selectedUniversityId} 
+            searchable
+            radius="lg" 
+        />
+        
         <div className="flex-1" />
-        <Button color="#0052cc" leftSection={<Plus size={16} />} onClick={startCreate}>New Item</Button>
+        
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto rounded-xl border">
         <Table striped highlightOnHover>
           <Table.Thead>
@@ -83,39 +173,36 @@ export default function ItemsPanel({ loading, items, onUpsert, onDelete }) {
                 <Table.Td className="max-w-[280px]">
                   <Tooltip label={it.name}><Text lineClamp={1}>{it.name}</Text></Tooltip>
                 </Table.Td>
-                <Table.Td><Badge color="blue">{it.subject}</Badge></Table.Td>
-                <Table.Td>{it.university}</Table.Td>
-                <Table.Td>₫{new Intl.NumberFormat('vi-VN').format(parseInt(it.price, 10) || 0)}</Table.Td>
-                <Table.Td><div className="flex items-center gap-1"><Star size={16} className="text-yellow-500"/>{it.avgRating}</div></Table.Td>
+                <Table.Td><Badge color="blue">{it.subjectName}</Badge></Table.Td>
+                <Table.Td>{it.universityName}</Table.Td>
+                <Table.Td>₫{new Intl.NumberFormat('vi-VN').format(it.price || 0)}</Table.Td>
+                <Table.Td>
+                    <div className="flex items-center gap-1">
+                        <Star size={16} className="text-yellow-500"/>{it.averageRating || it.avgRating || 0}
+                    </div>
+                </Table.Td>
                 <Table.Td>{it.purchaseCount || 0}</Table.Td>
                 <Table.Td>
                   <div className="flex justify-end gap-2">
-                    <Tooltip label="Edit"><ActionIcon variant="subtle" color="blue" onClick={() => startEdit(it)}><Edit3 size={18}/></ActionIcon></Tooltip>
-                    <Tooltip label="Delete"><ActionIcon variant="subtle" color="red" onClick={() => onDelete(it.id)}><Trash2 size={18}/></ActionIcon></Tooltip>
+                    <Tooltip label="Edit">
+                        <ActionIcon variant="subtle" color="blue" onClick={() => startEdit(it)}><Edit3 size={18}/></ActionIcon>
+                    </Tooltip>
+                    <Tooltip label="Delete">
+                        <ActionIcon variant="subtle" color="red" onClick={() => onDelete(it.id)}><Trash2 size={18}/></ActionIcon>
+                    </Tooltip>
                   </div>
                 </Table.Td>
               </Table.Tr>
             ))}
           </Table.Tbody>
         </Table>
+        
+        {filtered.length === 0 && (
+            <div className="p-8 text-center text-gray-500">
+                No items found matching your filters.
+            </div>
+        )}
       </div>
-
-      <Modal opened={opened} onClose={close} title={editItem?.name ? "Edit Item" : "New Item"} radius="lg" size="lg">
-        <div className="space-y-3">
-          <TextInput label="Name" value={editItem?.name || ""} onChange={(e) => setEditItem((p) => ({ ...p, name: e.currentTarget.value }))} radius="md"/>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <NumberInput label="Price (₫)" value={parseInt(editItem?.price || 0, 10)} onChange={(v) => setEditItem((p) => ({ ...p, price: String(v || 0) }))} min={0} radius="md"/>
-            <Select label="University" data={getUniversityNames()} value={editItem?.university || null} onChange={(v) => setEditItem((p) => ({ ...p, university: v, subject: null }))} searchable radius="md"/>
-            <Select label="Course" data={getCoursesByUniversity(editItem?.university || null)} value={editItem?.subject || null} onChange={(v) => setEditItem((p) => ({ ...p, subject: v }))} disabled={!editItem?.university} searchable radius="md"/>
-          </div>
-          <Textarea label="Description" minRows={3} value={editItem?.description || ""} onChange={(e) => setEditItem((p) => ({ ...p, description: e.currentTarget.value }))} radius="md"/>
-          <TextInput label="Image URL (cover)" value={(editItem?.images && editItem.images[0]) || ""} onChange={(e) => setEditItem((p) => ({ ...p, images: [e.currentTarget.value] }))} radius="md"/>
-          <Group justify="end">
-            <Button variant="light" onClick={close}>Cancel</Button>
-            <Button color="#0052cc" onClick={saveItem}>Save</Button>
-          </Group>
-        </div>
-      </Modal>
     </div>
   );
 }

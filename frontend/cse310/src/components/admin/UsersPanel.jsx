@@ -14,6 +14,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Edit3, Trash2, Search } from "lucide-react";
+import avtarImage from "../../assets/dog.jpg";
 
 export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
   const [query, setQuery] = useState("");
@@ -53,6 +54,8 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
               <Table.Th>Name</Table.Th>
               <Table.Th>Email</Table.Th>
               <Table.Th>Avatar</Table.Th>
+              <Table.Th>Role</Table.Th>
+              <Table.Th>Status</Table.Th>
               <Table.Th className="text-right">Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -60,14 +63,28 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
             {filtered.map((u) => (
               <Table.Tr key={u.id}>
                 <Table.Td>{u.id}</Table.Td>
-                <Table.Td>{u.name}</Table.Td>
+                <Table.Td>{u.userName}</Table.Td>
                 <Table.Td>{u.email || <em className="text-gray-500">(none)</em>}</Table.Td>
                 <Table.Td>
                   {u.profilePicture ? (
                     <img src={u.profilePicture} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
                   ) : (
-                    <div className="w-9 h-9 rounded-full bg-gray-200" />
+                    <img src={avtarImage} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
                   )}
+                </Table.Td>
+                <Table.Td>
+                  {u.isAdmin ? (
+                    <Badge color="orange" variant="light">Admin</Badge>
+                  ) : (
+                    <Badge color="green" variant="light">User</Badge>
+                  ) }
+                </Table.Td>
+                <Table.Td>
+                  {u.isActive ? (
+                    <Badge color="green" variant="light">Active</Badge>
+                  ) : (
+                    <Badge color="red" variant="light">Banned</Badge>
+                  ) }
                 </Table.Td>
                 <Table.Td>
                   <div className="flex justify-end gap-2">
