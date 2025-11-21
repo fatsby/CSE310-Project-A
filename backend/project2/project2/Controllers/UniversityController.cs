@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs.SubjectDto;
 using project2.DTOs.UniversityDto;
+using project2.Models;
 
 namespace project2.Controllers
 {
@@ -47,6 +48,15 @@ namespace project2.Controllers
                 })
                 .ToListAsync();
             return Ok(subjects);
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateUniversity([FromBody] CreateUniversityDTO dto)
+        {
+            var university = new University(dto.Name, dto.Suffix);
+            _db.Universities.Add(university);
+            await _db.SaveChangesAsync();
+            return Ok(new { university.Id, university.Name, university.Suffix });
         }
     }
 }

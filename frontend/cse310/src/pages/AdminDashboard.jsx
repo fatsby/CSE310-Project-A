@@ -28,33 +28,78 @@ import ItemsPanel from "../components/admin/ItemsPanel";
 import ReviewsPanel from "../components/admin/ReviewsPanel";
 import TransactionsPanel from "../components/admin/TransactionsPanel";
 
+
 const useAdminData = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [items, setItems] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalSales, setTotalSales] = useState(0);
+  const [avgPlatformRating, setAvgPlatformRating] = useState("0.00");
+  const [bestSellers, setBestSellers] = useState([]);
+  const API_URL = import.meta.env.VITE_API_BASE_URL
 
   useEffect(() => {
     // TODO[API]: Replace with real endpoints
-    const u = getUsers();
-    const i = getItemsList();
-    setUsers(u);
-    setItems(i);
+    fetchAnalytics();
     setLoading(false);
   }, []);
 
+  const fetchAnalytics = async () => {
+    setIsLoading(true);
+    try {
+      //fetch user list
+      const fetchUserLists = await fetch(`${API_URL}/api/users/users`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (!fetchUserLists.ok) {
+        throw new Error(`Failed to fetch analytics. Status: ${response.status}`);
+      }
+
+      const usersList = await fetchUserLists.json();
+      setUsers(usersList);
+      setTotalUsers(usersList.length);
+
+      const fetchTotalSales = await fetch(`${API_URL}/api/purchases/totalSales`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (!fetchTotalSales.ok) {
+        throw new Error(`Failed to fetch analytics. Status: ${response.status}`);
+      }
+      const salesData = await fetchTotalSales.json();
+      setTotalSales(salesData.totalSales || 0);
+
+    } catch (error) {
+      console.error("Failed to fetch analytics:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   // Derived stats
-  const analytics = useMemo(() => {
-    const totalUsers = users.length;
-    const totalItems = items.length;
-    const totalSales = items.reduce((sum, it) => sum + (parseInt(it.price, 10) || 0) * (it.purchaseCount || 0), 0);
-    const avgPlatformRating = items.length
-      ? (items.reduce((s, it) => s + (it.avgRating || 0), 0) / items.length).toFixed(2)
-      : "0.00";
-    const bestSellers = [...items]
-      .sort((a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0))
-      .slice(0, 5);
-    return { totalUsers, totalItems, totalSales, avgPlatformRating, bestSellers };
-  }, [users, items]);
+  // const analytics = useMemo(() => {
+  //   const totalUsers = users.length;
+  //   const totalItems = items.length;
+  //   const totalSales = items.reduce((sum, it) => sum + (parseInt(it.price, 10) || 0) * (it.purchaseCount || 0), 0);
+  //   const avgPlatformRating = items.length
+  //     ? (items.reduce((s, it) => s + (it.avgRating || 0), 0) / items.length).toFixed(2)
+  //     : "0.00";
+  //   const bestSellers = [...items]
+  //     .sort((a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0))
+  //     .slice(0, 5);
+  //   return { totalUsers, totalItems, totalSales, avgPlatformRating, bestSellers };
+  // }, [users, items]);
 
   // Mock mutations (visual only)
   const updateUser = (id, payload) => {
@@ -109,7 +154,7 @@ export default function AdminDashboard() {
             <Tabs.Tab value="transactions" leftSection={<CreditCard size={16} />}>Transactions</Tabs.Tab>
           </Tabs.List>
 
-          <Divider my="md"/>
+          <Divider my="md" />
 
           <Tabs.Panel value="analytics">
             <AnalyticsPanel loading={loading} analytics={analytics} items={items} />
