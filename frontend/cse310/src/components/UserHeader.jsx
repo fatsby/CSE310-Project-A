@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal, ScrollArea, Menu } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
@@ -24,6 +24,15 @@ export default function UserHeader() {
         removeToken()
         setUser(null) // Clear local state immediately
     }
+
+    useEffect(() => {
+        const handleUserUpdate = () => {
+            setUser(getUser())
+        }
+
+        window.addEventListener('user-update', handleUserUpdate)
+        return () => window.removeEventListener('user-update', handleUserUpdate)
+    }, [])
 
     const CustomScrollArea = (props) => (
         <ScrollArea.Autosize type="never" {...props} />

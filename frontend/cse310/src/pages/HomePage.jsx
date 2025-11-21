@@ -85,7 +85,6 @@ function HomePage() {
         if (!selectedUniversity) return
         const fetchSubjects = async () => {
             try {
-                setIsLoading(true)
                 const URL = `${API_URL}/api/university/${selectedUniversity}/subject`
                 const token = getToken()
                 const headers = {
@@ -109,8 +108,6 @@ function HomePage() {
                 setAvailableCourses(json)
             } catch (err) {
                 console.log('Error', err)
-            } finally {
-                setIsLoading(false)
             }
         }
         fetchSubjects()

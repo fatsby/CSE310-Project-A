@@ -16,6 +16,28 @@ export const fetchUser = async (userId) => {
     }
 }
 
+export const fetchCoupon = async (coupon) => {
+    try {
+        const respone = await fetch(`${API_URL}/api/coupons/${coupon}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getToken()}`,
+            },
+        })
+
+        if (!respone.ok) {
+            throw new Error(`HTTP error! Status: ${respone.status}`)
+        }
+
+        const json = await respone.json()
+        return json
+    } catch (err) {
+        console.log('Fail to get coupon data', err)
+        return null
+    }
+}
+
 export const fetchCourse = async ({
     universityId,
     subjectId,
@@ -41,5 +63,46 @@ export const fetchCourse = async ({
     } catch (err) {
         console.log('Fail to get document data', err)
         return []
+    }
+}
+
+export const fetchPurchase = async ({ documentIds, couponCode }) => {
+    try {
+        const response = await fetch(`${API_URL}/api/documents/purchase`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getToken()}`,
+            },
+            body: JSON.stringify({
+                documentIds: documentIds,
+                couponCode: couponCode || '',
+            }),
+        })
+
+        if (!response.ok) {
+            let errorMessage = `Purchase failed! Status: ${response.status}`
+
+            try {
+                const errorData = await response.json()
+
+                if (errorData && errorData.message) {
+                    errorMessage = errorData.message
+                }
+            } catch (e) {
+                const errorText = await response.text()
+                if (errorText) {
+                    errorMessage = errorText
+                }
+            }
+
+            throw new Error(errorMessage)
+        }
+
+        const json = await response.json()
+        return json
+    } catch (err) {
+        console.error('Transaction error:', err)
+        throw err
     }
 }

@@ -1,3 +1,5 @@
+import { fetchUser } from './fetch.js'
+
 export const saveToken = (data, remember) => {
     const storage = remember ? localStorage : sessionStorage
     const now = new Date().getTime()
@@ -40,9 +42,11 @@ export const checkAuth = () => {
 export const removeToken = () => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('tokenExpiry')
+    localStorage.removeItem('currentUser')
 
     sessionStorage.removeItem('accessToken')
     sessionStorage.removeItem('tokenExpiry')
+    sessionStorage.removeItem('currentUser')
 }
 
 export const getUser = () => {
@@ -62,6 +66,20 @@ export const isUserAdmin = () => {
 export const saveUser = (user, remember) => {
     const storage = remember ? localStorage : sessionStorage
     storage.setItem('currentUser', JSON.stringify(user))
+
+    window.dispatchEvent(new Event('user-update'))
+}
+
+export const refreshUserProfile = async (userId) => {
+    if (!userId) return
+
+    const latestUserData = await fetchUser(userId)
+
+    if (latestUserData) {
+        const isRemembered = localStorage.getItem('accessToken') !== null
+
+        saveUser(latestUserData, isRemembered)
+    }
 }
 
 export const checkPurchased = async (getToken, documentId) => {

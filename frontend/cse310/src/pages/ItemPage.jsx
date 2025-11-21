@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getToken, checkPurchased } from '../../utils/auth'
-import { fetchUser, fetchCourse } from '../../utils/fetch'
+import {
+    getToken,
+    checkPurchased,
+    refreshUserProfile,
+    getUser,
+} from '../../utils/auth'
+import {
+    fetchUser,
+    fetchCourse,
+    fetchCoupon,
+    fetchPurchase,
+} from '../../utils/fetch'
 import avatarIMG from '../assets/dog.jpg'
 import notFoundImg from '../assets/no-data.png'
-
-// import './css/ItemPageCSS.module.css';
 
 // Mantine Components
 import { Carousel } from '@mantine/carousel'
@@ -18,11 +26,12 @@ import {
     Loader,
     Modal,
     Button,
-    Group,
     Stack,
     Title,
     Card,
     Image,
+    Input,
+    Notification,
 } from '@mantine/core'
 import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
@@ -46,7 +55,16 @@ function ItemPage() {
 
     const [reviewRating, setReviewRating] = useState(5)
     const [comment, setComment] = useState('')
+
     const [opened, { open, close }] = useDisclosure(false)
+    const [openedPurchase, { open: openPurchase, close: closePurchase }] =
+        useDisclosure(false)
+
+    const [discountAmount, setDiscountAmount] = useState(0)
+    const [coupon, setCoupon] = useState('')
+    const [couponData, setCouponData] = useState(null)
+    const [total, setTotal] = useState(0)
+    const [couponError, setCouponError] = useState(false)
 
     const [isPurchased, setIsPurchased] = useState(false)
 
@@ -101,6 +119,14 @@ function ItemPage() {
 
         getOtherCourses()
     }, [course, id])
+
+    useEffect(() => {
+        if (course && course.price) {
+            setTotal(course.price)
+            setDiscountAmount(0)
+            setCoupon('')
+        }
+    }, [course])
 
     const fetchCourseData = async () => {
         setIsLoading(true)
@@ -168,6 +194,92 @@ function ItemPage() {
             console.error('Error fetching course:', err)
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleFetchCoupon = async () => {
+        setCouponError(false)
+
+        if (!coupon.trim()) {
+            setCouponError(true)
+            return
+        }
+
+        const data = await fetchCoupon(coupon)
+
+        if (data) {
+            setCouponData(data)
+
+            const offPrice = Math.floor(
+                (course.price * data.discountPercentage) / 100
+            )
+            setDiscountAmount(offPrice)
+            setTotal(course.price - offPrice)
+        } else {
+            console.log('Coupon data is null')
+
+            setCouponData(null)
+            setDiscountAmount(0)
+            setTotal(course.price)
+            setCouponError(true)
+        }
+    }
+
+    const handleCouponChange = (event) => {
+        const value = event.currentTarget.value
+        setCoupon(value)
+
+        if (discountAmount > 0 || couponData || couponError) {
+            setDiscountAmount(0)
+            setTotal(course.price)
+            setCouponData(null)
+            setCouponError(false)
+        }
+    }
+
+    const handleCheckout = async () => {
+        const notifId = notifications.show({
+            loading: true,
+            title: 'Processing...',
+            message: 'Please wait while we process your transaction.',
+            autoClose: false,
+            withCloseButton: false,
+        })
+
+        try {
+            await fetchPurchase({
+                documentIds: [course.id],
+                couponCode: coupon,
+            })
+
+            notifications.update({
+                id: notifId,
+                color: 'teal',
+                title: 'Purchase Successful!',
+                message: 'You can now access this document.',
+                icon: <CheckIcon size="1rem" />,
+                loading: false,
+                autoClose: 3000,
+            })
+
+            setIsPurchased(true)
+            closePurchase()
+            const currentUser = getUser()
+            if (currentUser) {
+                await refreshUserProfile(currentUser.id)
+            }
+        } catch (error) {
+            console.error(error)
+            notifications.update({
+                id: notifId,
+                color: 'red',
+                title: 'Transaction Failed',
+                message:
+                    error.message || 'Something went wrong during checkout.',
+                icon: <XIcon size="1rem" />,
+                loading: false,
+                autoClose: 4000,
+            })
         }
     }
 
@@ -277,12 +389,10 @@ function ItemPage() {
                 padding="xl"
             >
                 <Stack align="center" spacing="md">
-                    {/* Icon Lỗi màu đỏ */}
                     <div className="bg-red-100 p-4 rounded-full">
                         <AlertCircle size={48} className="text-red-600" />
                     </div>
 
-                    {/* Tiêu đề và nội dung */}
                     <div className="text-center">
                         <Title order={3} className="mb-2 text-slate-800">
                             {errorTitle}
@@ -292,7 +402,6 @@ function ItemPage() {
                         </Text>
                     </div>
 
-                    {/* Nút đóng */}
                     <Button
                         fullWidth
                         color="red"
@@ -306,6 +415,102 @@ function ItemPage() {
                     </Button>
                 </Stack>
             </Modal>
+
+            {/* Purchase Popup */}
+            <Modal
+                opened={openedPurchase}
+                onClose={closePurchase}
+                title="Purchase detail"
+                centered
+                size="auto"
+                padding="lg"
+            >
+                <div className="flex flex-row justify-center">
+                    <div className="pointer-events-none opacity-100 p-[15px]">
+                        <ItemCard key={course.id} itemData={course} />
+                    </div>
+                    <div className="shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] p-[15px] rounded-xl my-auto ml-2.5 w-96">
+                        <h3 className="font-semibold text-[20px]">
+                            Payment Summary
+                        </h3>
+                        <div className="py-[15px]">
+                            <div className="grid grid-cols-10">
+                                <div className="col-span-5">Subtotal</div>
+                                <div className="col-span-5 text-right">
+                                    {Number(course.price).toLocaleString()} VND
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-10">
+                                <div className="col-span-5 flex items-center">
+                                    <span>Discount</span>
+                                    {couponData && (
+                                        <span className="ml-2 text-xs font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                                            -{couponData.discountPercentage}%
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="col-span-5 text-right text-green-600 font-medium">
+                                    - {Number(discountAmount).toLocaleString()}{' '}
+                                    VND
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-10 gap-1">
+                            <div className="col-span-7">
+                                <Input
+                                    radius="md"
+                                    placeholder="Enter your coupon"
+                                    value={coupon}
+                                    onChange={handleCouponChange}
+                                />
+                            </div>
+                            <div className="col-span-3">
+                                <Button
+                                    variant="outline"
+                                    radius="md"
+                                    fullWidth
+                                    onClick={handleFetchCoupon}
+                                >
+                                    Apply
+                                </Button>
+                            </div>
+                            {couponError && (
+                                <div className="col-span-10 mt-2">
+                                    <Notification
+                                        icon={<XIcon size="1.1rem" />}
+                                        color="red"
+                                        title="Invalid Coupon"
+                                        onClose={() => setCouponError(false)}
+                                    >
+                                        Coupon is expired or not existed
+                                    </Notification>
+                                </div>
+                            )}
+                        </div>
+                        <hr className="my-[15px]" />
+                        <div className="grid grid-cols-10 mb-[15px]">
+                            <div className="col-span-3 font-medium text-[18px]">
+                                Total
+                            </div>
+                            <div className="col-span-7 text-right font-medium text-[18px]">
+                                {Number(total).toLocaleString()} VND
+                            </div>
+                        </div>
+
+                        <Button
+                            variant="filled"
+                            radius="md"
+                            fullWidth
+                            onClick={handleCheckout}
+                        >
+                            Checkout
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* LEFT COLUMN */}
                 <div className="lg:col-span-8">
@@ -565,6 +770,7 @@ function ItemPage() {
                             size="md"
                             disabled={isPurchased}
                             className="w-full"
+                            onClick={openPurchase}
                         >
                             {isPurchased ? 'Item Owned' : 'Purchase'}
                         </Button>
