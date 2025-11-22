@@ -17,5 +17,6 @@ namespace project2.Services {
         Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct);
         Task<List<DocumentResponse>> GetTopRatedDocumentsAsync(CancellationToken ct);
         Task<List<DocumentResponse>> GetBestSellingDocumentsAsync(CancellationToken ct);
+        Task<List<DocumentResponse>> GetPurchasedDocumentsAsync(string userId, CancellationToken ct);
     }
 }

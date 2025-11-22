@@ -81,6 +81,25 @@ namespace project2.Controllers {
             }
         }
 
+        [HttpGet("purchased")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetMyPurchasedDocuments(CancellationToken ct)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            try
+            {
+                var result = await _svc.GetPurchasedDocumentsAsync(userId, ct);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred fetching purchased documents.", details = ex.Message });
+            }
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(

@@ -628,5 +628,21 @@ namespace project2.Services {
 
             return docs.Select(MapToResponse).ToList();
         }
+
+        public async Task<List<DocumentResponse>> GetPurchasedDocumentsAsync(string userId, CancellationToken ct)
+        {
+            var docs = await _db.UserPurchases
+                .AsNoTracking()
+                .Where(p => p.UserId == userId)
+                .Include(p => p.Document).ThenInclude(d => d.University)
+                .Include(p => p.Document).ThenInclude(d => d.Subject)
+                .Include(p => p.Document).ThenInclude(d => d.Images)
+                .Include(p => p.Document).ThenInclude(d => d.Files)
+                .Include(p => p.Document).ThenInclude(d => d.Author)
+                .Select(p => p.Document)
+                .ToListAsync(ct);
+
+            return docs.Select(MapToResponse).ToList();
+        }
     }
 }
