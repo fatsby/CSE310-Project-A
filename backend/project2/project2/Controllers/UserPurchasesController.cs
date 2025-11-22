@@ -22,7 +22,7 @@ namespace project2.Controllers {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized("User ID not found.");
 
-            var purchases = await _db.UserPurchases.Where(u => u.UserId == userId)
+            var purchases = await _db.UserPurchases.AsNoTracking().Where(u => u.UserId == userId)
                 //.Include(d => d.Document) //too large to include
                 //.Include(d => d.User)
                 .ToListAsync();
@@ -39,6 +39,7 @@ namespace project2.Controllers {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized("User ID not found.");
             var purchase = await _db.UserPurchases
+                .AsNoTracking()
                 .Where(u => u.UserId == userId && u.DocumentId == documentId)
                 //.Include(d => d.Document) //too large to include
                 //.Include(d => d.User)
@@ -52,7 +53,7 @@ namespace project2.Controllers {
         [HttpGet("totalSales")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetTotalSales() {
-            var purchasesList = await _db.UserPurchases.ToListAsync();
+            var purchasesList = await _db.UserPurchases.AsNoTracking().ToListAsync();
             
             var totalSales = purchasesList.Sum(p => p.PricePaid);
 

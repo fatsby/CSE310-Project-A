@@ -52,7 +52,9 @@ namespace project2.Controllers
         [HttpGet("users")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers() {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _userManager.Users
+                .AsNoTracking()
+                .ToListAsync();
 
             var userDTOs = new List<object>();
 
@@ -131,7 +133,7 @@ namespace project2.Controllers
         [HttpGet("search-by-name")]
         public async Task<IActionResult> GetUsersByName(string nameInput)
         {
-            var users = await _userManager.Users.Where(u => u.UserName.ToLower().Contains(nameInput.ToLower())).ToListAsync();
+            var users = await _userManager.Users.AsNoTracking().Where(u => u.UserName.ToLower().Contains(nameInput.ToLower())).ToListAsync();
 
             if(users == null)
             {

@@ -24,7 +24,9 @@ namespace project2.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UniversityReadDto>>> GetAllUniversities()
         {
-            var universities = await _db.Universities.Select(u => new UniversityReadDto
+            var universities = await _db.Universities
+                .AsNoTracking()
+                .Select(u => new UniversityReadDto
             {
                 Id = u.Id,
                 Name = u.Name,
@@ -39,6 +41,7 @@ namespace project2.Controllers
         public async Task<ActionResult> GetSubjectsByUniversityId(int id)
         {
             var subjects = await _db.Subjects
+                .AsNoTracking()
                 .Where(s => s.UniversityId == id)
                 .Select(s => new SubjectReadDto
                 {

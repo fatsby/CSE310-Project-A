@@ -188,7 +188,7 @@ namespace project2.Services {
         }
 
         public async Task<double> GetAverageRatingsAsync(CancellationToken ct) {
-            var reviewsList = await _db.Reviews.ToListAsync();
+            var reviewsList = await _db.Reviews.AsNoTracking().ToListAsync();
 
             if (reviewsList.Count == 0) {
                 return 0; // no review exists
