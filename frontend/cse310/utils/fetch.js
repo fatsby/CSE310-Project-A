@@ -89,7 +89,7 @@ export const fetchPurchase = async ({ documentIds, couponCode }) => {
                 if (errorData && errorData.message) {
                     errorMessage = errorData.message
                 }
-            } catch (e) {
+            } catch {
                 const errorText = await response.text()
                 if (errorText) {
                     errorMessage = errorText

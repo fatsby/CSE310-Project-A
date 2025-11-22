@@ -52,6 +52,7 @@ function ItemPage() {
 
     const [otherCourses, setOtherCourses] = useState([])
     const [reviewsData, setReviewsData] = useState([])
+    const [author, setAuthor] = useState(null)
 
     const [reviewRating, setReviewRating] = useState(5)
     const [comment, setComment] = useState('')
@@ -67,6 +68,7 @@ function ItemPage() {
     const [couponError, setCouponError] = useState(false)
 
     const [isPurchased, setIsPurchased] = useState(false)
+    const [currentUser, setCurrentUser] = useState(getUser())
 
     const [errorTitle, setErrorTitle] = useState('Error')
     const [errorContent, setErrorContent] = useState('')
@@ -75,24 +77,44 @@ function ItemPage() {
 
     useEffect(() => {
         fetchCourseData()
-
         fetchReview()
-
-        //Check if this Document is purchased or not
-        const verifyPurchase = async () => {
-            const currentToken = getToken()
-            if (!currentToken) {
-                setIsPurchased(false)
-                return
-            }
-            const purchased = await checkPurchased(getToken, id)
-
-            setIsPurchased(purchased)
-        }
-
-        verifyPurchase()
     }, [id])
 
+    //Get author data
+    useEffect(() => {
+        if (!course) return
+
+        const getAuthorData = async () => {
+            const authorData = await fetchUser(course.authorId)
+            setAuthor(authorData)
+        }
+
+        getAuthorData()
+    }, [course])
+
+    //Check if this Document is purchased or not
+    useEffect(() => {
+        if (!course || !currentUser) return
+
+        const verifyStatus = async () => {
+            if (String(currentUser.id) === String(course.authorId)) {
+                setIsPurchased(true)
+                return
+            }
+
+            const currentToken = getToken()
+            if (currentToken) {
+                const purchased = await checkPurchased(getToken, id)
+                setIsPurchased(purchased)
+            } else {
+                setIsPurchased(false)
+            }
+        }
+
+        verifyStatus()
+    }, [course, currentUser, id])
+
+    //Get similar courses
     useEffect(() => {
         if (!course) return
 
@@ -264,7 +286,6 @@ function ItemPage() {
 
             setIsPurchased(true)
             closePurchase()
-            const currentUser = getUser()
             if (currentUser) {
                 await refreshUserProfile(currentUser.id)
             }
@@ -315,6 +336,7 @@ function ItemPage() {
             setComment('')
             setReviewRating(5)
             fetchCourse()
+            fetchReview()
         } catch (error) {
             console.error(error)
             setErrorContent('Network connection error.')
@@ -566,18 +588,16 @@ function ItemPage() {
 
                     {/* AUTHOR INFO */}
                     <div className="author-info mt-2 flex items-center gap-x-4 mb-10">
-                        {/* <Link to={`/profile/${authorData.id}`}> */}
-                        <Link to={`/profile/1`}>
-                            {/* <img
-                                src={authorData.profilePicture}
-                                alt={authorData.name}
+                        <Link to={`/profile/${author?.id}`}>
+                            <img
+                                src={author?.avatarUrl || avatarIMG}
+                                alt={author?.userName}
                                 className="w-12 h-12 rounded-full"
-                            /> */}
+                            />
                         </Link>
-                        {/* <Link to={`/profile/${authorData.id}`}> */}
-                        <Link to={`/profile/1`}>
+                        <Link to={`/profile/${author?.id}`}>
                             <p className="text-lg font-semibold">
-                                {course.authorName}
+                                {author?.userName}
                             </p>
                         </Link>
                     </div>
@@ -646,7 +666,6 @@ function ItemPage() {
                             Reviews ({reviewsData.length})
                         </h1>
                         <div className="space-y-4">
-                            {console.log(reviewsData)}
                             {reviewsData.length > 0 &&
                                 reviewsData.map((review) => {
                                     const user = fetchUser(review.userId)
@@ -761,7 +780,9 @@ function ItemPage() {
                                 </Button>
                             </div>
                         </div>
-
+                        {console.log(currentUser.id)}
+                        {console.log(course.authorId)}
+                        {console.log(isPurchased)}
                         {/* PURCHASE BUTTON */}
                         <Button
                             fullWidth
