@@ -302,8 +302,6 @@ function ItemPage() {
     }
 
     const handlePostReview = async () => {
-        setIsLoading(true)
-
         try {
             const response = await fetch(`${API_URL}/api/reviews/create`, {
                 method: 'POST',
@@ -338,8 +336,6 @@ function ItemPage() {
             console.error(error)
             setErrorContent('Network connection error.')
             open()
-        } finally {
-            setIsLoading(false)
         }
     }
 
