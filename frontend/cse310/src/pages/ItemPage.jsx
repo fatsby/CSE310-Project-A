@@ -553,61 +553,73 @@ function ItemPage() {
                     </Carousel>
 
                     {/* ITEM INFO */}
-                    <div className="item-info mt-4 grid lg:grid-cols-12 grid-cols-1 gap-4 ">
-                        <div className="item-name lg:col-span-9">
-                            <h1 className="text-3xl font-bold">
+                    <div className="mt-6">
+                        <div className="mb-4">
+                            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 leading-snug tracking-normal">
                                 {course.name}
                             </h1>
                         </div>
-                        <div className="item-stats lg:col-span-3 flex items-center justify-start lg:justify-end gap-x-2">
-                            {course.reviewCount > 0 && (
-                                <>
-                                    <p className="text-2xl font-bold">
-                                        {course.averageRating}
-                                    </p>
+
+                        <div className="flex flex-wrap items-center gap-6 pb-6 mb-6 border-b border-gray-100">
+                            {/* Author information */}
+                            <Link
+                                to={`/profile/${author?.id}`}
+                                className="flex items-center gap-3 group hover:bg-gray-50 p-1.5 rounded-lg transition-colors -ml-1.5"
+                            >
+                                <img
+                                    src={author?.avatarUrl || avatarIMG}
+                                    alt={author?.userName}
+                                    className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                />
+                                <div className="flex flex-col">
+                                    <span className="text-[10px] uppercase text-gray-400 font-bold tracking-wider">
+                                        Created by
+                                    </span>
+                                    <span className="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">
+                                        {author?.userName}
+                                    </span>
+                                </div>
+                            </Link>
+
+                            <div className="hidden sm:block w-px h-8 bg-gray-200"></div>
+
+                            {/* Rating */}
+                            <div className="flex items-center gap-1.5">
+                                <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-md border border-yellow-100">
+                                    <span className="text-lg font-bold text-slate-900 mr-1">
+                                        {course.reviewCount > 0
+                                            ? course.averageRating
+                                            : 'N/A'}
+                                    </span>
                                     <Star
                                         fill="#FFCC00"
                                         color="#FFCC00"
-                                        size={28}
+                                        size={18}
                                     />
-                                </>
-                            )}
+                                </div>
+                                <span className="text-sm text-gray-500 font-medium ml-1">
+                                    ({course.reviewCount} reviews)
+                                </span>
+                            </div>
+                        </div>
 
-                            <p className="text-2xl font-light">
-                                {course.reviewCount} Reviews
+                        {/* Description */}
+                        <div className="item-description">
+                            <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                                Description
+                            </h3>
+                            <p className="text-base md:text-lg leading-relaxed text-slate-600 whitespace-pre-line">
+                                {course.description}
                             </p>
                         </div>
-                    </div>
-
-                    {/* AUTHOR INFO */}
-                    <div className="author-info mt-2 flex items-center gap-x-4 mb-10">
-                        <Link to={`/profile/${author?.id}`}>
-                            <img
-                                src={author?.avatarUrl || avatarIMG}
-                                alt={author?.userName}
-                                className="w-12 h-12 rounded-full"
-                            />
-                        </Link>
-                        <Link to={`/profile/${author?.id}`}>
-                            <p className="text-lg font-semibold">
-                                {author?.userName}
-                            </p>
-                        </Link>
-                    </div>
-
-                    {/* PRODUCT DESCRIPTION */}
-                    <div className="item-description">
-                        <p className="text-lg font-regular mt-4 whitespace-pre-line text-zinc-900">
-                            {course.description}
-                        </p>
                     </div>
 
                     {/* REVIEWS SECTION */}
                     <div className="reviews mt-16">
                         {/* Only show review input section if already purchased the document */}
-                        {isPurchased && (
+                        {isPurchased && author?.id != currentUser?.id && (
                             <>
-                                <h1 className="text-2xl font-bold text-zinc-700 mb-4">
+                                <h1 className="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-blue-600 pl-4">
                                     Write your review
                                 </h1>
                                 <div className="mb-4">
@@ -655,7 +667,7 @@ function ItemPage() {
                                 </div>
                             </>
                         )}
-                        <h1 className="text-2xl font-bold text-zinc-700 mb-4">
+                        <h1 className="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-blue-600 pl-4 mt-8">
                             Reviews ({reviewsData.length})
                         </h1>
                         <div className="space-y-4">
@@ -792,7 +804,7 @@ function ItemPage() {
 
                     {/* OTHER ITEMS */}
                     <div className="mt-65">
-                        <h2 className="text-xl font-bold text-slate-600 mb-4">
+                        <h2 className="text-xl font-bold text-slate-800 mb-6 border-l-4 border-blue-600 pl-4">
                             You may also like
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
