@@ -128,66 +128,83 @@ function CartPage() {
                             </div>
 
                             {/* Products */}
+                            {/* Products Loop */}
                             {checkedItems.map((item, index) => (
                                 <div
                                     key={item.id}
-                                    className="grid grid-cols-10 gap-4 py-[20px] border-b-2 border-[#dadada]"
+                                    className="grid grid-cols-10 gap-4 py-[20px] border-b border-gray-100 items-center hover:bg-gray-50/50 transition-colors rounded-lg px-2"
                                 >
+                                    {/* Checkbox Column */}
                                     <div className="col-span-1 flex justify-center">
                                         <Checkbox
-                                            className="content-center"
+                                            size="md"
                                             checked={
                                                 checkedItems[index].selected
                                             }
                                             onChange={() =>
                                                 handleItemCheck(index)
                                             }
-                                        ></Checkbox>
+                                        />
                                     </div>
+
+                                    {/* Product Info Column (ĐÃ DESIGN LẠI) */}
                                     <Link
                                         to={`/item/${item.id}`}
-                                        className="col-span-6"
+                                        className="col-span-6 group"
                                     >
-                                        <div className="grid grid-cols-10">
-                                            <div className="col-span-3 flex content-center">
+                                        <div className="flex gap-4">
+                                            {/* Image */}
+                                            <div className="w-32 h-24 flex-shrink-0">
                                                 <img
                                                     src={item.images?.[0]}
-                                                    alt=""
-                                                    className="rounded-xl"
+                                                    alt={item.name}
+                                                    className="w-full h-full object-cover rounded-lg shadow-sm border border-gray-100"
                                                 />
                                             </div>
-                                            <div className="col-span-7">
-                                                <div className="px-[10px]">
-                                                    <h2 className="font-medium text-[20px] ">
-                                                        {item.name}
-                                                    </h2>
-                                                    <p className="font-semibold text-blue-800 bg-blue-100 px-2 py-1 rounded-full text-sm w-fit mb-2">
+
+                                            {/* Text Content */}
+                                            <div className="flex flex-col justify-center">
+                                                {/* University */}
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                                                    {item.university}
+                                                </span>
+
+                                                {/* Name */}
+                                                <h2 className="text-[17px] font-bold text-slate-800 leading-tight line-clamp-2 mb-2 group-hover:text-blue-700 transition-colors">
+                                                    {item.name}
+                                                </h2>
+
+                                                {/* Subject Badge */}
+                                                <div>
+                                                    <span className="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                                                         {item.subject}
-                                                    </p>
-                                                    <p className="font-semibold text-rose-800 bg-rose-100 px-2 py-1 rounded-full text-sm w-fit">
-                                                        {item.university}
-                                                    </p>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
                                     </Link>
-                                    <div className="col-span-2 flex">
-                                        <p className="font-bold text-blue-600 text-[22px] content-center">
+
+                                    {/* Price Column */}
+                                    <div className="col-span-2">
+                                        <p className="font-bold text-blue-600 text-[18px]">
                                             {Number(
-                                                item.price
+                                                item.price.replace(/,/g, '')
                                             ).toLocaleString()}{' '}
                                             VND
                                         </p>
                                     </div>
-                                    <div className="col-span-1 content-center">
+
+                                    {/* Delete Button Column */}
+                                    <div className="col-span-1 flex justify-center">
                                         <Button
-                                            variant="filled"
-                                            color="#E32929"
+                                            variant="subtle"
+                                            color="red"
                                             onClick={() =>
                                                 handleDeleteItem(item.id)
                                             }
+                                            className="hover:bg-red-50"
                                         >
-                                            <Trash2 />
+                                            <Trash2 size={20} />
                                         </Button>
                                     </div>
                                 </div>

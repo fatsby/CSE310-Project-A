@@ -199,7 +199,6 @@ function ItemPage() {
     }
 
     const fetchReview = async () => {
-        setIsLoading(true)
         try {
             const respone = await fetch(
                 `${API_URL}/api/reviews?documentId=${id}`
@@ -214,8 +213,6 @@ function ItemPage() {
             setReviewsData(reviews)
         } catch (err) {
             console.error('Error fetching course:', err)
-        } finally {
-            setIsLoading(false)
         }
     }
 

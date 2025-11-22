@@ -1,12 +1,12 @@
 import { TextInput, Select, Button } from '@mantine/core'
 import { ArrowDownAZ, ArrowUpAZ, Search } from 'lucide-react'
-import { getUserPurchased } from '../data/SampleData.js'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { fetchUserPurchase } from '../../utils/fetch.js'
 
 function PurchasedPage() {
-    const [allItems, setAllItems] = useState([])
-    const [filteredItems, setFilteredItems] = useState([])
+    const [allCourses, setAllCourses] = useState([])
+    const [filteredCourses, setfilteredCourses] = useState([])
 
     const [selectedUni, setSelectedUni] = useState(null)
     const [selectedSubject, setSelectedSubject] = useState(null)
@@ -19,23 +19,37 @@ function PurchasedPage() {
     console.log(universityList)
 
     useEffect(() => {
-        const data = getUserPurchased()
-        setAllItems(data)
-        setFilteredItems(data)
+        const getPurchasedCourses = async () => {
+            const data = await fetchUserPurchase()
 
-        setUniversityList([...new Set(data.map((item) => item.university))])
-        setCourseList([...new Set(data.map((item) => item.subject))])
+            if (Array.isArray(data)) {
+                setAllCourses(data)
+            } else {
+                setAllCourses([])
+            }
+        }
+        getPurchasedCourses()
     }, [])
+
+    useEffect(() => {
+        setAllCourses(allCourses)
+        setfilteredCourses(allCourses)
+
+        setUniversityList([
+            ...new Set(allCourses.map((item) => item.universityName)),
+        ])
+        setCourseList([...new Set(allCourses.map((item) => item.subjectName))])
+    }, [allCourses])
 
     // Filter
     const filterItems = (uni, subject, searchValue) => {
-        var result = allItems
+        var result = allCourses
         if (uni) {
-            result = result.filter((item) => item.university === uni)
+            result = result.filter((item) => item.universityName === uni)
         }
 
         if (subject) {
-            result = result.filter((item) => item.subject === subject)
+            result = result.filter((item) => item.subjectName === subject)
         }
 
         if (searchValue) {
@@ -43,7 +57,7 @@ function PurchasedPage() {
                 item.name.toLowerCase().includes(searchValue.toLowerCase())
             )
         }
-        setFilteredItems(result)
+        setfilteredCourses(result)
     }
 
     // Filter by University
@@ -52,9 +66,9 @@ function PurchasedPage() {
         setSelectedSubject(null)
         setCourseList([
             ...new Set(
-                allItems
-                    .filter((item) => item.university == value)
-                    .map((item) => item.subject)
+                allCourses
+                    .filter((item) => item.universityName == value)
+                    .map((item) => item.subjectName)
             ),
         ])
         filterItems(value, selectedSubject, searchValue)
@@ -68,7 +82,7 @@ function PurchasedPage() {
 
     // Sort by Alphabet
     const sortAlphabet = () => {
-        const sortAZ = [...filteredItems]
+        const sortAZ = [...filteredCourses]
 
         if (isAsc) {
             sortAZ.sort((a, b) => a.name.localeCompare(b.name))
@@ -76,7 +90,7 @@ function PurchasedPage() {
             sortAZ.sort((a, b) => b.name.localeCompare(a.name))
         }
 
-        setFilteredItems(sortAZ)
+        setfilteredCourses(sortAZ)
         setIsAsc((prev) => !prev)
     }
 
@@ -89,13 +103,14 @@ function PurchasedPage() {
 
     return (
         <>
-            <div className="bg-[#F9FAFB]">
+            {console.log(allCourses)}
+            <div className="bg-[#ffffff]">
                 <div className="container mx-auto pt-[125px]">
                     <h2 className="col-span-7 font-bold text-[40px] pl-[20px] pt-[20px] ">
-                        Your Purchased Courses ({allItems.length})
+                        Your Purchased Courses ({allCourses.length})
                     </h2>
                     <p className="font-bold text-[20px] pl-[20px] pt-[20px] text-blue-700">
-                        Showing {filteredItems.length} item(s)
+                        Showing {filteredCourses.length} item(s)
                     </p>
                     <div className="py-[20px] mt-[40px] border-y border-solid">
                         <div className="flex gap-4 px-[20px]">
@@ -143,30 +158,36 @@ function PurchasedPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pt-[20px] px-[10px]">
-                        {filteredItems.map((item) => (
+                        {filteredCourses.map((item) => (
                             <div key={item.id} className="col-span-1">
                                 <Link
                                     to={`/data/${item.id}`}
-                                    className="grid grid-cols-10 shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] rounded-xl p-[5px]"
+                                    className="group grid grid-cols-10 shadow-[0px_10px_20px_0px_rgba(0,_0,_0,_0.15)] rounded-xl p-[5px] transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl hover:bg-blue-50 border border-transparent hover:border-blue-200       "
                                 >
                                     <div className="col-span-3 flex content-center">
                                         <img
                                             src={item.images?.[0]}
                                             alt=""
-                                            className="rounded-xl"
+                                            className="rounded-xl w-full h-[100px] object-cover"
                                         />
                                     </div>
-                                    <div className="col-span-7">
-                                        <div className="px-[10px]">
-                                            <h2 className="font-medium text-[18px] ">
+                                    <div className="col-span-7 flex flex-col justify-center pl-4 pr-2">
+                                        <div className="col-span-7 flex flex-col justify-center pl-4 pr-2">
+                                            <div className="mb-1">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                                    {item.universityName}
+                                                </span>
+                                            </div>
+
+                                            <h3 className="font-bold text-slate-800 text-[17px] leading-tight line-clamp-2 mb-2 group-hover:text-blue-700 transition-colors">
                                                 {item.name}
-                                            </h2>
-                                            <p className="font-semibold text-blue-800 bg-blue-100 px-2 py-1 rounded-full text-sm w-fit mb-2">
-                                                {item.subject}
-                                            </p>
-                                            <p className="font-semibold text-rose-800 bg-rose-100 px-2 py-1 rounded-full text-sm w-fit">
-                                                {item.university}
-                                            </p>
+                                            </h3>
+
+                                            <div>
+                                                <span className="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 group-hover:border-blue-200 group-hover:bg-blue-50  transition-colors duration-300">
+                                                    {item.subjectName}
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </Link>
