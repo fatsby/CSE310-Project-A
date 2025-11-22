@@ -45,6 +45,7 @@ namespace project2.Services {
             return new DocumentResponse
             {
                 Id = doc.Id,
+                AuthorId = doc.AuthorId,
                 AuthorName = doc.Author.UserName!,
                 Name = doc.Name,
                 Description = doc.Description,
@@ -573,6 +574,7 @@ namespace project2.Services {
 
             return new DocumentResponse {
                 Id = full.Id,
+                AuthorId = full.AuthorId,
                 AuthorName = full.Author.UserName!,
                 Name = full.Name,
                 Description = full.Description,

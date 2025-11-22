@@ -1,6 +1,7 @@
 ﻿namespace project2.DTOs.DocumentDto {
     public class DocumentResponse {
         public int Id { get; set; }
+        public string AuthorId { get; set; } = null!;
         public string AuthorName { get; set; } = null!;
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;

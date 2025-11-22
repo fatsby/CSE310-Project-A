@@ -112,11 +112,14 @@ namespace project2.Controllers {
                 .Include(d => d.Subject)
                 .Include(d => d.Images)
                 .Include(d => d.Files)
+                .Include(d => d.Author)
                 .ToListAsync();
 
             // map the results to a DTO
             var response = docs.Select(doc => new DocumentResponse {
                 Id = doc.Id,
+                AuthorId = doc.AuthorId,
+                AuthorName = doc.Author.UserName ?? "",
                 Name = doc.Name,
                 Description = doc.Description,
                 Price = doc.Price,
