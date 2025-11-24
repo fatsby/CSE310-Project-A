@@ -1,4 +1,3 @@
-// src/components/TreePdfBrowser.jsx
 import { useEffect, useMemo, useState } from "react";
 import {
     Tree,
@@ -9,6 +8,7 @@ import {
     Badge,
     Paper,
     ScrollArea,
+    Loader
 } from "@mantine/core";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
@@ -23,212 +23,279 @@ import {
     FaFileExcel,
     FaFileAlt,
     FaFileCode,
-    FaFileImage,
+    FaFileImage
 } from "react-icons/fa";
 import { DiJava } from "react-icons/di";
 import { SiPython, SiJavascript, SiHtml5, SiCss3 } from "react-icons/si";
+import { getToken } from "../../utils/auth";
 
-const countFiles = (nodes = []) =>
-    nodes.reduce(
-        (s, n) => s + (n.isLeaf ? 1 : countFiles(n.children || [])),
-        0
-    );
+// --- Utility Functions ---
 
-function isPdf(val, ext) {
-    return ext === ".pdf" || (val || "").toLowerCase().endsWith(".pdf");
+function getFileExtension(filename) {
+    return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
 }
 
-function fileIcon(label, hasChildren, expanded) {
+function isPdf(filename) {
+    return getFileExtension(filename).toLowerCase() === 'pdf';
+}
+
+function fileIcon(filename, hasChildren, expanded) {
     if (hasChildren)
-        return expanded ? (
-            <FaFolderOpen color="#f1c40f" />
-        ) : (
-            <FaFolder color="#f1c40f" />
-        );
+        return expanded ? <FaFolderOpen color="#f1c40f" /> : <FaFolder color="#f1c40f" />;
 
-    const n = (label || "").toLowerCase();
-
-    // Document
-    if (n.endsWith(".pdf")) return <FaFilePdf color="#e74c3c" />;
-    if (/\.(doc|docx)$/.test(n)) return <FaFileWord color="#2e86c1" />;
-    if (/\.(ppt|pptx)$/.test(n)) return <FaFilePowerpoint color="#d35400" />;
-    if (/\.(xls|xlsx|csv)$/.test(n)) return <FaFileExcel color="#27ae60" />;
-
-    // Code files
-    if (n.endsWith(".java")) return <DiJava color="#f89820" />;
-    if (n.endsWith(".py")) return <SiPython color="#3776ab" />;
-    if (n.endsWith(".js")) return <SiJavascript color="#f7df1e" />;
-    if (n.endsWith(".html")) return <SiHtml5 color="#e34f26" />;
-    if (n.endsWith(".css")) return <SiCss3 color="#1572b6" />;
-
-    // Hình ảnh
-    if (/\.(png|jpg|jpeg|gif|svg)$/.test(n))
-        return <FaFileImage color="#9b59b6" />;
-
-    // File text
-    if (n.endsWith(".txt")) return <FaFileAlt color="#7f8c8d" />;
-
-    // File khác
+    const ext = getFileExtension(filename).toLowerCase();
+    if (ext === "pdf") return <FaFilePdf color="#e74c3c" />;
+    if (["doc", "docx"].includes(ext)) return <FaFileWord color="#2e86c1" />;
+    if (["ppt", "pptx"].includes(ext)) return <FaFilePowerpoint color="#d35400" />;
+    if (["xls", "xlsx", "csv"].includes(ext)) return <FaFileExcel color="#27ae60" />;
+    if (ext === "java") return <DiJava color="#f89820" />;
+    if (ext === "py") return <SiPython color="#3776ab" />;
+    if (ext === "js") return <SiJavascript color="#f7df1e" />;
+    if (["html", "htm"].includes(ext)) return <SiHtml5 color="#e34f26" />;
+    if (ext === "css") return <SiCss3 color="#1572b6" />;
+    if (["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(ext)) return <FaFileImage color="#9b59b6" />;
+    if (ext === "txt") return <FaFileAlt color="#7f8c8d" />;
     return <FaFileCode color="#95a5a6" />;
 }
 
-export default function TreePdfBrowser({ courseCode }) {
+export default function TreePdfBrowser({ document }) {
     const [nodes, setNodes] = useState([]);
-    const [pdfUrl, setPdfUrl] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null);
+    // NEW: Store the Blob URL for the viewer
+    const [pdfBlobUrl, setPdfBlobUrl] = useState(null); 
+    const [isLoadingPdf, setIsLoadingPdf] = useState(false);
+    
     const tree = useTree();
+    const API_URL = import.meta.env.VITE_API_BASE_URL;
 
-    // Toolbar plugin cho Viewer
     const toolbarPluginInstance = toolbarPlugin();
     const { Toolbar } = toolbarPluginInstance;
 
+    // --- 1. Fetch PDF Blob when selection changes ---
     useEffect(() => {
-        setPdfUrl(null);
-        tree.collapseAllNodes();
-        fetch("/manifest.json", { cache: "no-store" })
-            .then((r) => r.json())
-            .then((m) => setNodes(m[courseCode] || []))
-            .catch(() => setNodes([]));
-    }, [courseCode]);
+        // Reset previous state
+        setPdfBlobUrl(null);
+        
+        // If no file selected or not a PDF, stop here
+        if (!selectedFile || selectedFile.type !== 'pdf') return;
 
-    const totalFiles = useMemo(() => countFiles(nodes), [nodes]);
+        let active = true;
+        const fetchPdf = async () => {
+            setIsLoadingPdf(true);
+            try {
+                const token = getToken();
+                const response = await fetch(selectedFile.url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
 
-    const crumb = pdfUrl
-        ? decodeURIComponent(
-              pdfUrl.replace(
-                  `/DataFromCourse/${encodeURIComponent(courseCode)}/`,
-                  ""
-              )
-          )
-        : null;
+                if (!response.ok) throw new Error("Failed to load PDF");
+
+                const blob = await response.blob();
+                const objectUrl = URL.createObjectURL(blob);
+
+                if (active) {
+                    setPdfBlobUrl(objectUrl);
+                } else {
+                    URL.revokeObjectURL(objectUrl); // Cleanup if component unmounted
+                }
+            } catch (error) {
+                console.error("Error loading PDF:", error);
+            } finally {
+                if (active) setIsLoadingPdf(false);
+            }
+        };
+
+        fetchPdf();
+
+        // Cleanup function
+        return () => {
+            active = false;
+            if (pdfBlobUrl) {
+                URL.revokeObjectURL(pdfBlobUrl);
+            }
+        };
+    }, [selectedFile]); // Re-run when selectedFile changes
+
+    // --- Transform Document Files to Tree Nodes ---
+    useEffect(() => {
+        if (!document || !document.files) {
+            setNodes([]);
+            return;
+        }
+
+        const fileNodes = document.files.map(file => ({
+            value: file.id.toString(),
+            label: file.fileName,
+            fileId: file.id,
+            isLeaf: true,
+            size: file.sizeBytes,
+            downloadUrl: `${API_URL}/api/documents/${document.id}/files/${file.id}/download`
+        }));
+
+        const rootNode = [
+            {
+                value: "root",
+                label: document.name,
+                children: fileNodes,
+                isLeaf: false
+            }
+        ];
+
+        setNodes(rootNode);
+        setTimeout(() => tree.expandAllNodes(), 100);
+
+    }, [document]);
+
+    const totalFiles = useMemo(() => document?.files?.length || 0, [document]);
+
+    const handleNodeClick = async (node) => {
+        if (!node.isLeaf) return;
+
+        const filename = node.label;
+        
+        if (isPdf(filename)) {
+            setSelectedFile({
+                url: node.downloadUrl,
+                name: filename,
+                type: 'pdf'
+            });
+        } else {
+            setSelectedFile(null);
+            await downloadFile(node.downloadUrl, filename);
+        }
+    };
+
+    const downloadFile = async (url, filename) => {
+        try {
+            const token = getToken();
+            const res = await fetch(url, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.status === 403) {
+                alert("You do not have permission to download this file.");
+                return;
+            }
+            if (!res.ok) throw new Error("Download failed");
+
+            const blob = await res.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            
+            const a = window.document.createElement('a');
+            a.href = downloadUrl;
+            a.download = filename;
+            window.document.body.appendChild(a);
+            a.click();
+            
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (error) {
+            console.error("Download error:", error);
+            alert("Error downloading file: " + error.message);
+        }
+    };
 
     return (
         <div className="flex flex-col gap-4">
-            {/* TOP: Tree + tools */}
+            {/* TOP: Tree + Info */}
             <Paper withBorder radius="md">
+                {/* ... (Header UI code remains the same) ... */}
                 <div className="flex items-center gap-2 p-2 border-b bg-gray-50">
-                    <Tooltip label="Mở tất cả">
-                        <Button
-                            variant="subtle"
-                            size="xs"
-                            onClick={() => tree.expandAllNodes()}
-                        >
+                    <Tooltip label="Expand All">
+                        <Button variant="subtle" size="xs" onClick={() => tree.expandAllNodes()}>
                             + Expand
                         </Button>
                     </Tooltip>
-                    <Tooltip label="Thu gọn tất cả">
-                        <Button
-                            variant="subtle"
-                            size="xs"
-                            onClick={() => tree.collapseAllNodes()}
-                        >
+                    <Tooltip label="Collapse All">
+                        <Button variant="subtle" size="xs" onClick={() => tree.collapseAllNodes()}>
                             − Collapse
                         </Button>
                     </Tooltip>
                 </div>
 
                 <div className="flex items-center justify-between px-3 py-2 text-sm text-gray-700 border-b">
-                    <span className="truncate">
-                        <span className="font-medium">{courseCode}</span>{" "}
-                    </span>
+                    <span className="truncate font-medium">File Explorer</span>
                     <span>
-                        <span className="font-bold">Total file:</span>{" "}
+                        <span className="font-bold mr-2">Total files:</span>
                         <Badge>{totalFiles}</Badge>
                     </span>
                 </div>
 
-                <ScrollArea className="h-[30vh] ">
+                <ScrollArea className="h-[30vh]">
                     <div className="p-2">
                         <Tree
                             data={nodes}
                             tree={tree}
                             expandOnClick
-                            renderNode={({
-                                node,
-                                expanded,
-                                hasChildren,
-                                elementProps,
-                                level,
-                            }) => {
-                                const onClick = (e) => {
-                                    elementProps.onClick?.(e);
-                                    if (!hasChildren) {
-                                        if (isPdf(node.value, node.ext))
-                                            setPdfUrl(node.value);
-                                        else {
-                                            setPdfUrl(null);
-                                            window.open(
-                                                node.value,
-                                                "_blank",
-                                                "noopener,noreferrer"
-                                            );
-                                        }
-                                    }
-                                };
-                                return (
-                                    <Group
-                                        gap={8}
-                                        {...elementProps}
-                                        onClick={onClick}
-                                        className="min-h-7 rounded hover:bg-black/5 cursor-pointer pr-2"
-                                        style={{ paddingLeft: level * 20 }}
-                                    >
-                                        <span className="inline-block w-5 text-center">
-                                            {fileIcon(
-                                                node.label,
-                                                hasChildren,
-                                                expanded
-                                            )}
-                                        </span>
-                                        <span className="truncate inline-block">
-                                            {node.label}
-                                        </span>
-                                    </Group>
-                                );
-                            }}
+                            renderNode={({ node, expanded, hasChildren, elementProps, level }) => (
+                                <Group
+                                    gap={8}
+                                    {...elementProps}
+                                    onClick={(e) => {
+                                        elementProps.onClick?.(e);
+                                        handleNodeClick(node);
+                                    }}
+                                    className={`min-h-7 rounded cursor-pointer pr-2 transition-colors ${
+                                        selectedFile?.name === node.label 
+                                            ? "bg-blue-50 text-blue-700 font-medium" 
+                                            : "hover:bg-gray-100"
+                                    }`}
+                                    style={{ paddingLeft: level * 20 }}
+                                >
+                                    <span className="inline-block w-5 text-center">
+                                        {fileIcon(node.label, hasChildren, expanded)}
+                                    </span>
+                                    <span className="truncate inline-block font-normal">
+                                        {node.label}
+                                    </span>
+                                </Group>
+                            )}
                         />
                     </div>
                 </ScrollArea>
             </Paper>
 
-            {/* BOTTOM: PDF viewer + Toolbar */}
+            {/* BOTTOM: PDF Viewer */}
             <Paper withBorder radius="md">
-                <div className="px-3 py-2 border-b bg-gray-50 text-sm text-gray-700">
-                    {pdfUrl ? (
-                        <span className="truncate inline-block max-w-full">
-                            <span className="opacity-70">{courseCode} /</span>
-                            <span className="font-medium">{crumb}</span>
+                <div className="px-3 py-2 border-b bg-gray-50 text-sm text-gray-700 flex justify-between items-center">
+                    {selectedFile?.type === 'pdf' ? (
+                        <span className="truncate">
+                            <span className="opacity-70">Viewing: </span>
+                            <span className="font-medium">{selectedFile.name}</span>
                         </span>
                     ) : (
-                        <span className="font-bold">
-                            Choose a PDF file above to view.&nbsp;
-                            <span className="text-red-600">
-                                Choosing other file types will open/download the
-                                file
-                            </span>
+                        <span className="font-bold text-gray-500">
+                            Select a PDF to view.
                         </span>
                     )}
                 </div>
 
-                {pdfUrl && (
-                    <div className="border-b px-2 py-2">
+                {pdfBlobUrl && !isLoadingPdf && (
+                    <div className="border-b px-2 py-2 bg-gray-50">
                         <Toolbar />
                     </div>
                 )}
 
-                <div className="p-2">
-                    {pdfUrl ? (
-                        <div className="border rounded h-[75vh]">
-                            <Worker workerUrl="/pdf.worker.js">
+                <div className="p-2 bg-slate-50">
+                    {isLoadingPdf ? (
+                        <div className="h-[75vh] flex items-center justify-center bg-white border rounded">
+                            <Loader />
+                        </div>
+                    ) : pdfBlobUrl ? (
+                        <div className="border rounded h-[75vh] bg-white shadow-inner">
+                            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
                                 <Viewer
-                                    fileUrl={pdfUrl}
+                                    fileUrl={pdfBlobUrl} // Now passing a simple string URL
                                     plugins={[toolbarPluginInstance]}
                                 />
                             </Worker>
                         </div>
                     ) : (
-                        <div className="p-6 text-sm text-gray-500">
-                            Only support PDF file. Click on PDF file above to
-                            view!!
+                        <div className="h-[300px] flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-300 rounded-lg">
+                            <FaFilePdf size={48} className="mb-4 opacity-50" />
+                            <p>No PDF selected</p>
                         </div>
                     )}
                 </div>

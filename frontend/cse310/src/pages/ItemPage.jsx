@@ -200,19 +200,30 @@ function ItemPage() {
 
     const fetchReview = async () => {
         try {
-            const respone = await fetch(
+            const response = await fetch(
                 `${API_URL}/api/reviews?documentId=${id}`
             )
-            if (!respone.ok) {
+            if (!response.ok) {
                 throw new Error(
-                    `Could not reviews data. Status: ${respone.status}`
+                    `Could not fetch reviews data. Status: ${response.status}`
                 )
             }
 
-            const reviews = await respone.json()
-            setReviewsData(reviews)
+            const reviews = await response.json()
+
+            const reviewsWithUsers = await Promise.all(
+                reviews.map(async (review) => {
+                    const user = await fetchUser(review.userId)
+                    return {
+                        ...review,
+                        userData: user
+                    }
+                })
+            )
+
+            setReviewsData(reviewsWithUsers)
         } catch (err) {
-            console.error('Error fetching course:', err)
+            console.error('Error fetching reviews:', err)
         }
     }
 
@@ -673,21 +684,20 @@ function ItemPage() {
                         <div className="space-y-4">
                             {reviewsData.length > 0 &&
                                 reviewsData.map((review) => {
-                                    const user = fetchUser(review.userId)
-                                    var picture = avatarIMG
-                                    if (!user) return null
+                                    const user = review.userData
+                                    const picture = user?.avatarUrl || avatarIMG
 
-                                    if (user.avatarUrl) {
-                                        picture = user.avatarUrl
-                                    }
+                                    if (!user) return null
 
                                     return (
                                         <ReviewCard
+                                            key={review.id}
                                             reviewData={review}
                                             userProfilePic={picture}
                                         />
                                     )
-                                })}
+                                })
+                            }
                         </div>
                     </div>
                 </div>
