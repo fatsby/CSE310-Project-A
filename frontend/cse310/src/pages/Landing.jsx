@@ -13,6 +13,8 @@ import LogoIMG from "../assets/LogoBanner_Trans.png";
 import CHPlayIMG from "../assets/Landing/chPlay.png";
 import AppStoreIMG from "../assets/Landing/appStore.png";
 import PhoneIMG from "../assets/Landing/phone.png";
+import Typeanimation from '@/components/ui/typeanimation';
+import StatsCount from "@/components/ui/statscount";
 
 export default function Landing() {
   // ===========================
@@ -20,6 +22,12 @@ export default function Landing() {
   // ===========================
   const [showHero, setShowHero] = useState(false);
   const heroRef = useRef(null);
+
+  const statscount = [
+    { value: 1, suffix: "K+", label: "Trusted & verified course materials" },
+    { value: 100, suffix: "K+", label: "Valid & satisfied transactions" },
+    { value: 99, suffix: "%", label: "Students achieved 4.0" },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
@@ -95,76 +103,39 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="bg-[#EEF2F7] pt-[92px]">
+    <div className="pt-[92px]">
       <div className="container mx-auto w-fit">
         {/* =========================== */}
         {/* === Hero Section Start === */}
         {/* =========================== */}
         <section ref={heroRef} className="pb-6 pt-26">
           <img src={LogoIMG} alt="Logo" className="mx-auto max-w-[500px]" />
-          <h1
-            className={`text-center text-[60px] font-semibold text-black transition-all duration-700 ease-in transform ${
-              showHero
+          {/* <h1
+            className={`text-center text-[60px] font-semibold text-black transition-all duration-700 ease-in transform ${showHero
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 -translate-y-4"
-            }`}
+              }`}
           >
             Join the ultimate material hub
-          </h1>
-
-          {/* =========================== */}
-          {/* === Selector Form Area === */}
-          {/* =========================== */}
-          <div className="w-fit mx-auto min-w-[600px]">
-            <form action="">
-              <div className="flex gap-x-3 pt-4">
-                <div className="w-1/2">
-                  <Select
-                    checkIconPosition="right"
-                    data={["EIU", "VNU", "HUST", "HUB"]}
-                    pb={15}
-                    placeholder="Select University"
-                    radius="lg"
-                    size="md"
-                  />
-                </div>
-                <div className="w-1/2">
-                  <Select
-                    checkIconPosition="right"
-                    data={["EIU", "VNU", "HUST", "HUB"]}
-                    pb={15}
-                    placeholder="Select Course"
-                    radius="lg"
-                    size="md"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-x-2">
-                <div className="flex-auto w-6/7">
-                  <TextInput
-                    placeholder="Search for documents name, notes, and more... (Optional)"
-                    leftSection={<Search size="16" />}
-                    radius="lg"
-                    size="md"
-                  />
-                </div>
-                <div className="flex-auto w-1/7">
-                  <Button
-                    size="md"
-                    variant="filled"
-                    radius="lg"
-                    fullWidth
-                    color="#0052cc"
-                    style={{
-                      backgroundColor: "#4192fd",
-                    }}
-                  >
-                    Find
-                  </Button>
-                </div>
-              </div>
-            </form>
+          </h1> */}
+          <div className="flex items-center justify-center">
+            <Typeanimation
+              words={['Join the ultimate material hub', 'Unlock your full potential', 'Elevate your game']}
+              typingSpeed="slow"
+              deletingSpeed="slow"
+              pauseDuration={2000}
+              className="text-center text-[60px] font-semibold text-black"
+            />
           </div>
+          
+          <StatsCount
+              stats={statscount}
+              title="ACHIEVE YOUR PEAK PERFORMANCE IN CLASS"
+              showDividers={true}
+          />
+
+
+
 
           {/* =========================== */}
           {/* === Hero Two Columns === */}
@@ -172,11 +143,10 @@ export default function Landing() {
           <div className="grid grid-cols-2 mt-0 gap-[33px] px-18 pt-[155px]">
             {/* Left Hero Card */}
             <div
-              className={`shadow-md flex justify-center items-center rounded-4xl md:h-[750px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${
-                showHero
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-8"
-              }`}
+              className={`shadow-md flex justify-center items-center rounded-4xl md:h-[750px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${showHero
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+                }`}
             >
               <div className="relative w-full h-full">
                 <img
@@ -198,11 +168,10 @@ export default function Landing() {
             {/* Right Hero Card */}
             <div className="flex justify-end">
               <div
-                className={`bg-[#64addf] shadow-md flex justify-center items-center rounded-4xl md:h-[750px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${
-                  showHero
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-8"
-                }`}
+                className={`bg-[#64addf] shadow-md flex justify-center items-center rounded-4xl md:h-[750px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${showHero
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8"
+                  }`}
               >
                 <div className="relative w-full h-full">
                   <img
@@ -229,11 +198,10 @@ export default function Landing() {
           {/* =========================== */}
           <section
             ref={laptopRef}
-            className={`w-full flex flex-col px-18 items-center pt-[33px] text-center transition-all duration-700 ease-in transform ${
-              showLaptop
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-4"
-            }`}
+            className={`w-full flex flex-col px-18 items-center pt-[33px] text-center transition-all duration-700 ease-in transform ${showLaptop
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-4"
+              }`}
           >
             <div className="relative w-full">
               <img src={LapIMG} alt="Laptop" className="w-full rounded-3xl" />
@@ -264,11 +232,10 @@ export default function Landing() {
           <div className="grid grid-cols-2 mt-0 gap-[33px]">
             {/* Premium Left */}
             <div
-              className={`bg-[#4192fd] shadow-md flex justify-center items-center rounded-4xl p-16 md:h-[550px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${
-                showPremium
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-8"
-              }`}
+              className={`bg-[#4192fd] shadow-md flex justify-center items-center rounded-4xl p-16 md:h-[550px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${showPremium
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+                }`}
             >
               <div className="w-fit">
                 <p className="text-white text-[15px] font-medium">No ads</p>
@@ -286,11 +253,10 @@ export default function Landing() {
             {/* Premium Right */}
             <div className="flex justify-end">
               <div
-                className={`bg-[#64addf] shadow-md flex justify-center items-center rounded-4xl p-16 md:h-[550px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${
-                  showPremium
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 translate-y-8"
-                }`}
+                className={`bg-[#64addf] shadow-md flex justify-center items-center rounded-4xl p-16 md:h-[550px] md:w-full col-span-1 transition-all duration-700 ease-in transform ${showPremium
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8"
+                  }`}
               >
                 <div className="w-fit">
                   <p className="text-white text-[15px]">
@@ -346,11 +312,10 @@ export default function Landing() {
 
             {/* CTA Left Text */}
             <div
-              className={`absolute w-[650px] top-1/2 left-[10%] transform -translate-y-1/2 text-black transition-all duration-700 ease-in ${
-                showCtaText
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 -translate-x-8"
-              }`}
+              className={`absolute w-[650px] top-1/2 left-[10%] transform -translate-y-1/2 text-black transition-all duration-700 ease-in ${showCtaText
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-8"
+                }`}
             >
               <div className="flex items-end">
                 <img src={LogoIMG} alt="Logo" className="max-w-[160px]" />
@@ -390,11 +355,10 @@ export default function Landing() {
 
             {/* CTA Right Image */}
             <div
-              className={`absolute w-[270px] top-1/2 right-[10%] transform -translate-y-1/2 transition-all duration-700 ease-in ${
-                showCtaImage
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 translate-x-8"
-              }`}
+              className={`absolute w-[270px] top-1/2 right-[10%] transform -translate-y-1/2 transition-all duration-700 ease-in ${showCtaImage
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-8"
+                }`}
             >
               <img src={PhoneIMG} alt="Phone" />
             </div>
