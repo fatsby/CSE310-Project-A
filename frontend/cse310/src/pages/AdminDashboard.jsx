@@ -30,13 +30,13 @@ const useAdminData = () => {
   const [items, setItems] = useState([]); //documents
   const [reviews, setReviews] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  
+
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [avgPlatformRating, setAvgPlatformRating] = useState("0.00");
   const [bestSellers, setBestSellers] = useState([]);
-  
+
   const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
@@ -53,10 +53,10 @@ const useAdminData = () => {
 
     try {
       const [
-        usersRes, 
-        salesRes, 
-        ratingRes, 
-        bestSellersRes, 
+        usersRes,
+        salesRes,
+        ratingRes,
+        bestSellersRes,
         countRes,
         reviewsRes,
         transactionsRes
@@ -132,6 +132,24 @@ const useAdminData = () => {
     bestSellers
   };
 
+  const createUser = async (newUser) => {
+    try {
+      const createRes = await fetch(`${API_URL}/api/auth/register`,{
+        method: "POST",
+        body: JSON.stringify({
+          email: newUser.email,
+          userName: newUser.userName,
+          password: newUser.password
+        }),
+      });
+
+      if (!createRes.ok) throw new Error(`Failed to create new user ${createRes.text()}`)
+
+    } catch (error){
+      console.log(`Error creating user: ${error} `)
+    }
+  }
+
   // --- Actions (Placeholders for now) ---
   const updateUser = (id, payload) => {
     // Optimistic update
@@ -139,78 +157,99 @@ const useAdminData = () => {
     // TODO: Call API to update user
   };
 
-  const deleteUser = (id) => {
-    // Optimistic delete
-    setUsers((prev) => prev.filter((u) => u.id !== id));
-    // TODO: Call API DELETE /users/{id}
+  const deleteUser = async (email) => {
+    try {
+      const banRes = await fetch(`${API_URL}/api/users/ban-switch/${email}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        }});
+      if (!banRes.ok) throw new Error(`Failed to ban/unban user: ${banRes.text()}`);
+
+      const result = await banRes.json();
+      console.log("User status toggled successfully:", result);
+
+      // update status badge
+      setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.email === email ? { ...user, isActive: !user.isActive } : user
+      )
+      );
+
+      } catch (err) {
+        console.error("Failed to ban/unban user:", err);
+      } finally {
+      }
+      
   };
 
-  const upsertItem = (item) => {
-    // Optimistic upsert
-    setItems((prev) => {
-      const exists = prev.some((it) => it.id === item.id);
-      if (exists) return prev.map((it) => (it.id === item.id ? { ...it, ...item } : it));
-      return [item, ...prev];
-    });
-    // TODO: Call API POST/PUT /documents
+    const upsertItem = (item) => {
+      // Optimistic upsert
+      setItems((prev) => {
+        const exists = prev.some((it) => it.id === item.id);
+        if (exists) return prev.map((it) => (it.id === item.id ? { ...it, ...item } : it));
+        return [item, ...prev];
+      });
+      // TODO: Call API POST/PUT /documents
+    };
+
+    const deleteItem = (id) => {
+      // Optimistic delete
+      setItems((prev) => prev.filter((it) => it.id !== id));
+      // TODO: Call API DELETE /documents/{id}
+    };
+
+    return { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem, createUser };
   };
 
-  const deleteItem = (id) => {
-    // Optimistic delete
-    setItems((prev) => prev.filter((it) => it.id !== id));
-    // TODO: Call API DELETE /documents/{id}
-  };
+  export default function AdminDashboard() {
+    const { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem, createUser } = useAdminData();
+    const [activeTab, setActiveTab] = useState("analytics");
 
-  return { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem };
-};
-
-export default function AdminDashboard() {
-  const { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem } = useAdminData();
-  const [activeTab, setActiveTab] = useState("analytics");
-
-  return (
-    <div className="container mx-auto px-4 pb-6 pt-[110px]">
-      {/* Topbar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
-        <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <Text c="dimmed">Manage users, items, reviews, transactions & platform analytics</Text>
+    return (
+      <div className="container mx-auto px-4 pb-6 pt-[110px]">
+        {/* Topbar */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
+          <div>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <Text c="dimmed">Manage users, items, reviews, transactions & platform analytics</Text>
+          </div>
+          <Group gap="xs">
+            <Button variant="light" color="#0052cc" leftSection={<SearchIcon size={16} />}>Search</Button>
+            <Button variant="filled" color="#0052cc" leftSection={<Plus size={16} />}>Quick Action</Button>
+          </Group>
         </div>
-        <Group gap="xs">
-          <Button variant="light" color="#0052cc" leftSection={<SearchIcon size={16} />}>Search</Button>
-          <Button variant="filled" color="#0052cc" leftSection={<Plus size={16} />}>Quick Action</Button>
-        </Group>
+
+        <div className="bg-white rounded-2xl shadow-md p-3 md:p-5">
+          <Tabs value={activeTab} onChange={setActiveTab} variant="pills" radius="xl" color="indigo">
+            <Tabs.List>
+              <Tabs.Tab value="analytics" leftSection={<BarChart3 size={16} />}>Analytics</Tabs.Tab>
+              <Tabs.Tab value="users" leftSection={<Users size={16} />}>Users</Tabs.Tab>
+              <Tabs.Tab value="items" leftSection={<FileText size={16} />}>Documents/Items</Tabs.Tab>
+              <Tabs.Tab value="reviews" leftSection={<Star size={16} />}>Reviews</Tabs.Tab>
+              <Tabs.Tab value="transactions" leftSection={<CreditCard size={16} />}>Transactions</Tabs.Tab>
+            </Tabs.List>
+
+            <Divider my="md" />
+
+            <Tabs.Panel value="analytics">
+              <AnalyticsPanel loading={loading} analytics={analytics} items={items} />
+            </Tabs.Panel>
+            <Tabs.Panel value="users">
+              <UsersPanel loading={loading} users={users} onUpdate={updateUser} onDelete={deleteUser} onCreate={createUser} />
+            </Tabs.Panel>
+            <Tabs.Panel value="items">
+              <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onDelete={deleteItem} />
+            </Tabs.Panel>
+            <Tabs.Panel value="reviews">
+              <ReviewsPanel loading={loading} reviews={reviews} />
+            </Tabs.Panel>
+            <Tabs.Panel value="transactions">
+              <TransactionsPanel loading={loading} transactions={transactions} />
+            </Tabs.Panel>
+          </Tabs>
+        </div>
       </div>
-
-      <div className="bg-white rounded-2xl shadow-md p-3 md:p-5">
-        <Tabs value={activeTab} onChange={setActiveTab} variant="pills" radius="xl" color="indigo">
-          <Tabs.List>
-            <Tabs.Tab value="analytics" leftSection={<BarChart3 size={16} />}>Analytics</Tabs.Tab>
-            <Tabs.Tab value="users" leftSection={<Users size={16} />}>Users</Tabs.Tab>
-            <Tabs.Tab value="items" leftSection={<FileText size={16} />}>Documents/Items</Tabs.Tab>
-            <Tabs.Tab value="reviews" leftSection={<Star size={16} />}>Reviews</Tabs.Tab>
-            <Tabs.Tab value="transactions" leftSection={<CreditCard size={16} />}>Transactions</Tabs.Tab>
-          </Tabs.List>
-
-          <Divider my="md" />
-
-          <Tabs.Panel value="analytics">
-            <AnalyticsPanel loading={loading} analytics={analytics} items={items} />
-          </Tabs.Panel>
-          <Tabs.Panel value="users">
-            <UsersPanel loading={loading} users={users} onUpdate={updateUser} onDelete={deleteUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value="items">
-            <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onDelete={deleteItem} />
-          </Tabs.Panel>
-          <Tabs.Panel value="reviews">
-            <ReviewsPanel loading={loading} reviews={reviews} />
-          </Tabs.Panel>
-          <Tabs.Panel value="transactions">
-            <TransactionsPanel loading={loading} transactions={transactions} />
-          </Tabs.Panel>
-        </Tabs>
-      </div>
-    </div>
-  );
-}
+    );
+  }

@@ -213,13 +213,13 @@ namespace project2.Controllers
         }
 
         // i updated ban logic - tri
-        [HttpPost("ban/{email}")]
+        [HttpPost("ban-switch/{email}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IResult> BanUser(string email) {
+        public async Task<IResult> BanSwitchUser(string email) {
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null) return Results.NotFound();
 
-            user.IsActive = false;
+            user.IsActive = !user.IsActive;
 
             // update the Security Stamp
             // invalidate the refresh token

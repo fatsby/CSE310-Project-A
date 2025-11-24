@@ -11,15 +11,26 @@ import {
   TextInput,
   Tooltip,
   Group,
+  PasswordInput
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Edit3, Trash2, Search } from "lucide-react";
+import { Edit3, Gavel, Search, Unlock, AlertTriangle } from "lucide-react";
 import avtarImage from "../../assets/dog.jpg";
 
-export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
+export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreate }) {
   const [query, setQuery] = useState("");
+
+  //states for edit user modal
   const [editUser, setEditUser] = useState(null);
   const [opened, { open, close }] = useDisclosure(false);
+
+  //states for ban/unban user
+  const [actionUser, setActionUser] = useState(null);
+  const [confirmOpened, { open: openConfirm, close: closeConfirm }] = useDisclosure(false);
+
+  //states for creating user
+  const [newUser, setNewUser] = useState({ userName: "", email: "", password: ""});
+  const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
 
   const filtered = useMemo(() => {
     if (!query) return users;
@@ -27,6 +38,7 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
     return users.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
   }, [users, query]);
 
+  //handlers for edit user modal
   const handleEdit = (u) => { setEditUser(u); open(); };
   const handleSave = () => {
     if (!editUser) return;
@@ -34,15 +46,44 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
     close();
   };
 
+  //handlers for ban/unban user
+  const handleActionClick = (u) => {
+    setActionUser(u);
+    openConfirm();
+  };
+  const executeAction = () => {
+    if (actionUser) {
+      onDelete(actionUser.email);
+      closeConfirm();
+      setActionUser(null);
+    }
+  };
+
+  //handelers for create user modal
+  const handleCreateClick = () => {
+    setNewUser({ userName: "", email: "", password: ""});
+    openCreate();
+  };
+
+  const handleCreateSubmit = () => {
+    if (!newUser.userName || !newUser.email || !newUser.password) {
+      return;
+    }
+
+    onCreate(newUser);
+    closeCreate();
+  };
+
+
   if (loading) return <Loader />;
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-3">
-        <TextInput className="w-full md:w-80" placeholder="Search users by name or email" leftSection={<Search size={16} />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} radius="lg"/>
+        <TextInput className="w-full md:w-80" placeholder="Search users by name or email" leftSection={<Search size={16} />} value={query} onChange={(e) => setQuery(e.currentTarget.value)} radius="lg" />
         <div className="flex gap-2">
           <Button variant="light" color="#0052cc">Export CSV</Button>
-          <Button variant="filled" color="#0052cc">Invite User</Button>
+          <Button variant="filled" color="#0052cc" onClick={handleCreateClick}>Create User</Button>
         </div>
       </div>
 
@@ -77,14 +118,14 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
                     <Badge color="orange" variant="light">Admin</Badge>
                   ) : (
                     <Badge color="green" variant="light">User</Badge>
-                  ) }
+                  )}
                 </Table.Td>
                 <Table.Td>
                   {u.isActive ? (
                     <Badge color="green" variant="light">Active</Badge>
                   ) : (
                     <Badge color="red" variant="light">Banned</Badge>
-                  ) }
+                  )}
                 </Table.Td>
                 <Table.Td>
                   <div className="flex justify-end gap-2">
@@ -93,11 +134,27 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
                         <Edit3 size={18} />
                       </ActionIcon>
                     </Tooltip>
-                    <Tooltip label="Ban/Delete">
-                      <ActionIcon variant="subtle" color="red" onClick={() => onDelete(u.id)}>
-                        <Trash2 size={18} />
-                      </ActionIcon>
-                    </Tooltip>
+                    {u.isActive ? (
+                      <Tooltip label="Ban User">
+                        <ActionIcon
+                          variant="light"
+                          color="red"
+                          onClick={() => handleActionClick(u)}
+                        >
+                          <Gavel size={18} />
+                        </ActionIcon>
+                      </Tooltip>
+                    ) : (
+                      <Tooltip label="Unban User">
+                        <ActionIcon
+                          variant="light"
+                          color="green"
+                          onClick={() => handleActionClick(u)}
+                        >
+                          <Unlock size={18} />
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
                   </div>
                 </Table.Td>
               </Table.Tr>
@@ -108,12 +165,85 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete }) {
 
       <Modal opened={opened} onClose={close} title="Edit User" radius="lg">
         <div className="space-y-3">
-          <TextInput label="Name" value={editUser?.name || ""} onChange={(e) => setEditUser((p) => ({ ...p, name: e.currentTarget.value }))} radius="md"/>
-          <TextInput label="Email" value={editUser?.email || ""} onChange={(e) => setEditUser((p) => ({ ...p, email: e.currentTarget.value }))} radius="md"/>
-          <TextInput label="Avatar URL" value={editUser?.profilePicture || ""} onChange={(e) => setEditUser((p) => ({ ...p, profilePicture: e.currentTarget.value }))} radius="md"/>
+          <TextInput label="Name" value={editUser?.userName || ""} onChange={(e) => setEditUser((p) => ({ ...p, name: e.currentTarget.value }))} radius="md" />
+          <TextInput disabled label="Email" value={editUser?.email || ""} />
+          <TextInput label="Avatar URL" value={editUser?.avatarUrl || ""} onChange={(e) => setEditUser((p) => ({ ...p, profilePicture: e.currentTarget.value }))} radius="md" />
           <Group justify="end">
             <Button variant="light" onClick={close}>Cancel</Button>
             <Button color="#0052cc" onClick={handleSave}>Save</Button>
+          </Group>
+        </div>
+      </Modal>
+
+      <Modal
+        opened={confirmOpened}
+        onClose={closeConfirm}
+        title={actionUser?.isActive ? "Confirm Ban" : "Confirm Unban"}
+        centered
+        radius="lg"
+      >
+        <div className="flex flex-col gap-4">
+          {/* Warning Message */}
+          <div className="flex items-start gap-3 bg-red-50 p-3 rounded-lg border border-red-100">
+            <AlertTriangle className="text-red-500 mt-1" size={24} />
+            <div>
+              <Text fw={600} size="sm" c="red.8">
+                {actionUser?.isActive ? "Warning: Banning User" : "Restoring User Access"}
+              </Text>
+              <Text size="sm" c="dimmed">
+                {actionUser?.isActive
+                  ? `Are you sure you want to ban ${actionUser?.userName}? They will immediately lose access to the platform.`
+                  : `Are you sure you want to unban ${actionUser?.userName}? They will regain access immediately.`
+                }
+              </Text>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <Group justify="end" mt="md">
+            <Button variant="light" color="gray" onClick={closeConfirm}>
+              Cancel
+            </Button>
+            <Button
+              color={actionUser?.isActive ? "red" : "green"}
+              onClick={executeAction}
+            >
+              {actionUser?.isActive ? "Yes, Ban User" : "Yes, Unban User"}
+            </Button>
+          </Group>
+        </div>
+      </Modal>
+
+              {/* Create User modal */}
+      <Modal opened={createOpened} onClose={closeCreate} title="Create New User" radius="lg">
+        <div className="space-y-3">
+          <TextInput
+            withAsterisk
+            label="Username"
+            placeholder="JohnDoe"
+            value={newUser.userName}
+            onChange={(e) => setNewUser((p) => ({ ...p, userName: e.currentTarget.value }))}
+            radius="md"
+          />
+          <TextInput
+            withAsterisk
+            label="Email"
+            placeholder="john@example.com"
+            value={newUser.email}
+            onChange={(e) => setNewUser((p) => ({ ...p, email: e.currentTarget.value }))}
+            radius="md"
+          />
+          <PasswordInput
+            withAsterisk
+            label="Password"
+            placeholder="Secret password"
+            value={newUser.password}
+            onChange={(e) => setNewUser((p) => ({ ...p, password: e.currentTarget.value }))}
+            radius="md"
+          />
+          <Group justify="end" mt="md">
+            <Button variant="light" onClick={closeCreate}>Cancel</Button>
+            <Button color="#0052cc" onClick={handleCreateSubmit}>Create</Button>
           </Group>
         </div>
       </Modal>

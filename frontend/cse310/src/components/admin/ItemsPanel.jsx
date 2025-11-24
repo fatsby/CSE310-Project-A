@@ -158,6 +158,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
             <Table.Tr>
               <Table.Th>ID</Table.Th>
               <Table.Th>Name</Table.Th>
+              <Table.Th>Author</Table.Th>
               <Table.Th>Subject</Table.Th>
               <Table.Th>University</Table.Th>
               <Table.Th>Price</Table.Th>
@@ -173,6 +174,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
                 <Table.Td className="max-w-[280px]">
                   <Tooltip label={it.name}><Text lineClamp={1}>{it.name}</Text></Tooltip>
                 </Table.Td>
+                <Table.Td>{it.authorName}</Table.Td>
                 <Table.Td><Badge color="blue">{it.subjectName}</Badge></Table.Td>
                 <Table.Td>{it.universityName}</Table.Td>
                 <Table.Td>₫{new Intl.NumberFormat('vi-VN').format(it.price || 0)}</Table.Td>
