@@ -76,73 +76,6 @@ namespace project2.Controllers
             return Ok(userDTOs);
         }
 
-        // i did token thing by a different method, so i dont understand this
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateUser([FromBody] CreatedUserDto createdUserDto)
-        {
-            // use try because while saving a new user, it could have errors like failed DB Connection, null _userManager (learned from youtube)
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var appUser = new AppUser
-                {
-                    UserName = createdUserDto.Username,
-                    Email = createdUserDto.Email,
-                    PhoneNumber = createdUserDto.PhoneNumber,
-                };
-
-                var createdUser = await _userManager.CreateAsync(appUser, createdUserDto.Password);
-
-                if (createdUser.Succeeded)
-                {
-                    if (!await _roleManager.RoleExistsAsync("Admin"))
-                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                    var roleResult = await _userManager.AddToRoleAsync(appUser, "Admin");
-
-                    if (roleResult.Succeeded)
-                    {
-                        return Ok(new NewUserDto
-                        {
-                            Username = appUser.UserName,
-                            Email = appUser.Email,
-                            PhoneNumber = appUser.PhoneNumber,
-                            Token = "will be understood later"
-                        }
-                        );
-                    }
-                    else
-                    {
-                        return StatusCode(500, roleResult.Errors);
-                    }
-                }
-                else
-                {
-                    return StatusCode(500, createdUser.Errors);
-                }
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e);
-            }
-        }
-
-        [HttpGet("search-by-name")]
-        public async Task<IActionResult> GetUsersByName(string nameInput)
-        {
-            var users = await _userManager.Users.AsNoTracking().Where(u => u.UserName.ToLower().Contains(nameInput.ToLower())).ToListAsync();
-
-            if(users == null)
-            {
-                return NotFound("Username does not exist");
-            }
-
-            return Ok(users);
-        }
-
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
@@ -170,50 +103,74 @@ namespace project2.Controllers
             return Ok(userDTO);
         }
 
-        // EditUse still being reviewed
-        // after editting, we cannot log in by the new username & password (using Swagger). BUT IN MY OTHER PROJECT, I CAN
-        [HttpPut("edit/{id}")]
-        public async Task<IActionResult> EditUser([FromRoute] string id, [FromBody] UpdatedUserDto updatedUserDto)
+        [HttpPut("admin/edit/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> EditUser([FromRoute] string id, [FromBody] UpdatedUserDto dto)
         {
-            var existingUser = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null) return NotFound("User not found.");
 
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
+            var errors = new List<string>();
 
-            if (ModelState.IsValid)
-            {
-                existingUser.UserName = updatedUserDto.Username;
-                existingUser.Email = updatedUserDto.Email;
-                existingUser.PhoneNumber = updatedUserDto.PhoneNumber;
-                if (!string.IsNullOrEmpty(updatedUserDto.Password))
-                {
-                    var removingPasswordResult = await _userManager.RemovePasswordAsync(existingUser);
-                    if (!removingPasswordResult.Succeeded)
-                    {
-                        return BadRequest(removingPasswordResult.Errors);
-                    }
-
-                    var addNewPasswordResult = await _userManager.AddPasswordAsync(existingUser, updatedUserDto.Password);
-                    if (!addNewPasswordResult.Succeeded)
-                    {
-                        return BadRequest(addNewPasswordResult.Errors);
-                    }
-                }
-
-                var updateUserResult = await _userManager.UpdateAsync(existingUser);
-                if (!updateUserResult.Succeeded)
-                {
-                    return BadRequest(ModelState);
+            // username change
+            if (!string.IsNullOrWhiteSpace(dto.Username) && user.UserName != dto.Username) {
+                //allows duplicate username because email and guid is unique (not sure if good idea)
+                // use identity's method to update username
+                var setUserNameResult = await _userManager.SetUserNameAsync(user, dto.Username);
+                if (!setUserNameResult.Succeeded) {
+                    errors.AddRange(setUserNameResult.Errors.Select(e => e.Description));
                 }
             }
 
-            return Ok(existingUser);
+            // handle password change (admin override)
+            if (!string.IsNullOrWhiteSpace(dto.Password)) {
+                // remove current password
+                if (await _userManager.HasPasswordAsync(user)) {
+                    var removeResult = await _userManager.RemovePasswordAsync(user);
+                    if (!removeResult.Succeeded) {
+                        errors.AddRange(removeResult.Errors.Select(e => e.Description));
+                    }
+                }
+
+                // add new password
+                var addResult = await _userManager.AddPasswordAsync(user, dto.Password);
+                if (!addResult.Succeeded) {
+                    errors.AddRange(addResult.Errors.Select(e => e.Description));
+                }
+            }
+
+            // handle avatar change (allow null for clearing avatar)
+            //if (!string.IsNullOrEmpty(dto.AvatarUrl) && user.AvatarUrl != dto.AvatarUrl) {
+            //    user.AvatarUrl = dto.AvatarUrl;
+            //}
+            user.AvatarUrl = dto.AvatarUrl;
+
+            // save security stamp
+            await _userManager.UpdateSecurityStampAsync(user);
+
+            // save any custom property changes (avatar url)
+            var finalUpdate = await _userManager.UpdateAsync(user);
+            if (!finalUpdate.Succeeded) {
+                errors.AddRange(finalUpdate.Errors.Select(e => e.Description));
+            }
+
+            if (errors.Count > 0) {
+                return BadRequest(new { message = "Update failed", errors });
+            }
+
+            return Ok(new {
+                message = "User updated successfully",
+                user = new {
+                    user.Id,
+                    user.UserName,
+                    user.Email,
+                    user.AvatarUrl
+                }
+            });
         }
 
         // i updated ban logic - tri
-        [HttpPost("ban-switch/{email}")]
+        [HttpPost("admin/ban-switch/{email}")]
         [Authorize(Roles = "Admin")]
         public async Task<IResult> BanSwitchUser(string email) {
             var user = await _userManager.FindByEmailAsync(email);

@@ -253,7 +253,7 @@ namespace project2.Migrations
 
                     b.HasIndex("IsActive", "ExpiryDate");
 
-                    b.ToTable("Coupons");
+                    b.ToTable("Coupons", (string)null);
                 });
 
             modelBuilder.Entity("project2.Models.Document", b =>
@@ -318,7 +318,7 @@ namespace project2.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("project2.Models.DocumentFile", b =>
@@ -354,7 +354,7 @@ namespace project2.Migrations
 
                     b.HasIndex("DocumentId");
 
-                    b.ToTable("DocumentFiles");
+                    b.ToTable("DocumentFiles", (string)null);
                 });
 
             modelBuilder.Entity("project2.Models.DocumentImage", b =>
@@ -384,7 +384,7 @@ namespace project2.Migrations
                     b.HasIndex("DocumentId", "SortOrder")
                         .IsUnique();
 
-                    b.ToTable("DocumentImages");
+                    b.ToTable("DocumentImages", (string)null);
                 });
 
             modelBuilder.Entity("project2.Models.Review", b =>
@@ -410,7 +410,7 @@ namespace project2.Migrations
 
                     b.HasIndex("DocumentId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("project2.Models.Subject", b =>
@@ -436,7 +436,7 @@ namespace project2.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("Subjects");
+                    b.ToTable("Subjects", (string)null);
 
                     b.HasData(
                         new
@@ -480,7 +480,7 @@ namespace project2.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Universities");
+                    b.ToTable("Universities", (string)null);
 
                     b.HasData(
                         new
@@ -515,7 +515,7 @@ namespace project2.Migrations
 
                     b.HasIndex("DocumentId");
 
-                    b.ToTable("UserPurchases");
+                    b.ToTable("UserPurchases", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

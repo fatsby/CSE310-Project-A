@@ -21,7 +21,7 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
   const [query, setQuery] = useState("");
 
   //states for edit user modal
-  const [editUser, setEditUser] = useState(null);
+  const [editUser, setEditUser] = useState({ userName: "", password: "" });
   const [opened, { open, close }] = useDisclosure(false);
 
   //states for ban/unban user
@@ -29,20 +29,23 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
   const [confirmOpened, { open: openConfirm, close: closeConfirm }] = useDisclosure(false);
 
   //states for creating user
-  const [newUser, setNewUser] = useState({ userName: "", email: "", password: ""});
+  const [newUser, setNewUser] = useState({ userName: "", email: "", password: "" });
   const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
 
   const filtered = useMemo(() => {
     if (!query) return users;
     const q = query.toLowerCase();
-    return users.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
+    return users.filter((u) => u.userName?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
   }, [users, query]);
 
   //handlers for edit user modal
-  const handleEdit = (u) => { setEditUser(u); open(); };
+  const handleEdit = (u) => {
+     setEditUser(u); 
+     open(); 
+  };
   const handleSave = () => {
     if (!editUser) return;
-    onUpdate(editUser.id, { name: editUser.name, email: editUser.email, profilePicture: editUser.profilePicture });
+    onUpdate(editUser.id, { userName: editUser.userName, avatarUrl: editUser.avatarUrl });
     close();
   };
 
@@ -61,7 +64,7 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
 
   //handelers for create user modal
   const handleCreateClick = () => {
-    setNewUser({ userName: "", email: "", password: ""});
+    setNewUser({ userName: "", email: "", password: "" });
     openCreate();
   };
 
@@ -107,8 +110,8 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
                 <Table.Td>{u.userName}</Table.Td>
                 <Table.Td>{u.email || <em className="text-gray-500">(none)</em>}</Table.Td>
                 <Table.Td>
-                  {u.profilePicture ? (
-                    <img src={u.profilePicture} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
+                  {u.avatarUrl ? (
+                    <img src={u.avatarUrl} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
                   ) : (
                     <img src={avtarImage} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
                   )}
@@ -165,9 +168,19 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
 
       <Modal opened={opened} onClose={close} title="Edit User" radius="lg">
         <div className="space-y-3">
-          <TextInput label="Name" value={editUser?.userName || ""} onChange={(e) => setEditUser((p) => ({ ...p, name: e.currentTarget.value }))} radius="md" />
+          <TextInput label="Name" value={editUser?.userName || ""} 
+            onChange={(e) => {
+              const val = e.currentTarget.value;
+              setEditUser((p) => ({ ...p, userName: val }));
+            }}
+            radius="md" />
           <TextInput disabled label="Email" value={editUser?.email || ""} />
-          <TextInput label="Avatar URL" value={editUser?.avatarUrl || ""} onChange={(e) => setEditUser((p) => ({ ...p, profilePicture: e.currentTarget.value }))} radius="md" />
+          <TextInput label="Avatar URL" value={editUser?.avatarUrl || ""} 
+            onChange={(e) => {
+              const val = e.currentTarget.value;
+              setEditUser((p) => ({ ...p, avatarUrl: val }));
+            }}
+            radius="md" />
           <Group justify="end">
             <Button variant="light" onClick={close}>Cancel</Button>
             <Button color="#0052cc" onClick={handleSave}>Save</Button>
@@ -214,7 +227,7 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
         </div>
       </Modal>
 
-              {/* Create User modal */}
+      {/* Create User modal */}
       <Modal opened={createOpened} onClose={closeCreate} title="Create New User" radius="lg">
         <div className="space-y-3">
           <TextInput
@@ -222,7 +235,10 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
             label="Username"
             placeholder="JohnDoe"
             value={newUser.userName}
-            onChange={(e) => setNewUser((p) => ({ ...p, userName: e.currentTarget.value }))}
+            onChange={(e) => {
+              const val = e.currentTarget.value;
+              setNewUser((p) => ({ ...p, userName: val }));
+            }}
             radius="md"
           />
           <TextInput
@@ -230,7 +246,10 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
             label="Email"
             placeholder="john@example.com"
             value={newUser.email}
-            onChange={(e) => setNewUser((p) => ({ ...p, email: e.currentTarget.value }))}
+            onChange={(e) => {
+              const val = e.currentTarget.value;
+              setNewUser((p) => ({ ...p, email: val }));
+            }}
             radius="md"
           />
           <PasswordInput
@@ -238,7 +257,10 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
             label="Password"
             placeholder="Secret password"
             value={newUser.password}
-            onChange={(e) => setNewUser((p) => ({ ...p, password: e.currentTarget.value }))}
+            onChange={(e) => {
+              const val = e.currentTarget.value;
+              setNewUser((p) => ({ ...p, password: val }));
+            }}
             radius="md"
           />
           <Group justify="end" mt="md">

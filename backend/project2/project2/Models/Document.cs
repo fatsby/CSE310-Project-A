@@ -33,7 +33,7 @@ namespace project2.Models {
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool isActive { get; set; } = true;
-        public bool isDeleted { get; set; } = false;
+        public bool isDeleted { get; set; } = true;
 
         //total reviews count and average rating
         public int ReviewCount { get; set; } = 0;

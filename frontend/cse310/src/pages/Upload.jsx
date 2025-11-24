@@ -182,7 +182,8 @@ export default function Upload({ onCloseUpload }) {
           <button
             onClick={() => {
               onCloseUpload?.();
-              navigate("/set-file-name");
+              // Pass the files array in the state object
+              navigate("/set-file-name", { state: { uploadedFiles: files } });
             }}
             className="text-white bg-[#4e93fc] px-4 py-2 mt-5 rounded-full hover:bg-[#3776e8] font-bold cursor-pointer"
           >
