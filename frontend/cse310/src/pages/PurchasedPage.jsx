@@ -125,16 +125,19 @@ function PurchasedPage() {
                             </div>
                             <div className="">
                                 <Select
+                                    checkIconPosition="right"
                                     placeholder="Select university"
                                     autoSelectOnBlur
                                     radius="xl"
                                     data={universityList}
                                     onChange={handleUniChange}
                                     value={selectedUni}
+                                    className="w-[300px]"
                                 />
                             </div>
                             <div className=" ">
                                 <Select
+                                    checkIconPosition="right"
                                     placeholder="Select course name"
                                     autoSelectOnBlur
                                     radius="xl"
@@ -142,6 +145,7 @@ function PurchasedPage() {
                                     onChange={handleSubjectChange}
                                     disabled={!selectedUni}
                                     value={selectedSubject}
+                                    className="w-[300px]"
                                 />
                             </div>
                             <div className="ml-auto flex items-center">
