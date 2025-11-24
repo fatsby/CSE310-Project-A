@@ -18,5 +18,6 @@ namespace project2.Services {
         Task<List<DocumentResponse>> GetTopRatedDocumentsAsync(CancellationToken ct);
         Task<List<DocumentResponse>> GetBestSellingDocumentsAsync(CancellationToken ct);
         Task<List<DocumentResponse>> GetPurchasedDocumentsAsync(string userId, CancellationToken ct);
+        Task<List<DocumentResponse>> GetAllDeletedDocumentsAsync(CancellationToken ct);
     }
 }

@@ -66,12 +66,6 @@ export default function ReviewsPanel({ loading, reviews }) {
               </Text>
               
               <div className="flex items-center gap-1">
-                <Tooltip label="Approve & Keep">
-                  <ActionIcon variant="light" color="green" size="sm"><ShieldCheck size={16}/></ActionIcon>
-                </Tooltip>
-                <Tooltip label="Hide Review">
-                  <ActionIcon variant="light" color="orange" size="sm"><EyeOff size={16}/></ActionIcon>
-                </Tooltip>
                 <Tooltip label="Delete Review">
                   <ActionIcon variant="light" color="red" size="sm"><Trash2 size={16}/></ActionIcon>
                 </Tooltip>

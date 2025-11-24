@@ -180,15 +180,16 @@ namespace project2.Services {
                 .FirstOrDefaultAsync(f => f.Id == fileId && f.DocumentId == docId, ct);
             if (file is null) return null;
 
-            //check if Document is deleted
-            bool isDeleted = file.Document.isDeleted;
-            if (isDeleted) {
-                throw new UnauthorizedAccessException("The requested document was deleted by an Administrator.");
-            }
 
-            // check ownership / purchase
-            // only check ownership if a userId was provided (user is not admin)
+            // check if userid was provided (useId = not admin)
             if (userId is not null) {
+                //check if file isDeleted
+                bool isDeleted = file.Document.isDeleted;
+                if (isDeleted) {
+                    throw new UnauthorizedAccessException("The requested document was deleted by an Administrator.");
+                }
+
+                //check ownership
                 bool isAuthor = file.Document.AuthorId == userId;
                 bool hasPurchased = false;
 
@@ -640,6 +641,20 @@ namespace project2.Services {
                 .Include(p => p.Document).ThenInclude(d => d.Files)
                 .Include(p => p.Document).ThenInclude(d => d.Author)
                 .Select(p => p.Document)
+                .ToListAsync(ct);
+
+            return docs.Select(MapToResponse).ToList();
+        }
+
+        public async Task<List<DocumentResponse>> GetAllDeletedDocumentsAsync(CancellationToken ct) {
+            var docs = await _db.Documents
+                .AsNoTracking()
+                .Where(d => d.isDeleted)
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .Include(d => d.Author)
                 .ToListAsync(ct);
 
             return docs.Select(MapToResponse).ToList();

@@ -21,7 +21,7 @@ export default function TransactionsPanel({ loading, transactions }) {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="overflow-x-auto">
         <Table striped highlightOnHover>
           <Table.Thead>
             <Table.Tr>

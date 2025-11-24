@@ -9,7 +9,7 @@ import {
   TextInput,
   Tooltip,
 } from "@mantine/core";
-import { Edit3, Trash2, Star, Search } from "lucide-react";
+import { Edit3, Trash2, Star, Search, Eye } from "lucide-react";
 
 // Helper to get token for API calls
 import { getToken } from "../../../utils/auth";
@@ -107,6 +107,10 @@ export default function ItemsPanel({ loading, items, onDelete }) {
     setSelectedSubjectId(null); // reset subject when university changes
   };
 
+  const handleViewFiles = (id) => {
+        window.open(`/data/${id}`); 
+  };
+
   const universityOptions = universityList.map(u => ({ value: u.id.toString(), label: u.name }));
   const subjectOptions = availableSubjects.map(s => ({ value: s.id.toString(), label: s.name }));
 
@@ -152,7 +156,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="overflow-x-auto">
         <Table striped highlightOnHover>
           <Table.Thead>
             <Table.Tr>
@@ -164,7 +168,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
               <Table.Th>Price</Table.Th>
               <Table.Th>Rating</Table.Th>
               <Table.Th>Purchases</Table.Th>
-              <Table.Th className="text-right">Actions</Table.Th>
+              <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -183,11 +187,14 @@ export default function ItemsPanel({ loading, items, onDelete }) {
                         <Star size={16} className="text-yellow-500"/>{it.averageRating || it.avgRating || 0}
                     </div>
                 </Table.Td>
-                <Table.Td>{it.purchaseCount || 0}</Table.Td>
+                <Table.Td className="text-center">{it.purchaseCount || 0}</Table.Td>
                 <Table.Td>
-                  <div className="flex justify-end gap-2">
+                  <div className="flex">
                     <Tooltip label="Edit">
                         <ActionIcon variant="subtle" color="blue" onClick={() => startEdit(it)}><Edit3 size={18}/></ActionIcon>
+                    </Tooltip>
+                    <Tooltip label="View Files">
+                        <ActionIcon variant="subtle" color="cyan" onClick={() => handleViewFiles(it.id)}><Eye size={18}/></ActionIcon>
                     </Tooltip>
                     <Tooltip label="Delete">
                         <ActionIcon variant="subtle" color="red" onClick={() => onDelete(it.id)}><Trash2 size={18}/></ActionIcon>

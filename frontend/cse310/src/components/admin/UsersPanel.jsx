@@ -90,7 +90,7 @@ export default function UsersPanel({ loading, users, onUpdate, onDelete, onCreat
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border">
+      <div className="overflow-x-auto">
         <Table striped highlightOnHover>
           <Table.Thead>
             <Table.Tr>

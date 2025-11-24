@@ -22,11 +22,6 @@ namespace project2.Services {
             if (documentId.HasValue)
                 query = query.Where(r => r.DocumentId == documentId.Value);
 
-            if (string.IsNullOrEmpty(userId) && !documentId.HasValue)
-            {
-                return new List<ReviewDto>();
-            }
-
             var dtos = await query
                 .Select(r => new ReviewDto
                 {

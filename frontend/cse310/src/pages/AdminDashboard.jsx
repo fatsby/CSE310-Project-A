@@ -16,7 +16,8 @@ import {
   BarChart3,
   CreditCard,
   Search as SearchIcon,
-  X as XIcon
+  X as XIcon,
+  ShieldAlert
 } from "lucide-react";
 
 import AnalyticsPanel from "../components/admin/AnalyticsPanel";
@@ -24,6 +25,7 @@ import UsersPanel from "../components/admin/UsersPanel";
 import ItemsPanel from "../components/admin/ItemsPanel";
 import ReviewsPanel from "../components/admin/ReviewsPanel";
 import TransactionsPanel from "../components/admin/TransactionsPanel";
+import DeletedDocsPanel from "../components/admin/DeletedDocsPanel";
 
 import { getToken } from '../../utils/auth'
 
@@ -268,6 +270,7 @@ export default function AdminDashboard() {
           <Tabs.List>
             <Tabs.Tab value="analytics" leftSection={<BarChart3 size={16} />}>Analytics</Tabs.Tab>
             <Tabs.Tab value="users" leftSection={<Users size={16} />}>Users</Tabs.Tab>
+            <Tabs.Tab value="deleteddocs" leftSection={<ShieldAlert size={16} />}>Approve Documents</Tabs.Tab>
             <Tabs.Tab value="items" leftSection={<FileText size={16} />}>Documents/Items</Tabs.Tab>
             <Tabs.Tab value="reviews" leftSection={<Star size={16} />}>Reviews</Tabs.Tab>
             <Tabs.Tab value="transactions" leftSection={<CreditCard size={16} />}>Transactions</Tabs.Tab>
@@ -280,6 +283,9 @@ export default function AdminDashboard() {
           </Tabs.Panel>
           <Tabs.Panel value="users">
             <UsersPanel loading={loading} users={users} onUpdate={updateUser} onDelete={deleteUser} onCreate={createUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value="deleteddocs">
+            <DeletedDocsPanel />
           </Tabs.Panel>
           <Tabs.Panel value="items">
             <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onDelete={deleteItem} />

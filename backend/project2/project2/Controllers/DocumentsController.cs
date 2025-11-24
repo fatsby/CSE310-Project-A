@@ -81,6 +81,17 @@ namespace project2.Controllers {
             }
         }
 
+        [HttpGet("deleted-documents")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetAllDeletedDocuments(CancellationToken ct) { 
+            try {
+                var result = await _svc.GetAllDeletedDocumentsAsync(ct);
+                return Ok(result);
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An error occurred fetching deleted documents.", details = ex.Message });
+            }
+        }
+
         [HttpGet("purchased")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetMyPurchasedDocuments(CancellationToken ct)
@@ -176,8 +187,10 @@ namespace project2.Controllers {
             if (userId == null)
                 return Unauthorized("User ID not found in token.");
 
+            string? userIdToPass = User.IsInRole("Admin") ? null : userId;
+
             try {
-                var result = await _svc.OpenFileForDownloadAsync(id, fileId, userId, ct);
+                var result = await _svc.OpenFileForDownloadAsync(id, fileId, userIdToPass, ct);
                 if (result is null) return NotFound();
 
                 var (stream, contentType, downloadName) = result.Value;
