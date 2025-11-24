@@ -216,7 +216,7 @@ function ItemPage() {
                     const user = await fetchUser(review.userId)
                     return {
                         ...review,
-                        userData: user
+                        userData: user,
                     }
                 })
             )
@@ -696,8 +696,7 @@ function ItemPage() {
                                             userProfilePic={picture}
                                         />
                                     )
-                                })
-                            }
+                                })}
                         </div>
                     </div>
                 </div>
@@ -764,40 +763,20 @@ function ItemPage() {
 
                         {/* ADD TO CART AND FAVORITE */}
                         <div className="grid grid-cols-12 mb-3 gap-2">
-                            <div className="col-span-9">
+                            <div className="col-span-12">
                                 <Button
                                     fullWidth
                                     variant="outline"
                                     color="#000"
                                     size="md"
                                     disabled={isPurchased}
+                                    className="w-full"
                                 >
                                     {isPurchased ? 'Item Owned' : 'Add to Cart'}
                                 </Button>
                             </div>
-                            <div className="col-span-3">
-                                <Button
-                                    onClick={() =>
-                                        notifications.show({
-                                            title: 'New Favourite Item ❤️',
-                                            message:
-                                                'Added a new item to your favourite collection!',
-                                            color: 'pink',
-                                        })
-                                    }
-                                    fullWidth
-                                    variant="outline"
-                                    color="#000"
-                                    size="md"
-                                    disabled={isPurchased}
-                                >
-                                    <Heart size={18} />
-                                </Button>
-                            </div>
                         </div>
-                        {console.log(currentUser.id)}
-                        {console.log(course.authorId)}
-                        {console.log(isPurchased)}
+
                         {/* PURCHASE BUTTON */}
                         <Button
                             fullWidth
