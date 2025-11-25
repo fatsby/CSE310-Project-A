@@ -126,3 +126,24 @@ export const fetchUserPurchase = async () => {
         return []
     }
 }
+
+export const fetchPurchaseLog = async () => {
+    try {
+        const respone = await fetch(`${API_URL}/api/purchases`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getToken()}`,
+            },
+        })
+
+        if (!respone.ok) {
+            throw new Error(`HTTP error! Status: ${respone.status}`)
+        }
+
+        const json = await respone.json()
+        return json
+    } catch (err) {
+        console.log('Fail to get your purchased courses data', err)
+        return []
+    }
+}
