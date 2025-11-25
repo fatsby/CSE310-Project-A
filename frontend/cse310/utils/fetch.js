@@ -147,3 +147,30 @@ export const fetchPurchaseLog = async () => {
         return []
     }
 }
+
+export const fetchChangeCourseActiveStatus = async (documentId, isActive) => {
+    try {
+        const respone = await fetch(
+            `${API_URL}/api/documents/${documentId}/active?isActive=${isActive}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            }
+        )
+
+        if (!respone.ok) {
+            const errorText = await respone.text()
+            throw new Error(
+                `HTTP error! Status: ${respone.status} - ${errorText}`
+            )
+        }
+
+        return true
+    } catch (err) {
+        console.log('Fail to change Course status', err.message)
+        return false
+    }
+}
