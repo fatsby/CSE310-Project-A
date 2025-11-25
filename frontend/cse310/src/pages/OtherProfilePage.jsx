@@ -101,46 +101,51 @@ export default function OtherUserProfile() {
     }, [])
 
     // Filtering pipeline
-    const filtered = useMemo(() => {
-        let res = [...userItems]
+    const filtered = useMemo(
+        ({ userData }) => {
+            let res = [...userItems]
 
-        if (query.trim()) {
-            const q = query.trim().toLowerCase()
-            res = res.filter((it) => it.name.toLowerCase().includes(q))
-        }
+            if (query.trim()) {
+                const q = query.trim().toLowerCase()
+                res = res.filter((it) => it.name.toLowerCase().includes(q))
+            }
 
-        if (selectedUniversity !== 'all') {
-            res = res.filter((it) => it.university === selectedUniversity)
-        }
+            if (selectedUniversity !== 'all') {
+                res = res.filter((it) => it.university === selectedUniversity)
+            }
 
-        if (selectedCourse !== 'all') {
-            res = res.filter((it) => it.subject === selectedCourse)
-        }
+            if (selectedCourse !== 'all') {
+                res = res.filter((it) => it.subject === selectedCourse)
+            }
 
-        switch (sort) {
-            case 'priceAsc':
-                res.sort((a, b) => Number(a.price) - Number(b.price))
-                break
-            case 'priceDesc':
-                res.sort((a, b) => Number(b.price) - Number(a.price))
-                break
-            case 'ratingDesc':
-                res.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
-                break
-            case 'purchasedDesc':
-                res.sort(
-                    (a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0)
-                )
-                break
-            case 'recent':
-            default:
-                res.sort(
-                    (a, b) => parseDMY(b.lastUpdated) - parseDMY(a.lastUpdated)
-                )
-                break
-        }
-        return res
-    }, [userItems, query, selectedUniversity, selectedCourse, sort])
+            switch (sort) {
+                case 'priceAsc':
+                    res.sort((a, b) => Number(a.price) - Number(b.price))
+                    break
+                case 'priceDesc':
+                    res.sort((a, b) => Number(b.price) - Number(a.price))
+                    break
+                case 'ratingDesc':
+                    res.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
+                    break
+                case 'purchasedDesc':
+                    res.sort(
+                        (a, b) =>
+                            (b.purchaseCount || 0) - (a.purchaseCount || 0)
+                    )
+                    break
+                case 'recent':
+                default:
+                    res.sort(
+                        (a, b) =>
+                            parseDMY(b.lastUpdated) - parseDMY(a.lastUpdated)
+                    )
+                    break
+            }
+            return res
+        },
+        [userItems, query, selectedUniversity, selectedCourse, sort]
+    )
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
     const pageItems = useMemo(() => {

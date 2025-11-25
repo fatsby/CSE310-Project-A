@@ -12,7 +12,6 @@ import { getUser } from '../../utils/auth'
 function ProfileController() {
     const { id } = useParams()
 
-    // Zustand selectors
     const [userData, setUserData] = useState(null)
     const [myData, setMyData] = useState(null)
     const myId = getUser().id
@@ -26,8 +25,12 @@ function ProfileController() {
             setUserData(respone)
         }
 
-        const getMyData = async () => {}
+        const getMyData = async () => {
+            const respone = await fetchUser(myId)
+            setMyData(respone)
+        }
 
+        getMyData()
         getUserData()
         setMyData(getUser())
 
@@ -43,12 +46,15 @@ function ProfileController() {
         )
     }
 
-    const isOwnProfile = 
+    var isOwnProfile = false
+
+    if (id == myId) isOwnProfile = true
+    else isOwnProfile = false
 
     return isOwnProfile ? (
-        <YourProfilePage userData={userData} />
+        <YourProfilePage userData={myData} />
     ) : (
-        <OtherProfilePage />
+        <OtherProfilePage userData={userData} />
     )
 }
 
