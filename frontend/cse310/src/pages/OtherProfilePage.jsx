@@ -25,6 +25,8 @@ import {
 } from '../data/SampleData'
 
 import ItemCard from '../components/OtherProfilePage_components/OtherProfileItemCard'
+import avatarIMG from '../assets/dog.jpg'
+import { fetchCourse } from '../../utils/fetch'
 
 function parseDMY(dmy) {
     if (!dmy) return new Date(0)
@@ -46,9 +48,10 @@ function calcSummary(items) {
     return { uploads, avgRating, totalPurchases }
 }
 
-export default function OtherUserProfile() {
+export default function OtherUserProfile({ userData }) {
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(true)
+    const [uploadCourse, setUploadCourse] = useState([])
 
     const user = useMemo(() => getUserById(Number(id)), [id])
 
@@ -96,8 +99,12 @@ export default function OtherUserProfile() {
     const PAGE_SIZE = 8
 
     useEffect(() => {
-        const t = setTimeout(() => setIsLoading(false), 200)
-        return () => clearTimeout(t)
+        const getUploadCourse = async () => {
+            const uploaded = await fetchCourse({ authorId: userData.id })
+            setUploadCourse(uploaded)
+        }
+
+        getUploadCourse()
     }, [])
 
     // Filtering pipeline
@@ -157,6 +164,25 @@ export default function OtherUserProfile() {
         setPage(1)
     }, [query, selectedUniversity, selectedCourse, sort])
 
+    const avgRating = () => {
+        if (!uploadCourse) return 0
+
+        const rated = uploadCourse.filter((i) => Number(i.avgRating) > 0)
+
+        if (!rated) return 0
+
+        return (
+            rated.reduce((sum, item) => sum + item.averageRating, 0) /
+            rated.length
+        )
+    }
+
+    const soldCount = () => {
+        if (!uploadCourse) return 0
+
+        return uploadCourse.reduce((sum, item) => sum + item.purchaseCount, 0)
+    }
+
     const summary = useMemo(() => calcSummary(userItems), [userItems])
 
     if (!user) {
@@ -174,12 +200,12 @@ export default function OtherUserProfile() {
                 <div className="lg:col-span-4 bg-white shadow-md rounded-2xl p-6">
                     <div className="flex flex-col items-center">
                         <img
-                            src={user.profilePicture}
-                            alt={user.name}
+                            src={userData?.avatarUrl || avatarIMG}
+                            alt={userData.userName}
                             className="w-24 h-24 rounded-full mb-4 object-cover"
                         />
                         <h2 className="text-xl font-semibold text-center">
-                            {user.name}
+                            {userData.userName}
                         </h2>
                         <div className="mt-3 flex gap-2 flex-wrap justify-center">
                             <Badge variant="light" color="blue" radius="md">
@@ -196,7 +222,7 @@ export default function OtherUserProfile() {
                                 <Medal /> Total Uploads
                             </h3>
                             <p className="text-2xl font-bold">
-                                {summary.uploads}
+                                {uploadCourse.length()}
                             </p>
                         </div>
                         <div className="bg-gray-100 p-4 rounded-lg text-center">
@@ -204,16 +230,14 @@ export default function OtherUserProfile() {
                                 <Star className="text-yellow-500" /> Avg Rating
                             </h3>
                             <p className="text-2xl font-bold">
-                                {summary.avgRating.toFixed(1)}
+                                {avgRating().toFixed(1)}
                             </p>
                         </div>
                         <div className="bg-gray-100 p-4 rounded-lg text-center">
                             <h3 className="text-lg font-semibold flex items-center justify-center gap-2">
                                 <ShoppingBag /> Total Purchases
                             </h3>
-                            <p className="text-2xl font-bold">
-                                {summary.totalPurchases}
-                            </p>
+                            <p className="text-2xl font-bold">{soldCount()}</p>
                         </div>
                     </div>
                 </div>

@@ -174,3 +174,9 @@ export const fetchChangeCourseActiveStatus = async (documentId, isActive) => {
         return false
     }
 }
+
+export const apiFetchFiles = async (docId, apiUrl) => {
+    const res = await fetch(`${apiUrl}/api/documents/${docId}/files`)
+    if (!res.ok) throw new Error('Failed to load files')
+    return await res.json()
+}
