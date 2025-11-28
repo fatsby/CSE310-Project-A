@@ -208,7 +208,7 @@ export default function YourProfilePage({ userData }) {
                             Uploaded Items
                         </Tabs.Tab>
                         <Tabs.Tab value="history" leftSection={<History />}>
-                            Balance History
+                            Purchase History
                         </Tabs.Tab>
                     </Tabs.List>
 

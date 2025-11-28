@@ -52,6 +52,12 @@ export default function EditItemPage() {
     const [newFiles, setNewFiles] = useState([])
     const [newImages, setNewImages] = useState([])
 
+    const [error, setError] = useState(null)
+    const [saving, setSaving] = useState(false)
+
+    const fileInputRef = useRef(null)
+    const imageInputRef = useRef(null)
+
     const API_URL = import.meta.env.VITE_API_BASE_URL
 
     useEffect(() => {
@@ -59,6 +65,17 @@ export default function EditItemPage() {
         fetchFileFromCourse()
         fetchImageFromCourse()
     }, [id])
+
+    // Auto turn off Error Alert
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                setError(null)
+            }, 3000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [error])
 
     // Get Course data
     const fetchCourseData = async () => {
@@ -86,8 +103,9 @@ export default function EditItemPage() {
             const res = await fetch(`${API_URL}/api/documents/${id}/files`)
 
             if (!res.ok) {
+                const errData = await res.json()
                 throw new Error(
-                    `Could not fetch file from course. Status: ${res.status}`
+                    `Could not fetch file from course. Status: ${errData.message}`
                 )
             }
 
@@ -95,6 +113,7 @@ export default function EditItemPage() {
             setFiles(json)
         } catch (err) {
             console.log('Error fetching file from course', err)
+            setError(err.message || 'Error fetching file from course')
         }
     }
 
@@ -114,33 +133,6 @@ export default function EditItemPage() {
         } catch (err) {
             console.log('Error fetching image from course', err)
         }
-    }
-
-    const [error, setError] = useState(null)
-    const [saving, setSaving] = useState(false)
-
-    const fileInputRef = useRef(null)
-    const imageInputRef = useRef(null)
-
-    // ---------- Thumbnails handlers ----------
-    const removeImage = (idx) => {
-        setImages((arr) => arr.filter((_, i) => i !== idx))
-    }
-    const moveImageUp = (idx) => {
-        if (idx === 0) return
-        setImages((arr) => {
-            const cp = [...arr]
-            ;[cp[idx - 1], cp[idx]] = [cp[idx], cp[idx - 1]]
-            return cp
-        })
-    }
-    const moveImageDown = (idx) => {
-        setImages((arr) => {
-            if (idx >= arr.length - 1) return arr
-            const cp = [...arr]
-            ;[cp[idx + 1], cp[idx]] = [cp[idx], cp[idx + 1]]
-            return cp
-        })
     }
 
     // Confirm to upload Files
@@ -191,7 +183,7 @@ export default function EditItemPage() {
     }
 
     // Comfirm to Remove file in course
-    const openRemoveConfirmModal = (fileId) => {
+    const openRemoveFileConfirmModal = (fileId) => {
         modals.openConfirmModal({
             title: 'Please confirm your action',
             centered: true,
@@ -200,6 +192,18 @@ export default function EditItemPage() {
             onConfirm: () => handleRemoveFile(fileId),
         })
     }
+
+    // Comfirm to Remove image in course
+    const openRemoveImageConfirmModal = (imageId) => {
+        modals.openConfirmModal({
+            title: 'Please confirm your action',
+            centered: true,
+            children: <Text size="sm">This image will be delete!!</Text>,
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: () => handleRemoveImage(imageId),
+        })
+    }
+
     // ============================================ BASIC INFORMTION ================================ //
     // Save Changes handle
     const onSave = async () => {
@@ -287,24 +291,24 @@ export default function EditItemPage() {
     const executeUploadImages = async (imagesToUpload) => {
         const uploadedFiles = []
         try {
-            await Promise.all(
-                imagesToUpload.map(async (file) => {
-                    const formData = new FormData()
-                    formData.append('file', file)
+            for (const file of imagesToUpload) {
+                const formData = new FormData()
+                formData.append('file', file)
 
-                    const res = await fetch(
-                        `${API_URL}/api/documents/${id}/images/add`,
-                        {
-                            method: 'POST',
-                            headers: { Authorization: `Bearer ${getToken()}` },
-                            body: formData,
-                        }
-                    )
-                    if (!res.ok) throw new Error('Fail to upload')
-                    const newFileDto = await res.json()
-                    uploadedFiles.push(newFileDto)
-                })
-            )
+                const res = await fetch(
+                    `${API_URL}/api/documents/${id}/images/add`,
+                    {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${getToken()}` },
+                        body: formData,
+                    }
+                )
+
+                if (!res.ok) throw new Error('Fail to upload')
+
+                const newFileDto = await res.json()
+                uploadedFiles.push(newFileDto)
+            }
 
             if (uploadedFiles.length > 0) {
                 setImages((prevFiles) => [...prevFiles, ...uploadedFiles])
@@ -317,10 +321,10 @@ export default function EditItemPage() {
     }
 
     // Delete Image in course
-    const handleRemoveImage = async (fileId) => {
+    const handleRemoveImage = async (imageId) => {
         try {
             const res = await fetch(
-                `${API_URL}/api/documents/${id}/images/${fileId}/delete`,
+                `${API_URL}/api/documents/${id}/images/${imageId}/delete`,
                 {
                     method: 'DELETE',
                     headers: {
@@ -330,13 +334,16 @@ export default function EditItemPage() {
             )
 
             if (!res.ok) {
-                throw new Error(`Remove failed: ${res.statusText}`)
+                const errData = await res.json()
+                throw new Error(`Remove failed: ${errData.message}`)
             }
 
-            const updateFiles = files.filter((f) => f.id !== fileId)
-            setImages(updateFiles)
+            setImages((prevImages) =>
+                prevImages.filter((img) => img.id !== imageId)
+            )
         } catch (err) {
             console.log(err)
+            setError(err.message || 'Error removing image')
         }
     }
 
@@ -394,13 +401,15 @@ export default function EditItemPage() {
             )
 
             if (!res.ok) {
-                throw new Error(`Remove failed: ${res.statusText}`)
+                const errData = await res.json()
+                throw new Error(`Remove failed: ${errData.message}`)
             }
 
             const updateFiles = files.filter((f) => f.id !== fileId)
             setFiles(updateFiles)
         } catch (err) {
             console.log(err)
+            setError(err.message || 'Error removing file')
         }
     }
 
@@ -521,7 +530,12 @@ export default function EditItemPage() {
             </div>
 
             {error && (
-                <Alert color="red" className="mb-4">
+                <Alert
+                    color="red"
+                    className="mb-4"
+                    withCloseButton
+                    onClose={() => setError(null)}
+                >
                     {error}
                 </Alert>
             )}
@@ -728,66 +742,62 @@ export default function EditItemPage() {
                             </Paper>
 
                             <Paper withBorder radius="md" p="md">
-                                <div className="font-semibold mb-3">
-                                    Preview
+                                <div className="font-semibold mb-3 flex justify-between items-center">
+                                    <span>Preview</span>
+                                    <Badge color="gray" variant="light">
+                                        {images.length} images
+                                    </Badge>
                                 </div>
-                                {images.length === 0 && (
-                                    <div className="text-sm text-gray-500">
-                                        No thumbnails yet.
+
+                                {images.length === 0 ? (
+                                    <div className="flex flex-col items-center justify-center py-10 text-gray-400 bg-gray-50 rounded-md border border-dashed">
+                                        <ImagePlus
+                                            size={40}
+                                            className="mb-2 opacity-50"
+                                        />
+                                        <span className="text-sm">
+                                            No images uploaded yet.
+                                        </span>
                                     </div>
-                                )}
-                                {console.log(images)}
-                                <div className="grid grid-cols-2 gap-3">
-                                    {images.map((src, idx) => (
-                                        <div
-                                            key={idx}
-                                            className="border rounded-md p-2"
-                                        >
-                                            <div className="relative">
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {images.map((img) => (
+                                            <div
+                                                key={img.id}
+                                                className="group relative border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
+                                            >
+                                                {/* Hiển thị ảnh - fill đầy khung */}
                                                 <Image
-                                                    src={src}
-                                                    alt={`thumb-${idx}`}
-                                                    radius="sm"
+                                                    src={img.url}
+                                                    alt={`img-${img.id}`}
+                                                    h={160}
+                                                    w="100%"
+                                                    fit="contain"
+                                                    fallbackSrc="https://placehold.co/400x300?text=Error"
                                                 />
-                                                <div className="flex gap-1 mt-2">
-                                                    <ActionIcon
-                                                        variant="light"
-                                                        onClick={() =>
-                                                            moveImageUp(idx)
-                                                        }
-                                                        title="Move up"
-                                                    >
-                                                        <MoveUp size={16} />
-                                                    </ActionIcon>
-                                                    <ActionIcon
-                                                        variant="light"
-                                                        onClick={() =>
-                                                            moveImageDown(idx)
-                                                        }
-                                                        title="Move down"
-                                                    >
-                                                        <MoveDown size={16} />
-                                                    </ActionIcon>
+
+                                                <div className="absolute top-2 right-2">
                                                     <ActionIcon
                                                         color="red"
-                                                        variant="light"
+                                                        variant="filled"
+                                                        size="sm"
+                                                        className="opacity-90 hover:opacity-100 shadow-sm"
                                                         onClick={() =>
-                                                            handleRemoveImage(
-                                                                idx
+                                                            openRemoveImageConfirmModal(
+                                                                img.id
                                                             )
                                                         }
-                                                        title="Delete"
+                                                        title="Delete image"
                                                     >
-                                                        <Trash2 size={16} />
+                                                        <Trash2 size={14} />
                                                     </ActionIcon>
                                                 </div>
+
+                                                <div className="absolute inset-0 pointer-events-none border rounded-lg border-black/5"></div>
                                             </div>
-                                            <div className="text-[11px] text-gray-500 mt-1 break-all">
-                                                {src}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
+                                )}
                             </Paper>
                         </div>
 
@@ -899,7 +909,9 @@ export default function EditItemPage() {
                                                 </Table.Td>
                                                 <Table.Td className="break-all">
                                                     <div className="flex justify-center items-center">
-                                                        <ActionIcon
+                                                        <Button
+                                                            color="green"
+                                                            variant="light"
                                                             onClick={() =>
                                                                 handleDownloadFile(
                                                                     f.id,
@@ -909,25 +921,25 @@ export default function EditItemPage() {
                                                             className="text-blue-600 underline"
                                                         >
                                                             <ArrowBigDownDash
-                                                                size={16}
+                                                                size={20}
                                                             />
-                                                        </ActionIcon>
+                                                        </Button>
                                                     </div>
                                                 </Table.Td>
                                                 <Table.Td>
                                                     <div className="flex justify-center items-center">
-                                                        <ActionIcon
+                                                        <Button
                                                             color="red"
                                                             variant="light"
                                                             onClick={() =>
-                                                                openRemoveConfirmModal(
+                                                                openRemoveFileConfirmModal(
                                                                     f.id
                                                                 )
                                                             }
                                                             title="Remove"
                                                         >
                                                             <Trash2 size={16} />
-                                                        </ActionIcon>
+                                                        </Button>
                                                     </div>
                                                 </Table.Td>
                                             </Table.Tr>

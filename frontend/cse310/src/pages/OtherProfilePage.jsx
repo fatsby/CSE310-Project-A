@@ -18,8 +18,7 @@ import {
     Search,
 } from 'lucide-react'
 
-import ItemCard from '../components/OtherProfilePage_components/OtherProfileItemCard'
-// import ItemCard from '../components/ItemCard'
+import ItemCard from '../components/ItemCard'
 import avatarIMG from '../assets/dog.jpg'
 import { fetchCourse } from '../../utils/fetch'
 
@@ -346,7 +345,7 @@ export default function OtherUserProfile({ userData }) {
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                             {pageItems.map((item) => (
                                 // <ItemCard key={item.id} itemData={item} />
-                                <ItemCard key={item.id} item={item} />
+                                <ItemCard key={item.id} itemData={item} />
                             ))}
                         </div>
 

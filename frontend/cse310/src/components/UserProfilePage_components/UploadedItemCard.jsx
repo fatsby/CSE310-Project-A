@@ -1,18 +1,17 @@
 import { Link } from 'react-router-dom'
-import { Button, Text } from '@mantine/core'
+import { Button, Text, Badge, Tooltip, ActionIcon } from '@mantine/core'
 import { modals } from '@mantine/modals'
 import { notifications } from '@mantine/notifications'
-import { Pencil, Power, Ban, CheckCircle2 } from 'lucide-react'
+import { Pencil, Power, Ban, CheckCircle2, Eye } from 'lucide-react'
 import { fetchChangeCourseActiveStatus } from '../../../utils/fetch'
 import { useState } from 'react'
 
-export default function UploadedItemCard({ item, onEdit, onDelete }) {
+export default function UploadedItemCard({ item }) {
     const [isActive, setIsActive] = useState(item.isActive)
 
     if (!item) return null
 
     const handleToggleStatus = () => {
-        // Xác định hành động tiếp theo dựa trên trạng thái hiện tại
         const nextStatus = !isActive
         const actionLabel = isActive ? 'Disable' : 'Activate'
         const actionColor = isActive ? 'red' : 'teal'
@@ -50,7 +49,6 @@ export default function UploadedItemCard({ item, onEdit, onDelete }) {
 
                 if (success) {
                     setIsActive(nextStatus)
-
                     notifications.update({
                         id,
                         color: 'green',
@@ -78,48 +76,104 @@ export default function UploadedItemCard({ item, onEdit, onDelete }) {
     }
 
     return (
-        <div className="border p-4 mb-4 rounded-lg shadow-sm">
-            <div className="flex items-center justify-between mb-2">
-                {/* Container for item details on the left */}
-                <div className="flex items-center space-x-1">
-                    <Link to={`/item/${item.id}`}>
-                        <h3 className="text-lg font-semibold hover:underline">
-                            {item.name}
-                        </h3>
-                    </Link>
-                    <p className="bg-blue-700 text-white font-semibold rounded-lg p-1.5 text-sm">
-                        {item.subjectName}
-                    </p>
-                    <p className="bg-rose-600 text-white font-semibold rounded-lg p-1.5 text-sm">
-                        {item.universityName}
-                    </p>
+        <div
+            className={`group flex flex-col sm:flex-row bg-white border rounded-xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md mb-4 ${
+                !isActive ? 'opacity-75 bg-gray-50' : ''
+            }`}
+        >
+            {/* --- LEFT: CLICKABLE CONTENT AREA --- */}
+            <Link
+                to={`/data/${item.id}`}
+                className="flex-1 grid grid-cols-10 gap-4 p-3 text-inherit no-underline hover:bg-blue-50/30 transition-colors relative"
+            >
+                {/* Image Section */}
+                <div className="col-span-3 sm:col-span-2 overflow-hidden rounded-lg relative">
+                    <img
+                        src={
+                            item.images?.[0] ||
+                            'https://placehold.co/400?text=No+Image'
+                        }
+                        alt={item.name}
+                        className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                            !isActive ? 'grayscale' : ''
+                        }`}
+                    />
+                    <div className="absolute top-1 left-1">
+                        <Badge
+                            color={isActive ? 'green' : 'red'}
+                            variant="filled"
+                            size="xs"
+                        >
+                            {isActive ? 'Active' : 'Disabled'}
+                        </Badge>
+                    </div>
                 </div>
 
-                {/* Container for buttons on the right */}
-                <div className="flex space-x-2">
-                    <Link to={`/item/${item.id}/edit`}>
-                        <Button
-                            variant="light"
-                            radius="md"
-                            rightSection={<Pencil size="16" />}
-                        >
-                            Edit
-                        </Button>
-                    </Link>
-                    <Button
-                        variant="filled"
-                        radius="md"
-                        color={isActive ? '#c10007' : '#41c720'}
-                        onClick={handleToggleStatus}
-                        rightSection={
-                            isActive ? <Ban size="16" /> : <Power size="16" />
-                        }
-                    >
-                        {isActive ? 'Disable' : 'Activate'}
-                    </Button>
+                {/* Info Section */}
+                <div className="col-span-7 sm:col-span-8 flex flex-col justify-between py-1 pr-2">
+                    <div>
+                        <div className="mb-1 flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                {item.universityName}
+                            </span>
+                        </div>
+                        <h3 className="line-clamp-2 mb-2 text-[16px] font-bold leading-tight text-slate-800 group-hover:text-blue-700 transition-colors">
+                            {item.name}
+                        </h3>
+                    </div>
+
+                    <div className="flex items-end justify-between mt-2">
+                        <span className="inline-block rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                            {item.subjectName}
+                        </span>
+
+                        <div className="text-right">
+                            {item.price === 0 ? (
+                                <span className="font-bold text-green-600 text-sm">
+                                    Free
+                                </span>
+                            ) : (
+                                <span className="font-bold text-blue-600 text-[15px]">
+                                    {new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND',
+                                    }).format(item.price)}
+                                </span>
+                            )}
+                        </div>
+                    </div>
                 </div>
+            </Link>
+
+            {/* --- RIGHT: ACTION BUTTONS AREA --- */}
+            <div className="flex sm:flex-col items-center justify-center gap-2 p-3 border-t sm:border-t-0 sm:border-l border-gray-100 bg-gray-50 min-w-[120px]">
+                <Link to={`/item/${item.id}/edit`} className="w-full">
+                    <Button
+                        fullWidth
+                        variant="white"
+                        color="blue"
+                        className="border border-gray-200 hover:bg-blue-50"
+                        leftSection={<Pencil size={14} />}
+                        size="xs"
+                    >
+                        Edit
+                    </Button>
+                </Link>
+
+                <Button
+                    fullWidth
+                    variant={isActive ? 'light' : 'filled'}
+                    color={isActive ? 'red' : 'green'}
+                    onClick={handleToggleStatus}
+                    leftSection={
+                        isActive ? <Ban size={14} /> : <Power size={14} />
+                    }
+                    size="xs"
+                    className="transition-all"
+                >
+                    {isActive ? 'Disable' : 'Activate'}
+                </Button>
             </div>
-            <p className="text-gray-600">Price: ${item.price}</p>
         </div>
     )
 }
