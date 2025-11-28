@@ -17,14 +17,9 @@ import {
     CalendarClock,
     Search,
 } from 'lucide-react'
-import {
-    getUserById,
-    getItemsList,
-    getUniversityNames,
-    getCoursesByUniversity,
-} from '../data/SampleData'
 
 import ItemCard from '../components/OtherProfilePage_components/OtherProfileItemCard'
+// import ItemCard from '../components/ItemCard'
 import avatarIMG from '../assets/dog.jpg'
 import { fetchCourse } from '../../utils/fetch'
 
@@ -34,62 +29,62 @@ function parseDMY(dmy) {
     return new Date(y, (m || 1) - 1, d || 1)
 }
 
-function calcSummary(items) {
-    if (!items.length) return { uploads: 0, avgRating: 0, totalPurchases: 0 }
-    const uploads = items.length
-    const avgRating =
-        Math.round(
-            (items.reduce((s, it) => s + (it.avgRating || 0), 0) / uploads) * 10
-        ) / 10
-    const totalPurchases = items.reduce(
-        (s, it) => s + (it.purchaseCount || 0),
-        0
-    )
-    return { uploads, avgRating, totalPurchases }
-}
-
 export default function OtherUserProfile({ userData }) {
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(true)
     const [uploadCourse, setUploadCourse] = useState([])
 
-    const user = useMemo(() => getUserById(Number(id)), [id])
-
-    // All items → then just this user's uploads
-    const allItems = useMemo(() => getItemsList(), [])
-    const userItems = useMemo(
-        () => allItems.filter((it) => String(it.authorId) === String(id)),
-        [allItems, id]
-    )
+    const [selectedUniversity, setSelectedUniversity] = useState('all')
+    const [selectedCourse, setSelectedCourse] = useState('all')
 
     // Search & sort
     const [query, setQuery] = useState('')
 
-    // “Smart” selectors like HomePage
-    const universityOptions = useMemo(
-        () => [
-            { value: 'all', label: 'All universities' },
-            ...getUniversityNames().map((n) => ({ value: n, label: n })),
-        ],
-        []
-    )
+    useEffect(() => {
+        setIsLoading(true)
+        const getUploadCourse = async () => {
+            const uploaded = await fetchCourse({ authorId: userData.id })
+            setUploadCourse(uploaded)
+            setIsLoading(false)
+        }
 
-    const [selectedUniversity, setSelectedUniversity] = useState('all')
-    const [selectedCourse, setSelectedCourse] = useState('all')
+        getUploadCourse()
+    }, [id])
+
+    // “Smart” selectors like HomePage
+    const universityOptions = useMemo(() => {
+        const unis = [
+            ...new Set(
+                uploadCourse.map((item) => item.universityName).filter(Boolean)
+            ),
+        ]
+        return [
+            { value: 'all', label: 'All Universities' },
+            ...unis.map((u) => ({ value: u, label: u })),
+        ]
+    }, [uploadCourse])
 
     // Courses shown = (courses for that university) ∩ (courses this user uploaded at that university)
     const courseOptions = useMemo(() => {
-        if (selectedUniversity === 'all') return []
-        const baseCourses = getCoursesByUniversity(selectedUniversity) // [{value: 'CSE201', label: 'CSE201 - ...'}]
-        const userCourseCodes = new Set(
-            userItems
-                .filter((it) => it.university === selectedUniversity)
-                .map((it) => it.subject)
-                .filter(Boolean)
-        )
-        const filtered = baseCourses.filter((c) => userCourseCodes.has(c.value))
-        return [{ value: 'all', label: 'All courses' }, ...filtered]
-    }, [selectedUniversity, userItems])
+        let validItems = uploadCourse
+
+        if (selectedUniversity !== 'all') {
+            validItems = uploadCourse.filter(
+                (item) => item.universityName === selectedUniversity
+            )
+        }
+
+        const subjects = [
+            ...new Set(
+                validItems.map((item) => item.subjectName).filter(Boolean)
+            ),
+        ]
+
+        return [
+            { value: 'all', label: 'All Courses' },
+            ...subjects.map((s) => ({ value: s, label: s })),
+        ]
+    }, [selectedUniversity, uploadCourse])
 
     // Sorting
     const [sort, setSort] = useState('recent') // recent | priceAsc | priceDesc | ratingDesc | purchasedDesc
@@ -98,61 +93,49 @@ export default function OtherUserProfile({ userData }) {
     const [page, setPage] = useState(1)
     const PAGE_SIZE = 8
 
-    useEffect(() => {
-        const getUploadCourse = async () => {
-            const uploaded = await fetchCourse({ authorId: userData.id })
-            setUploadCourse(uploaded)
+    // Filtering pipeline
+    const filtered = useMemo(() => {
+        let res = [...uploadCourse]
+
+        if (query.trim()) {
+            const q = query.trim().toLowerCase()
+            res = res.filter((it) => it.name.toLowerCase().includes(q))
         }
 
-        getUploadCourse()
-    }, [])
+        if (selectedUniversity !== 'all') {
+            res = res.filter((it) => it.universityName === selectedUniversity)
+        }
 
-    // Filtering pipeline
-    const filtered = useMemo(
-        ({ userData }) => {
-            let res = [...userItems]
+        if (selectedCourse !== 'all') {
+            res = res.filter((it) => it.subjectName === selectedCourse)
+        }
 
-            if (query.trim()) {
-                const q = query.trim().toLowerCase()
-                res = res.filter((it) => it.name.toLowerCase().includes(q))
-            }
-
-            if (selectedUniversity !== 'all') {
-                res = res.filter((it) => it.university === selectedUniversity)
-            }
-
-            if (selectedCourse !== 'all') {
-                res = res.filter((it) => it.subject === selectedCourse)
-            }
-
-            switch (sort) {
-                case 'priceAsc':
-                    res.sort((a, b) => Number(a.price) - Number(b.price))
-                    break
-                case 'priceDesc':
-                    res.sort((a, b) => Number(b.price) - Number(a.price))
-                    break
-                case 'ratingDesc':
-                    res.sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0))
-                    break
-                case 'purchasedDesc':
-                    res.sort(
-                        (a, b) =>
-                            (b.purchaseCount || 0) - (a.purchaseCount || 0)
-                    )
-                    break
-                case 'recent':
-                default:
-                    res.sort(
-                        (a, b) =>
-                            parseDMY(b.lastUpdated) - parseDMY(a.lastUpdated)
-                    )
-                    break
-            }
-            return res
-        },
-        [userItems, query, selectedUniversity, selectedCourse, sort]
-    )
+        switch (sort) {
+            case 'priceAsc':
+                res.sort((a, b) => Number(a.price) - Number(b.price))
+                break
+            case 'priceDesc':
+                res.sort((a, b) => Number(b.price) - Number(a.price))
+                break
+            case 'ratingDesc':
+                res.sort(
+                    (a, b) => (b.averageRating || 0) - (a.averageRating || 0)
+                )
+                break
+            case 'purchasedDesc':
+                res.sort(
+                    (a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0)
+                )
+                break
+            case 'recent':
+            default:
+                res.sort(
+                    (a, b) => parseDMY(b.updatedAt) - parseDMY(a.updatedAt)
+                )
+                break
+        }
+        return res
+    }, [uploadCourse, query, selectedUniversity, selectedCourse, sort])
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
     const pageItems = useMemo(() => {
@@ -171,10 +154,12 @@ export default function OtherUserProfile({ userData }) {
 
         if (!rated) return 0
 
-        return (
-            rated.reduce((sum, item) => sum + item.averageRating, 0) /
-            rated.length
+        const total = uploadCourse.reduce(
+            (sum, item) => sum + (item.averageRating || 0),
+            0
         )
+
+        return total / uploadCourse.length
     }
 
     const soldCount = () => {
@@ -183,9 +168,7 @@ export default function OtherUserProfile({ userData }) {
         return uploadCourse.reduce((sum, item) => sum + item.purchaseCount, 0)
     }
 
-    const summary = useMemo(() => calcSummary(userItems), [userItems])
-
-    if (!user) {
+    if (!userData) {
         return (
             <div className="container mx-auto px-4 pb-4 pt-[125px]">
                 <p className="text-lg">User not found.</p>
@@ -222,7 +205,7 @@ export default function OtherUserProfile({ userData }) {
                                 <Medal /> Total Uploads
                             </h3>
                             <p className="text-2xl font-bold">
-                                {uploadCourse.length()}
+                                {uploadCourse.length}
                             </p>
                         </div>
                         <div className="bg-gray-100 p-4 rounded-lg text-center">
@@ -362,6 +345,7 @@ export default function OtherUserProfile({ userData }) {
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
                             {pageItems.map((item) => (
+                                // <ItemCard key={item.id} itemData={item} />
                                 <ItemCard key={item.id} item={item} />
                             ))}
                         </div>

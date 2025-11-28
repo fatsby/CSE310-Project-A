@@ -1,0 +1,2 @@
+- /api/documents/{id}/images - bổ sung thêm id của image trong respone
+- Thêm api trả về tất cả course của AuthorId (isActive = true/false lấy hết) - chỉ call api dc nếu currentUser là Auhor 

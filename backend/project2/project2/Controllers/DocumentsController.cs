@@ -157,7 +157,11 @@ namespace project2.Controllers {
                 UniversityName = doc.University.Name,
                 SubjectId = doc.SubjectId,
                 SubjectName = doc.Subject.Name,
+                PurchaseCount = doc.purchaseCount,
+                ReviewCount = doc.ReviewCount,
+                AverageRating = doc.AverageRating,
                 isActive = doc.isActive,
+                UpdatedAt = doc.UpdatedAt,
                 isDeleted = doc.isDeleted,
                 Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
                 Files = doc.Files.Select(f => new DocumentFileDto {

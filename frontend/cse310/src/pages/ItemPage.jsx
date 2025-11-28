@@ -68,7 +68,7 @@ function ItemPage() {
     const [couponError, setCouponError] = useState(false)
 
     const [isPurchased, setIsPurchased] = useState(false)
-    const [currentUser, setCurrentUser] = useState(getUser())
+    const currentUser = getUser()
 
     const [errorTitle, setErrorTitle] = useState('Error')
     const [errorContent, setErrorContent] = useState('')
