@@ -1,21 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using project2.DTOs.CartDto;
 
-namespace project2.Services {
-    public class CartService : ICartService {
+
+namespace project2.Services
+{
+    public class CartService : ICartService
+    {
         private readonly AppDbContext _db;
 
-        public CartService(AppDbContext db) {
+        public CartService(AppDbContext db)
+        {
             _db = db;
         }
 
-        public async Task AddToCartAsync(string userId, int documentId, CancellationToken ct) {
+        public async Task AddToCartAsync(string userId, int documentId, CancellationToken ct)
+        {
             // validate
             var document = await _db.Documents
                 .AsNoTracking()
@@ -38,12 +39,14 @@ namespace project2.Services {
             var alreadyInCart = await _db.CartItems
                 .AnyAsync(ci => ci.UserId == userId && ci.DocumentId == documentId, ct);
 
-            if (alreadyInCart) {
+            if (alreadyInCart)
+            {
                 throw new InvalidOperationException("This item is already in your cart.");
             }
 
             // add to cart
-            var cartItem = new CartItem {
+            var cartItem = new CartItem
+            {
                 UserId = userId,
                 DocumentId = documentId,
             };
@@ -52,16 +55,37 @@ namespace project2.Services {
             await _db.SaveChangesAsync(ct);
         }
 
-        public async Task RemoveFromCartAsync(string userId, int documentId, CancellationToken ct) {
+        public async Task RemoveFromCartAsync(string userId, int documentId, CancellationToken ct)
+        {
             var cartItem = await _db.CartItems
                 .FirstOrDefaultAsync(ci => ci.UserId == userId && ci.DocumentId == documentId, ct);
 
-            if (cartItem == null) {
+            if (cartItem == null)
+            {
                 return;
             }
 
             _db.CartItems.Remove(cartItem);
             await _db.SaveChangesAsync(ct);
         }
+
+        public async Task<IEnumerable<CartItemDto>> GetCartAsync(string userId, CancellationToken ct)
+        {
+            var response = await _db.CartItems
+                .Where(ci => ci.UserId == userId)
+                .Select(ci => new CartItemDto
+                {
+                    DocumentName = ci.Document.Name,
+                    DocumentId = ci.DocumentId,
+                    DocumentPrice = ci.Document.Price,
+                    UniversityName = ci.Document.University.Name,
+                    SubjectName = ci.Document.Subject.Name,
+                    ImageUrl = ci.Document.Images.OrderBy(i => i.SortOrder).FirstOrDefault().Url
+                })
+                .ToListAsync(ct);
+
+            return response;
+        }
     }
+
 }

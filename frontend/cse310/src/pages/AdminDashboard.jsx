@@ -212,13 +212,12 @@ const useAdminData = () => {
   };
 
   const upsertItem = (item) => {
-    // Optimistic upsert
+    // DEPRECATED
     setItems((prev) => {
       const exists = prev.some((it) => it.id === item.id);
       if (exists) return prev.map((it) => (it.id === item.id ? { ...it, ...item } : it));
       return [item, ...prev];
     });
-    // TODO: Call API POST/PUT /documents
   };
 
   const deleteItem = (id) => {

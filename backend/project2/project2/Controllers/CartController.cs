@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using project2.Services;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace project2.Controllers
 {
@@ -19,6 +15,19 @@ namespace project2.Controllers
         public CartController(ICartService cartService)
         {
             _cartService = cartService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCart(CancellationToken ct)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            var cart = await _cartService.GetCartAsync(userId, ct);
+            return Ok(cart);
         }
 
         [HttpPost("{documentId:int}")]

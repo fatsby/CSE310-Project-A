@@ -1,8 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FileInput, TextInput, NumberInput, Textarea, Select, Button, Container, Paper, Title, Text, Group, ThemeIcon } from '@mantine/core';
-import { Check, Clock, ArrowLeft, Home } from 'lucide-react'; // Import icons
-import { getToken } from '../../utils/auth';
+import { useState, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import {
+    FileInput,
+    TextInput,
+    NumberInput,
+    Textarea,
+    Select,
+    Button,
+    Container,
+    Paper,
+    Title,
+    Text,
+    Group,
+    ThemeIcon,
+    SimpleGrid,
+    Image,
+    ActionIcon,
+    Alert,
+    Divider,
+} from '@mantine/core'
+import { Check, Clock, CloudUpload, Home, FileText, Book, Building, Tag, Image as ImageIcon, File, X } from 'lucide-react'
+import { getToken } from '../../utils/auth'
 
 export default function SetFileName() {
   const navigate = useNavigate();
@@ -133,12 +151,12 @@ export default function SetFileName() {
 
   if (uploadSuccess) {
         return (
-            <Container size="sm" className="mt-25">
-                <Paper p="xl" radius="md" withBorder className="text-center shadow-sm">
+            <Container size="sm" className="pt-[120px] pb-10">
+                <Paper p="xl" radius="lg" withBorder className="text-center shadow-lg">
                     {/* Success Icon */}
-                    <ThemeIcon color="green" size={60} radius="xl" className="mb-4">
-                        <Check size={32} />
-                    </ThemeIcon>
+                    <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full mx-auto flex items-center justify-center mb-4">
+                        <Check size={48} />
+                    </div>
 
                     <Title order={2} className="mb-2">Submission Received!</Title>
                     
@@ -147,7 +165,7 @@ export default function SetFileName() {
                     </Text>
 
                     {/* Pending Info Card */}
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 mx-auto max-w-md">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8 mx-auto max-w-lg">
                         <div className="flex items-center justify-center gap-3 text-yellow-800">
                             <Clock size={24} />
                             <Text fw={600}>Waiting for Approval</Text>
@@ -161,14 +179,15 @@ export default function SetFileName() {
                     <Group justify="center" gap="md">
                         <Button 
                             variant="default" 
+                            size="md"
                             leftSection={<Home size={16}/>}
                             onClick={() => navigate('/')}
                         >
                             Return to Home
                         </Button>
                         <Button 
-                            color="blue"
-                            leftSection={<ArrowLeft size={16}/>}
+                            size="md"
+                            leftSection={<CloudUpload size={16}/>}
                             onClick={() => {
                                 navigate('/');
                             }}
@@ -182,113 +201,163 @@ export default function SetFileName() {
     }
 
   return (
-    <div className="max-w-2xl mx-auto mt-25 p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-2xl font-bold mb-6">Finalize Upload</h1>
+        <div className="bg-slate-50 min-h-screen">
+            <Container size="md" className="pt-[120px] pb-10">
+                <Paper withBorder shadow="lg" p="xl" radius="lg">
+                    <Title order={2} className="text-slate-800 mb-1">
+                        Finalize Your Upload
+                    </Title>
+                    <Text c="dimmed" mb="xl">
+                        Provide the details for your document to make it available on the platform.
+                    </Text>
 
-      <div className="space-y-4">
-        <TextInput
-          label="Document Title"
-          placeholder="e.g. Calculus II Final Exam 2024"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+                    <div className="space-y-6">
+                        <TextInput
+                            label="Document Title"
+                            placeholder="e.g. Calculus II Final Exam 2024"
+                            required
+                            size="md"
+                            radius="md"
+                            leftSection={<FileText size={18} />}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
 
-        <Textarea
-          label="Description"
-          placeholder="Describe the contents..."
-          required
-          minRows={3}
-          autosize
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+                        <Textarea
+                            label="Description"
+                            placeholder="Describe the contents, topics covered, and any other relevant details..."
+                            required
+                            minRows={4}
+                            autosize
+                            size="md"
+                            radius="md"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
 
-        <div className="grid grid-cols-2 gap-4">
-          <Select
-            label="University"
-            placeholder="Select University"
-            data={universities}
-            value={universityId}
-            onChange={setUniversityId}
-            required
-            searchable
-          />
-          <Select
-            label="Subject"
-            placeholder="Select Subject"
-            data={subjects}
-            value={subjectId}
-            onChange={setSubjectId}
-            required
-            disabled={!universityId}
-            searchable
-          />
+                        <SimpleGrid cols={2} spacing="md">
+                            <Select
+                                label="University"
+                                placeholder="Select University"
+                                data={universities}
+                                value={universityId}
+                                onChange={setUniversityId}
+                                required
+                                searchable
+                                size="md"
+                                radius="md"
+                                leftSection={<Building size={18} />}
+                            />
+                            <Select
+                                label="Subject"
+                                placeholder="Select Subject"
+                                data={subjects}
+                                value={subjectId}
+                                onChange={setSubjectId}
+                                required
+                                disabled={!universityId}
+                                searchable
+                                size="md"
+                                radius="md"
+                                leftSection={<Book size={18} />}
+                            />
+                        </SimpleGrid>
+
+                        <NumberInput
+                            label="Price (VND)"
+                            description="Set to 0 for a free document."
+                            defaultValue={0}
+                            min={0}
+                            step={10000}
+                            thousandSeparator
+                            size="md"
+                            radius="md"
+                            leftSection={<Tag size={18} />}
+                            value={price}
+                            onChange={setPrice}
+                        />
+
+                        <FileInput
+                            label="Preview Images"
+                            description="Upload 1-5 images (JPG/PNG) to serve as thumbnails."
+                            placeholder={previewImages.length > 0 ? `${previewImages.length} images selected` : "Click to select images"}
+                            multiple
+                            clearable
+                            accept="image/png,image/jpeg,image/webp"
+                            value={previewImages}
+                            onChange={(payload) => {
+                                // handle clear
+                                if (!payload || payload.length === 0) {
+                                  setPreviewImages([]);
+                                  return;
+                                }
+                    
+                                // logic to append images instead of replacing
+                                setPreviewImages((current) => {
+                                  // create a set of existing file names to avoid duplicates
+                                  const currentNames = new Set(current.map(f => f.name));
+                                  const newFiles = payload.filter(f => !currentNames.has(f.name));
+                                  return [...current, ...newFiles];
+                                });
+                              }}
+                            required
+                            size="md"
+                            radius="md"
+                            leftSection={<ImageIcon size={18} />}
+                        />
+
+                        {previewImages.length > 0 && (
+                            <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="sm">
+                                {previewImages.map((file, index) => (
+                                    <Paper key={index} withBorder radius="md" className="overflow-hidden">
+                                      <ActionIcon
+                                            variant="filled"
+                                            color="red"
+                                            size="sm"
+                                            radius="xl"
+                                            className="absolute left-1 top-1 mb-2"
+                                            onClick={() => setPreviewImages(current => current.filter((_, i) => i !== index))}
+                                        >
+                                            <X size={12} />
+                                        </ActionIcon>
+                                        <Image className="relative" src={URL.createObjectURL(file)} height={100} fit="cover" />
+                                        
+                                    </Paper>
+                                ))}
+                            </SimpleGrid>
+                        )}
+
+                        <Paper withBorder p="md" radius="md" bg="gray.0">
+                            <Text size="sm" fw={500} mb="xs">Attached Document Files</Text>
+                            <ul className="space-y-1 list-none p-0 m-0">
+                                {documentFiles.map((f, index) => (
+                                    <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                                        <File size={14} />
+                                        <span>{f.name}</span>
+                                        <span className="text-gray-400">({(f.size / 1024).toFixed(1)} KB)</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </Paper>
+
+                        <Divider my="xs" />
+
+                        <Group justify="flex-end">
+                            <Button variant="default" size="md" radius="md" onClick={() => navigate(-1)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                size="md"
+                                radius="md"
+                                onClick={handleSubmit}
+                                loading={isSubmitting}
+                            >
+                                Publish Document
+                            </Button>
+                        </Group>
+                    </div>
+                </Paper>
+            </Container>
         </div>
-
-        <NumberInput
-          label="Price (VND)"
-          description="Set 0 for free"
-          defaultValue={0}
-          min={0}
-          step={1000}
-          value={price}
-          onChange={setPrice}
-        />
-
-        {/* Specific Input for Preview Images required by Backend */}
-        <FileInput
-          label="Preview Images (Required)"
-          description="Upload 1-5 images (JPG/PNG). Click again to add more."
-          placeholder={previewImages.length > 0 ? `${previewImages.length} images selected` : "Click to select images"}
-          multiple
-          clearable
-          accept="image/png,image/jpeg,image/webp"
-          value={previewImages}
-          onChange={(payload) => {
-            // handle clear
-            if (!payload || payload.length === 0) {
-              setPreviewImages([]);
-              return;
-            }
-
-            // logic to append images instead of replacing
-
-            setPreviewImages((current) => {
-              // create a map of existing file names to avoid duplicates
-              const currentNames = new Set(current.map(f => f.name));
-              const newFiles = payload.filter(f => !currentNames.has(f.name));
-              return [...current, ...newFiles];
-            });
-          }}
-          required={previewImages.length === 0}
-        />
-        {/* Add a mini list to show selected files so user can see what is staged */}
-        {previewImages.length > 0 && (
-          <div className="mt-2 text-sm text-gray-500">
-            <strong>Selected:</strong> {previewImages.map(f => f.name).join(', ')}
-          </div>
-        )}
-
-        <div className="mt-4 bg-gray-50 p-4 rounded">
-          <p className="text-sm font-semibold text-gray-600 mb-2">Attached Files:</p>
-          <ul className="list-disc pl-5 text-sm text-gray-500">
-            {documentFiles.map((f, index) => (
-              <li key={index}>{f.name} ({f.size} bytes)</li>
-            ))}
-          </ul>
-        </div>
-
-        <Button
-          fullWidth
-          size="md"
-          onClick={handleSubmit}
-          loading={isSubmitting}
-          className="mt-6 bg-[#4e93fc] hover:bg-[#3776e8]"
-        >
-          Publish Document
-        </Button>
-      </div>
-    </div>
   );
 }

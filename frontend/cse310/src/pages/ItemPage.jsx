@@ -70,6 +70,7 @@ function ItemPage() {
     const [isPurchased, setIsPurchased] = useState(false)
     const currentUser = getUser()
 
+    const [isAddingToCart, setIsAddingToCart] = useState(false)
     const [errorTitle, setErrorTitle] = useState('Error')
     const [errorContent, setErrorContent] = useState('')
 
@@ -347,6 +348,45 @@ function ItemPage() {
             console.error(error)
             setErrorContent('Network connection error.')
             open()
+        }
+    }
+
+    const handleAddToCart = async () => {
+        setIsAddingToCart(true)
+        const notifId = notifications.show({
+            loading: true,
+            title: 'Adding to Cart',
+            message: 'Please wait...',
+            autoClose: false,
+            withCloseButton: false,
+        })
+
+        try {
+            const response = await fetch(`${API_URL}/api/cart/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            })
+
+            if (!response.ok) {
+                const errorData = await response.text()
+                throw new Error(errorData || 'Failed to add item to cart.')
+            }
+
+            notifications.update({
+                id: notifId,
+                color: 'teal',
+                title: 'Success!',
+                message: 'Item added to your cart.',
+                icon: <CheckIcon size="1rem" />,
+                autoClose: 3000,
+            })
+        } catch (error) {
+            showError('Add to Cart Failed', error.message)
+        } finally {
+            setIsAddingToCart(false)
         }
     }
 
@@ -769,8 +809,10 @@ function ItemPage() {
                                     variant="outline"
                                     color="#000"
                                     size="md"
-                                    disabled={isPurchased}
+                                    disabled={isPurchased || isAddingToCart}
                                     className="w-full"
+                                    onClick={handleAddToCart}
+                                    loading={isAddingToCart}
                                 >
                                     {isPurchased ? 'Item Owned' : 'Add to Cart'}
                                 </Button>
