@@ -6,7 +6,15 @@ import Upload from '../pages/Upload'
 // Import auth utilities
 import { removeToken, getUser } from '../../utils/auth'
 // Lucide Logo Imports
-import { User, LogOut, Wallet, Archive, ShoppingCart } from 'lucide-react'
+import {
+    User,
+    LogOut,
+    Wallet,
+    Archive,
+    ShoppingCart,
+    Banknote,
+    Landmark,
+} from 'lucide-react'
 
 // Images
 import LogoIMG from '../assets/LogoBanner_Trans.png'
@@ -14,7 +22,8 @@ import avatarIMG from '../assets/dog.jpg'
 
 export default function UserHeader() {
     // Modal state
-    const [opened, { open, close }] = useDisclosure(false)
+    const [uploadOpened, { open: openUpload, close: closeUpload }] =
+        useDisclosure(false)
 
     // Initialize state directly from localStorage
     // If the user is not logged in, this will be null
@@ -52,7 +61,7 @@ export default function UserHeader() {
                             />
                         </Link>
                         <div
-                            onClick={open}
+                            onClick={openUpload}
                             className="hover:text-[#68a8fd] hover:bg-[#ecf2fb] cursor-pointer h-[42px] flex items-center px-4 rounded-[4px]"
                         >
                             <span className="text-base font-medium">
@@ -138,6 +147,26 @@ export default function UserHeader() {
                                 >
                                     Your purchased
                                 </Menu.Item>
+
+                                <Menu.Divider />
+
+                                <Menu.Item
+                                    component={Link}
+                                    to="/deposit"
+                                    leftSection={<Landmark size={16} />}
+                                >
+                                    Deposit
+                                </Menu.Item>
+                                <Menu.Item
+                                    component={Link}
+                                    to="/withdraw"
+                                    leftSection={<Banknote size={16} />}
+                                >
+                                    Withdraw
+                                </Menu.Item>
+
+                                <Menu.Divider />
+
                                 <Menu.Item
                                     color="red"
                                     leftSection={<LogOut size={16} />}
@@ -155,8 +184,8 @@ export default function UserHeader() {
 
             {/* Upload Modal */}
             <Modal
-                opened={opened}
-                onClose={close}
+                opened={uploadOpened}
+                onClose={closeUpload}
                 title="Upload Files"
                 size="55vw"
                 radius="20px"
@@ -182,7 +211,7 @@ export default function UserHeader() {
                     },
                 }}
             >
-                <Upload onCloseUpload={close} />
+                <Upload onCloseUpload={closeUpload} />
             </Modal>
         </header>
     )

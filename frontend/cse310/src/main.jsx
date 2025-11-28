@@ -32,6 +32,8 @@ import DataPage from "./pages/DataPage.jsx";
 import ProfileController from "./pages/ProfileController.jsx";
 import EditItemPage from "./pages/EditItemPage.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import DepositPage from "./pages/DepositPage.jsx";
+import WithdrawPage from "./pages/WithdrawPage.jsx";
 
 import { checkAuth } from "../utils/auth.js";
 
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
             {
                 path: "/item/:id",
                 element: <ItemPage />,
+            },
+            {
+                path: "/deposit",
+                element: <DepositPage />,
+            },
+            {
+                path: "/withdraw",
+                element: <WithdrawPage />,
             },
             {
                 path: "/search",
