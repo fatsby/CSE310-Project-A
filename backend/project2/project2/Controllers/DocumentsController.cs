@@ -111,6 +111,48 @@ namespace project2.Controllers {
             }
         }
 
+        [HttpGet("my-documents")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetMyCreatedDocuments(CancellationToken ct)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return Unauthorized("User ID not found in token.");
+
+            var docs = await _db.Documents
+                .AsNoTracking()
+                .Where(d => d.AuthorId == userId && !d.isDeleted) // Return all documents by user that are not deleted
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .Include(d => d.Author)
+                .ToListAsync(ct);
+
+            var response = docs.Select(doc => new DocumentResponse {
+                Id = doc.Id,
+                AuthorId = doc.AuthorId,
+                AuthorName = doc.Author.UserName ?? "",
+                Name = doc.Name,
+                Description = doc.Description,
+                Price = doc.Price,
+                UniversityId = doc.UniversityId,
+                UniversityName = doc.University.Name,
+                SubjectId = doc.SubjectId,
+                SubjectName = doc.Subject.Name,
+                PurchaseCount = doc.purchaseCount,
+                ReviewCount = doc.ReviewCount,
+                AverageRating = doc.AverageRating,
+                isActive = doc.isActive,
+                UpdatedAt = doc.UpdatedAt,
+                isDeleted = doc.isDeleted,
+                Images = doc.Images.OrderBy(i => i.SortOrder).Select(i => i.Url),
+                Files = doc.Files.Select(f => new DocumentFileDto { Id = f.Id, FileName = f.FileName, SizeBytes = f.SizeBytes })
+            });
+
+            return Ok(response);
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> List(
@@ -297,17 +339,17 @@ namespace project2.Controllers {
             }
         }
 
-        //return string list of document images URL only
+        //return list of document images with Id and URL
         [HttpGet("{id:int}/images")]
         [AllowAnonymous]
         public async Task<IActionResult> GetDocumentImages([FromRoute] int id, CancellationToken ct) {
-            var ImageUrlList = await _db.DocumentImages
+            var ImageList = await _db.DocumentImages
                 .AsNoTracking()
                 .Where(img => img.DocumentId == id)
                 .OrderBy(img => img.SortOrder)
-                .Select(img => img.Url)
+                .Select(img => new { Id = img.Id, img.Url })
                 .ToListAsync(ct);
-            return Ok(ImageUrlList);
+            return Ok(ImageList);
         }
 
         //return full list of document file entities

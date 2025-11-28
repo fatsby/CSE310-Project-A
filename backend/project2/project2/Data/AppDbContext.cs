@@ -17,6 +17,9 @@
         public DbSet<Coupon> Coupons => Set<Coupon>();
         public DbSet<Review> Reviews => Set<Review>();
 
+        public DbSet<CartItem> CartItems => Set<CartItem>();
+
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
         }
 
@@ -109,6 +112,25 @@
                 .HasOne(r => r.Document)
                 .WithMany(d => d.Reviews)
                 .HasForeignKey(r => r.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CONFIGURATIONS FOR CARTITEM ENTITY
+            // Composite primary key
+            b.Entity<CartItem>()
+                .HasKey(ci => new { ci.UserId, ci.DocumentId });
+
+            // User -> CartItem relationship
+            b.Entity<CartItem>()
+                .HasOne(ci => ci.User)
+                .WithMany()
+                .HasForeignKey(ci => ci.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Document -> CartItem relationship
+            b.Entity<CartItem>()
+                .HasOne(ci => ci.Document)
+                .WithMany()
+                .HasForeignKey(ci => ci.DocumentId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             //Seed data

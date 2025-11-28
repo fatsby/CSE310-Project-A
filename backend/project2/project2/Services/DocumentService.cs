@@ -31,12 +31,14 @@ namespace project2.Services {
         private readonly IFileStorage _storage;
         private readonly IWebHostEnvironment _env;
         private readonly IBalanceManager _balanceManager;
+        private readonly ICartService _cartService;
 
-        public DocumentService(AppDbContext db, IFileStorage storage, IWebHostEnvironment env, IBalanceManager balanceManager) {
+        public DocumentService(AppDbContext db, IFileStorage storage, IWebHostEnvironment env, IBalanceManager balanceManager, ICartService cartService) {
             _db = db;
             _storage = storage;
             _env = env;
             _balanceManager = balanceManager;
+            _cartService = cartService;
         }
 
         //helper method
@@ -305,6 +307,12 @@ namespace project2.Services {
                 _db.UserPurchases.AddRange(newPurchases);
                 await _db.SaveChangesAsync(ct);
                 await tx.CommitAsync(ct);
+
+                // after successful purchase, remove items from cart
+                foreach (var docId in distinctDocIds)
+                {
+                    await _cartService.RemoveFromCartAsync(buyerUserId, docId, CancellationToken.None);
+                }
 
                 // response
                 return new PurchaseResponse {

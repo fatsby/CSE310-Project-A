@@ -98,7 +98,7 @@ export default function Upload({ onCloseUpload }) {
                     Drag & Drop
                   </p>
                   <p className="text-[#a0a9b5] text-[11px]">
-                    ( doc, pdf, pptx, zip )
+                      ( doc/docx, pdf, pptx, csv, xls/xlsx )
                   </p>
                   <div className="text-transparent bg-transparent px-4 py-2 rounded-[10px] text-[13px] font-bold">
                     Select files
@@ -118,7 +118,7 @@ export default function Upload({ onCloseUpload }) {
                     Drag & Drop
                   </p>
                   <p className="text-[#a0a9b5] text-[11px]">
-                    ( doc, pdf, pptx, zip )
+                    ( doc/docx, pdf, pptx, csv, xls/xlsx )
                   </p>
                   <button
                     onClick={openFileDialog}
