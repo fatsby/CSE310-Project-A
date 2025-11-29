@@ -24,7 +24,7 @@ import {
 import { useState, useEffect } from 'react'
 import UploadedItemCard from '../components/UserProfilePage_components/UploadedItemCard'
 import BalanceHistoryItem from '../components/UserProfilePage_components/BalanceHistoryItem'
-import { fetchCourse, fetchPurchaseLog } from '../../utils/fetch'
+import { fetchMyUploadCourse, fetchPurchaseLog } from '../../utils/fetch'
 import { getToken, getUser, saveUser } from '../../utils/auth'
 import { useDisclosure } from '@mantine/hooks'
 import { notifications } from '@mantine/notifications'
@@ -40,7 +40,8 @@ export default function YourProfilePage({ userData }) {
     const [purchaseLog, setPurchaseLog] = useState(0)
 
     // State for profile picture modal
-    const [pfpModalOpened, { open: openPfpModal, close: closePfpModal }] = useDisclosure(false)
+    const [pfpModalOpened, { open: openPfpModal, close: closePfpModal }] =
+        useDisclosure(false)
     const [newAvatarUrl, setNewAvatarUrl] = useState(userData?.avatarUrl || '')
     const [isSavingPfp, setIsSavingPfp] = useState(false)
     const [pfpError, setPfpError] = useState(null)
@@ -54,7 +55,7 @@ export default function YourProfilePage({ userData }) {
 
         const fetchData = async () => {
             try {
-                const uploaded = await fetchCourse({ authorId: userData.id })
+                const uploaded = await fetchMyUploadCourse()
                 setUploadCourse(uploaded)
 
                 const logs = await fetchPurchaseLog()
@@ -158,7 +159,9 @@ export default function YourProfilePage({ userData }) {
             })
 
             if (!res.ok) {
-                throw new Error(await res.text() || 'Failed to update profile picture.')
+                throw new Error(
+                    (await res.text()) || 'Failed to update profile picture.'
+                )
             }
 
             // Update user data in local storage
@@ -192,7 +195,12 @@ export default function YourProfilePage({ userData }) {
     return (
         <div className="container mx-auto px-4 pb-4 pt-[125px]">
             {/* PFP Update Modal */}
-            <Modal opened={pfpModalOpened} onClose={closePfpModal} title="Update Profile Picture" centered>
+            <Modal
+                opened={pfpModalOpened}
+                onClose={closePfpModal}
+                title="Update Profile Picture"
+                centered
+            >
                 <div className="space-y-4">
                     <TextInput
                         label="Image URL"
@@ -203,7 +211,9 @@ export default function YourProfilePage({ userData }) {
                     />
                     {newAvatarUrl && (
                         <div>
-                            <Text size="sm" fw={500} mb="xs">Preview:</Text>
+                            <Text size="sm" fw={500} mb="xs">
+                                Preview:
+                            </Text>
                             <Image
                                 src={newAvatarUrl}
                                 fallbackSrc="https://placehold.co/400x400?text=Invalid+URL"
@@ -216,13 +226,21 @@ export default function YourProfilePage({ userData }) {
                         </div>
                     )}
                     {pfpError && (
-                        <Alert color="red" icon={<AlertCircle size={16} />} title="Error">
+                        <Alert
+                            color="red"
+                            icon={<AlertCircle size={16} />}
+                            title="Error"
+                        >
                             {pfpError}
                         </Alert>
                     )}
                     <Group justify="end" mt="md">
-                        <Button variant="default" onClick={closePfpModal}>Cancel</Button>
-                        <Button onClick={handlePfpUpdate} loading={isSavingPfp}>Save</Button>
+                        <Button variant="default" onClick={closePfpModal}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handlePfpUpdate} loading={isSavingPfp}>
+                            Save
+                        </Button>
                     </Group>
                 </div>
             </Modal>
@@ -232,14 +250,20 @@ export default function YourProfilePage({ userData }) {
                 {/* LEFT COLUMN */}
                 <div className="lg:col-span-4 bg-[#fff] shadow-md rounded-2xl p-6">
                     <div className="flex flex-col items-center">
-                        <div className="relative group cursor-pointer" onClick={openPfpModal}>
+                        <div
+                            className="relative group cursor-pointer"
+                            onClick={openPfpModal}
+                        >
                             <img
                                 src={userData?.avatarUrl || avatarIMG}
                                 alt="Profile"
                                 className="w-24 h-24 rounded-full mb-4"
                             />
                             <div className="absolute inset-0 group-hover:bg-opacity-50 rounded-full flex items-center justify-center transition-all">
-                                <Edit size={24} className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <Edit
+                                    size={24}
+                                    className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                />
                             </div>
                         </div>
 

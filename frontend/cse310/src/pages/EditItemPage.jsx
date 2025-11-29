@@ -30,13 +30,15 @@ import {
     ImagePlus,
     ArrowBigDownDash,
     X,
+    Info,
 } from 'lucide-react'
 
-import { getToken } from '../../utils/auth'
+import { getToken, getUser } from '../../utils/auth'
 
 export default function EditItemPage() {
     const { id } = useParams()
     const navigate = useNavigate()
+    const isAdmin = getUser().isAdmin
 
     const [courseData, setCourseData] = useState(null)
 
@@ -57,6 +59,8 @@ export default function EditItemPage() {
 
     const fileInputRef = useRef(null)
     const imageInputRef = useRef(null)
+
+    const isMaxImage = images.length + newImages.length > 5
 
     const API_URL = import.meta.env.VITE_API_BASE_URL
 
@@ -511,13 +515,15 @@ export default function EditItemPage() {
         <div className="container mx-auto px-4 pb-10 pt-[125px]">
             {/* Header */}
             <div className="flex items-center gap-3 mb-4">
-                <Button
-                    variant="light"
-                    leftSection={<ArrowLeft />}
-                    onClick={() => navigate(-1)}
-                >
-                    Back
-                </Button>
+                {!isAdmin && (
+                    <Button
+                        variant="light"
+                        leftSection={<ArrowLeft />}
+                        onClick={() => navigate(-1)}
+                    >
+                        Back
+                    </Button>
+                )}
                 <h1 className="text-3xl font-semibold">Edit Item</h1>
             </div>
 
@@ -537,6 +543,19 @@ export default function EditItemPage() {
                     onClose={() => setError(null)}
                 >
                     {error}
+                </Alert>
+            )}
+
+            {isAdmin && (
+                <Alert
+                    variant="light"
+                    color="indigo"
+                    title="Note"
+                    icon={<Info />}
+                >
+                    <p className="font-bold">
+                        Admin can only delete File and Image
+                    </p>
                 </Alert>
             )}
 
@@ -672,6 +691,7 @@ export default function EditItemPage() {
                                             onClick={() =>
                                                 imageInputRef.current.click()
                                             }
+                                            disabled={isAdmin || isMaxImage}
                                         >
                                             Choose Image
                                         </Button>
@@ -682,9 +702,24 @@ export default function EditItemPage() {
                                                 onClick={
                                                     openUploadImageConfirmModal
                                                 }
+                                                disabled={isMaxImage}
                                             >
                                                 Upload
                                             </Button>
+                                        )}
+                                    </div>
+                                    <div className="mt-2.5">
+                                        {isMaxImage && (
+                                            <Alert
+                                                variant="light"
+                                                color="red"
+                                                radius="md"
+                                                title="Error"
+                                                icon={<Info />}
+                                            >
+                                                Reaching max number of images
+                                                allow (5)
+                                            </Alert>
                                         )}
                                     </div>
                                 </div>
@@ -822,6 +857,7 @@ export default function EditItemPage() {
                                         onClick={() =>
                                             fileInputRef.current.click()
                                         }
+                                        disabled={isAdmin}
                                     >
                                         Choose File
                                     </Button>

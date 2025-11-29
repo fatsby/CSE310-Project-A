@@ -87,7 +87,7 @@ export default function UploadedItemCard({ item }) {
                 className="flex-1 grid grid-cols-10 gap-4 p-3 text-inherit no-underline hover:bg-blue-50/30 transition-colors relative"
             >
                 {/* Image Section */}
-                <div className="col-span-3 sm:col-span-2 overflow-hidden rounded-lg relative">
+                <div className="col-span-3 sm:col-span-2 overflow-hidden rounded-lg relative h-26">
                     <img
                         src={
                             item.images?.[0] ||

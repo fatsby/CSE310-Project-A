@@ -66,6 +66,27 @@ export const fetchCourse = async ({
     }
 }
 
+export const fetchMyUploadCourse = async () => {
+    try {
+        const respone = await fetch(`${API_URL}/api/documents/my-documents`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${getToken()}`,
+            },
+        })
+
+        if (!respone.ok) {
+            throw new Error(`HTTP error! Status: ${respone.status}`)
+        }
+        const json = await respone.json()
+        return json
+    } catch (err) {
+        console.log('Fail to get document data', err)
+        return []
+    }
+}
+
 export const fetchPurchase = async ({ documentIds, couponCode }) => {
     try {
         const response = await fetch(`${API_URL}/api/documents/purchase`, {
@@ -173,10 +194,4 @@ export const fetchChangeCourseActiveStatus = async (documentId, isActive) => {
         console.log('Fail to change Course status', err.message)
         return false
     }
-}
-
-export const apiFetchFiles = async (docId, apiUrl) => {
-    const res = await fetch(`${apiUrl}/api/documents/${docId}/files`)
-    if (!res.ok) throw new Error('Failed to load files')
-    return await res.json()
 }
