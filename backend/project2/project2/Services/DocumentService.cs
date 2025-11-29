@@ -487,7 +487,7 @@ namespace project2.Services {
             await _db.SaveChangesAsync(ct);
         }
 
-        public async Task<string> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct) {
+        public async Task<UploadImageResponseDTO> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct) {
             // get doc
             var doc = await _db.Documents.FirstOrDefaultAsync(d => d.Id == documentId, ct);
             if (doc == null)
@@ -537,7 +537,12 @@ namespace project2.Services {
 
             await _db.SaveChangesAsync(ct);
 
-            return docImage.Url;
+            var response = new UploadImageResponseDTO
+            {
+                Url = docImage.Url,
+                Id = docImage.Id
+            };
+            return response;
         }
 
         public async Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct) {

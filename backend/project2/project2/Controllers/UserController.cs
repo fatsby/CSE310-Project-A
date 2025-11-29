@@ -49,6 +49,22 @@ namespace project2.Controllers
             return Ok(userDTO);
         }
 
+        [HttpPatch("pfp")]
+        [Authorize]
+        public async Task<IActionResult> UploadProfilePicture([FromBody] string url)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return NotFound("User not found.");
+
+            user.AvatarUrl = url;
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok();
+        }
+
         [HttpGet("users")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers() {

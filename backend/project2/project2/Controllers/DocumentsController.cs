@@ -450,8 +450,8 @@ namespace project2.Controllers {
             if (file == null) return BadRequest("No image uploaded.");
 
             try {
-                var url = await _svc.AddImageAsync(id, userId, file, ct);
-                return Ok(new { url });
+                var response = await _svc.AddImageAsync(id, userId, file, ct);
+                return Ok(response);
             } catch (KeyNotFoundException ex) {
                 return NotFound(new { message = ex.Message });
             } catch (UnauthorizedAccessException ex) {

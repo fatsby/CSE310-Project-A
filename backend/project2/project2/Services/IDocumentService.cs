@@ -13,7 +13,7 @@ namespace project2.Services {
         Task<DocumentFileDto> AddFileAsync(int documentId, string userId, IFormFile file, CancellationToken ct);
         Task DeleteFileAsync(int documentId, int fileId, string? userId, CancellationToken ct);
 
-        Task<string> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct);
+        Task<UploadImageResponseDTO> AddImageAsync(int documentId, string userId, IFormFile image, CancellationToken ct);
         Task DeleteImageAsync(int documentId, int imageId, string? userId, CancellationToken ct);
         Task<List<DocumentResponse>> GetTopRatedDocumentsAsync(CancellationToken ct);
         Task<List<DocumentResponse>> GetBestSellingDocumentsAsync(CancellationToken ct);
