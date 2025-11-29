@@ -15,7 +15,8 @@ import {
   Plus,
   BarChart3,
   CreditCard,
-  Search as SearchIcon,
+  Library,
+  Search as SearchIcon, // Renamed to avoid conflict
   X as XIcon,
   ShieldAlert
 } from "lucide-react";
@@ -25,6 +26,7 @@ import UsersPanel from "../components/admin/UsersPanel";
 import ItemsPanel from "../components/admin/ItemsPanel";
 import ReviewsPanel from "../components/admin/ReviewsPanel";
 import TransactionsPanel from "../components/admin/TransactionsPanel";
+import UniversitySubjectPanel from "../components/admin/UniversitySubjectPanel";
 import DeletedDocsPanel from "../components/admin/DeletedDocsPanel";
 
 import { getToken } from '../../utils/auth'
@@ -75,7 +77,8 @@ const useAdminData = () => {
         bestSellersRes,
         countRes,
         reviewsRes,
-        transactionsRes
+        transactionsRes,
+        documentsRes
       ] = await Promise.all([
         fetch(`${API_URL}/api/users/users`, { method: "GET", headers }),
         fetch(`${API_URL}/api/purchases/totalSales`, { method: "GET", headers }),
@@ -83,7 +86,8 @@ const useAdminData = () => {
         fetch(`${API_URL}/api/documents/best-sellers`, { method: "GET", headers }),
         fetch(`${API_URL}/api/documents/count`, { method: "GET", headers }),
         fetch(`${API_URL}/api/reviews`, { method: "GET", headers }),
-        fetch(`${API_URL}/api/purchases/all`, { method: "GET", headers })
+        fetch(`${API_URL}/api/purchases/all`, { method: "GET", headers }),
+        fetch(`${API_URL}/api/documents/inactive`, { method: "GET", headers })
       ]);
 
       // users data
@@ -100,11 +104,11 @@ const useAdminData = () => {
       if (bestSellersRes.ok) {
         const data = await bestSellersRes.json();
         setBestSellers(data.slice(0, 5));
-        setItems(data);
       }
       if (countRes.ok) setTotalItems(await countRes.json() || 0);
       if (reviewsRes.ok) setReviews(await reviewsRes.json());
       if (transactionsRes.ok) setTransactions(await transactionsRes.json());
+      if (documentsRes.ok) setItems(await documentsRes.json());
 
     } catch (error) {
       console.error("Failed to fetch admin analytics:", error.message);
@@ -220,17 +224,55 @@ const useAdminData = () => {
     });
   };
 
-  const deleteItem = (id) => {
-    // Optimistic delete
-    setItems((prev) => prev.filter((it) => it.id !== id));
-    // TODO: Call API DELETE /documents/{id}
+  const toggleItemActive = async (id, currentIsActive) => {
+    // Optimistic update
+    setItems((prev) =>
+      prev.map((it) => (it.id === id ? { ...it, isActive: !currentIsActive } : it))
+    );
+
+    try {
+      const res = await fetch(`${API_URL}/api/documents/${id}/active?isActive=${!currentIsActive}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+    } catch (err) {
+      setError(`Failed to update document status: ${err.message}`);
+      // Revert optimistic update on error
+      setItems((prev) =>
+        prev.map((it) => (it.id === id ? { ...it, isActive: currentIsActive } : it))
+      );
+    }
   };
 
-  return { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem, createUser, error, setError };
+  const deleteItem = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/api/documents/${id}/delete?isDeleted=true`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(await res.text());
+      }
+      setItems((prev) => prev.filter((it) => it.id !== id));
+    } catch (err) {
+      setError(`Failed to delete document: ${err.message}`);
+    }
+  };
+
+  return { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, toggleItemActive, deleteItem, createUser, error, setError };
 };
 
 export default function AdminDashboard() {
-  const { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, deleteItem, createUser, error, setError } = useAdminData();
+  const { loading, users, items, reviews, transactions, analytics, updateUser, deleteUser, upsertItem, toggleItemActive, deleteItem, createUser, error, setError } = useAdminData();
   const [activeTab, setActiveTab] = useState("analytics");
 
   return (
@@ -271,6 +313,7 @@ export default function AdminDashboard() {
             <Tabs.Tab value="users" leftSection={<Users size={16} />}>Users</Tabs.Tab>
             <Tabs.Tab value="deleteddocs" leftSection={<ShieldAlert size={16} />}>Approve Documents</Tabs.Tab>
             <Tabs.Tab value="items" leftSection={<FileText size={16} />}>Documents/Items</Tabs.Tab>
+            <Tabs.Tab value="uni-subjects" leftSection={<Library size={16} />}>University/Subjects</Tabs.Tab>
             <Tabs.Tab value="reviews" leftSection={<Star size={16} />}>Reviews</Tabs.Tab>
             <Tabs.Tab value="transactions" leftSection={<CreditCard size={16} />}>Transactions</Tabs.Tab>
           </Tabs.List>
@@ -287,7 +330,10 @@ export default function AdminDashboard() {
             <DeletedDocsPanel />
           </Tabs.Panel>
           <Tabs.Panel value="items">
-            <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onDelete={deleteItem} />
+            <ItemsPanel loading={loading} items={items} onUpsert={upsertItem} onToggleActive={toggleItemActive} onDeleteItem={deleteItem} />
+          </Tabs.Panel>
+          <Tabs.Panel value="uni-subjects">
+            <UniversitySubjectPanel />
           </Tabs.Panel>
           <Tabs.Panel value="reviews">
             <ReviewsPanel loading={loading} reviews={reviews} />

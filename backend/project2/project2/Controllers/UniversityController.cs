@@ -27,10 +27,10 @@ namespace project2.Controllers
             var universities = await _db.Universities
                 .AsNoTracking()
                 .Select(u => new UniversityReadDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-            }).ToListAsync();
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                }).ToListAsync();
 
             return Ok(universities);
         }
@@ -47,7 +47,8 @@ namespace project2.Controllers
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    UniversityId = s.UniversityId
+                    UniversityId = s.UniversityId,
+                    Code = s.Code
                 })
                 .ToListAsync();
             return Ok(subjects);
@@ -66,6 +67,23 @@ namespace project2.Controllers
             _db.Universities.Add(university);
             await _db.SaveChangesAsync();
             return Ok(new { university.Id, university.Name, university.Suffix });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUniversityName(int id, [FromBody] CreateUniversityDTO dto)
+        {
+            var uni = await _db.Universities.FindAsync(id);
+            if (uni == null)
+            {
+                return NotFound();
+            }
+
+            uni.Name = dto.Name;
+            uni.Suffix = dto.Suffix;
+
+            await _db.SaveChangesAsync();
+
+            return Ok(uni);
         }
     }
 }

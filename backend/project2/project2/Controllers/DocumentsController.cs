@@ -92,6 +92,17 @@ namespace project2.Controllers {
             }
         }
 
+        [HttpGet("inactive")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetAllAndInactiveDocuments(CancellationToken ct) { 
+            try {
+                var result = await _svc.GetAllAndInactiveDocuments(ct);
+                return Ok(result);
+            } catch (Exception ex) {
+                return StatusCode(500, new { message = "An error occurred fetching deleted documents.", details = ex.Message });
+            }
+        }
+
         [HttpGet("purchased")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<DocumentResponse>>> GetMyPurchasedDocuments(CancellationToken ct)
@@ -121,7 +132,7 @@ namespace project2.Controllers {
 
             var docs = await _db.Documents
                 .AsNoTracking()
-                .Where(d => d.AuthorId == userId && !d.isDeleted) // Return all documents by user that are not deleted
+                .Where(d => d.AuthorId == userId && !d.isDeleted)
                 .Include(d => d.University)
                 .Include(d => d.Subject)
                 .Include(d => d.Images)

@@ -667,5 +667,19 @@ namespace project2.Services {
 
             return docs.Select(MapToResponse).ToList();
         }
+
+        public async Task<List<DocumentResponse>> GetAllAndInactiveDocuments(CancellationToken ct) {
+            var docs = await _db.Documents
+                .AsNoTracking()
+                .Where(d => d.isActive || !d.isActive)
+                .Include(d => d.University)
+                .Include(d => d.Subject)
+                .Include(d => d.Images)
+                .Include(d => d.Files)
+                .Include(d => d.Author)
+                .ToListAsync(ct);
+
+            return docs.Select(MapToResponse).ToList();
+        }
     }
 }

@@ -4,17 +4,20 @@ import {
   Badge,
   Loader,
   Select,
+  Switch,
+  Modal,
   Table,
   Text,
   TextInput,
   Tooltip,
 } from "@mantine/core";
-import { Edit3, Trash2, Star, Search, Eye } from "lucide-react";
+import { modals } from '@mantine/modals';
+import { Edit3, Trash2, Star, Search as SearchIcon, Eye, AlertTriangle } from "lucide-react";
 
 // Helper to get token for API calls
 import { getToken } from "../../../utils/auth";
 
-export default function ItemsPanel({ loading, items, onDelete }) {
+export default function ItemsPanel({ loading, items, onToggleActive, onDeleteItem }) {
   const API_URL = import.meta.env.VITE_API_BASE_URL;
 
   // --- Filter States ---
@@ -111,6 +114,27 @@ export default function ItemsPanel({ loading, items, onDelete }) {
         window.open(`/data/${id}`); 
   };
 
+  const openDeleteConfirmModal = (item) => modals.openConfirmModal({
+    title: 'Confirm Deletion',
+    centered: true,
+    children: (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start gap-3 bg-red-50 p-3 rounded-lg border border-red-100">
+            <AlertTriangle className="text-red-500 mt-1 flex-shrink-0" size={32} />
+            <div>
+                <Text fw={600} c="red.8">Double check the Document</Text>
+                <Text size="sm" c="dimmed">
+                    Are you sure you want to delete the document: <Text span fw={700} c="dark">{item.name}</Text>?
+                </Text>
+            </div>
+        </div>
+      </div>
+    ),
+    labels: { confirm: 'Delete Document', cancel: 'Cancel' },
+    confirmProps: { color: 'red', leftSection: <Trash2 size={16}/> },
+    onConfirm: () => onDeleteItem(item.id),
+  });
+
   const universityOptions = universityList.map(u => ({ value: u.id.toString(), label: u.name }));
   const subjectOptions = availableSubjects.map(s => ({ value: s.id.toString(), label: s.name }));
 
@@ -124,7 +148,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
         <TextInput 
             className="w-full md:w-80" 
             placeholder="Search items by name" 
-            leftSection={<Search size={16} />} 
+            leftSection={<SearchIcon size={16} />} 
             value={query} 
             onChange={(e) => setQuery(e.currentTarget.value)} 
             radius="lg"
@@ -169,6 +193,7 @@ export default function ItemsPanel({ loading, items, onDelete }) {
               <Table.Th>Rating</Table.Th>
               <Table.Th>Purchases</Table.Th>
               <Table.Th>Actions</Table.Th>
+              <Table.Th>Active</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -197,9 +222,15 @@ export default function ItemsPanel({ loading, items, onDelete }) {
                         <ActionIcon variant="subtle" color="cyan" onClick={() => handleViewFiles(it.id)}><Eye size={18}/></ActionIcon>
                     </Tooltip>
                     <Tooltip label="Delete">
-                        <ActionIcon variant="subtle" color="red" onClick={() => onDelete(it.id)}><Trash2 size={18}/></ActionIcon>
+                        <ActionIcon variant="subtle" color="red" onClick={() => openDeleteConfirmModal(it)}><Trash2 size={18}/></ActionIcon>
                     </Tooltip>
                   </div>
+                </Table.Td>
+                <Table.Td>
+                  <Switch
+                    checked={it.isActive}
+                    onChange={() => onToggleActive(it.id, it.isActive)}
+                  />
                 </Table.Td>
               </Table.Tr>
             ))}

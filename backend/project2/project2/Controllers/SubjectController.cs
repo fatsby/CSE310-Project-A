@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using project2.Data;
 using project2.DTOs.SubjectDto;
+using project2.DTOs.UniversityDto;
 using project2.Models;
 
 namespace project2.Controllers
@@ -52,6 +53,23 @@ namespace project2.Controllers
         {
             var sub = await _db.Subjects.FindAsync(id);
             return sub == null ? NotFound() : Ok(sub);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateSubject(int id, [FromBody] UpdateSubjectDTO dto)
+        {
+            var sub = await _db.Subjects.FindAsync(id);
+            if (sub == null)
+            {
+                return NotFound();
+            }
+
+            sub.Name = dto.Name;
+            sub.Code = dto.Code;
+            
+            await _db.SaveChangesAsync();
+
+            return Ok(sub);
         }
     }
 }

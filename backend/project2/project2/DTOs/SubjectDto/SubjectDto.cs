@@ -6,5 +6,6 @@
         public string Name { get; set; }
 
         public int UniversityId { get; set; }
+        public string Code { get; set; }
     }
 }
